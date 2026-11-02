@@ -25,12 +25,15 @@ Aplikacja w katalogu `app_preview/` została przygotowana jako w pełni certyfik
 
 ---
 
-## 📱 Metoda 2: Gotowy plik instalacyjny APK (Android 8.0+)
+## 📱 Metoda 2: Pobranie gotowego pliku .APK z GitHub Releases (Najszybsza)
 
-W głównym katalogu projektu znajduje się już skompilowany plik pakietu instalacyjnego dla systemu Android:
-👉 **`SmartCUS_Wieliszew.apk`** *(oraz `apk_output/SmartCUS-Wieliszew-Debug-APK/app-debug.apk`)*.
+Gotowy, skompilowany plik pakietu instalacyjnego dla systemu Android (wersja 8.0+) został opublikowany w oficjalnym wydaniu:
+👉 **[Pobierz SmartCUS_Wieliszew.apk z GitHub Releases](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.0.0/SmartCUS_Wieliszew.apk)**  
+Strona wydania: **[GitHub Releases v1.0.0](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.0.0)**
 
-1. Prześlij plik `SmartCUS_Wieliszew.apk` na swój smartfon (przez kabel USB, Dysk Google, Bluetooth lub e-mail).
+Plik znajduje się również lokalnie w głównym katalogu projektu pod nazwą `SmartCUS_Wieliszew.apk`.
+
+1. Otwórz powyższy link na smartfonie, aby bezpośrednio pobrać plik instalacyjny.
 2. Na smartfonie kliknij pobrany plik `.apk`.
 3. Jeśli system wyświetli pytanie o instalację z nieznanych źródeł, wybierz **„Zezwalaj”**.
 4. Aplikacja Smart CUS Wieliszew zainstaluje się na urządzeniu z pełnym zestawem modułów.

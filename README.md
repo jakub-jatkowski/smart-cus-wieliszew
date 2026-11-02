@@ -124,10 +124,13 @@ Skrypt automatycznie uruchomi lokalny serwer i otworzy aplikację w Twojej domy�
 4. Kliknij **„Dodaj do ekranu głównego” / „Zainstaluj aplikację”**.
 5. **Efekt:** Aplikacja automatycznie dopasuje się do pełnego ekranu Twojego smartfona (bez sztucznej ramki komputera), zainstaluje oficjalną ikonę Gminy Wieliszew i będzie działać jak natywna aplikacja ze sklepu!
 
-### Metoda 3: Instalacja pliku .APK na telefonie z Androidem
-Gotowy plik instalacyjny znajduje się bezpośrednio w głównym katalogu:
-👉 **`SmartCUS_Wieliszew.apk`**
-Prześlij go na smartfon z systemem Android i zainstaluj.
+### Metoda 3: Pobranie i instalacja pliku .APK z GitHub Releases
+Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z oficjalnego wydania:
+👉 **[Pobierz SmartCUS_Wieliszew.apk (GitHub Releases)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.0.0/SmartCUS_Wieliszew.apk)**
+lub z poziomu strony wydań:
+👉 **[Strona Wydań (Releases v1.0.0)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.0.0)**
+
+Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 
 ---
 
