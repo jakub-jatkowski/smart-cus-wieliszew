@@ -1,0 +1,13 @@
+<resources>
+    <color name="primary_green">#137547</color>
+    <color name="primary_green_dark">#0C4A2D</color>
+    <color name="primary_green_light">#2CA56A</color>
+    <color name="accent_gold">#DDA72A</color>
+    <color name="surface_light">#F8FAF9</color>
+    <color name="surface_dark">#121815</color>
+    <color name="text_dark">#1A202C</color>
+    <color name="text_light">#F7FAFC</color>
+    <color name="high_contrast_yellow">#FFD600</color>
+    <color name="high_contrast_bg">#000000</color>
+</resources>
+

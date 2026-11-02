@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.SmartCus" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/primary_green_dark</item>
+        <item name="android:navigationBarColor">@color/surface_light</item>
+    </style>
+</resources>
+

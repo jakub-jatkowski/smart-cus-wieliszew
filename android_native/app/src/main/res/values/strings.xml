@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Smart CUS Wieliszew</string>
+    <string name="slogan">Cyfrowy Hub Usług Społecznych</string>
+    <string name="senior_mode">Tryb Seniora / Wysoki Kontrast</string>
+    <string name="nav_assistant">Asystent AI</string>
+    <string name="nav_card">e-Karta</string>
+    <string name="nav_map">Mapa Potrzeb</string>
+    <string name="nav_timebank">Bank Czasu</string>
+    <string name="nav_more">Więcej</string>
+    <string name="nav_gamification">Nagrody</string>
+    <string name="nav_telehealth">Telekonsultacje</string>
+    <string name="nav_sharing">Współdzielenie</string>
+</resources>
+
