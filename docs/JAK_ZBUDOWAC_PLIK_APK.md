@@ -1,60 +1,63 @@
-# Instrukcja: Jak uzyskać i zainstalować plik .APK
+# Instrukcja: Jak uzyskać i zainstalować aplikację Smart CUS
 ## Smart CUS Wieliszew – Cyfrowy Hub Społeczny
 
-Plik **.apk** (Android Application Package) to skompilowany i podpisany cyfrowo pakiet instalacyjny dla systemu Android. Kod źródłowy aplikacji znajduje się w folderze [`android_native/`](file:///c:/Users/jjatkowski/Desktop/Aplikacja/android_native).
+Aplikacja **Smart CUS Wieliszew** została przygotowana do wielokanałowej dystrybucji, umożliwiając natychmiastowe uruchomienie bez konieczności skomplikowanych konfiguracji programistycznych.
 
-Poniżej znajdują się **3 proste sposoby**, aby uruchomić i zainstalować aplikację na Twoim smartfonie.
+Poniżej znajdują się **3 proste sposoby**, aby uruchomić i zainstalować aplikację na Twoim smartfonie lub komputerze.
 
 ---
 
 ## ⚡ Metoda 1: Natychmiastowa instalacja na smartfonie (PWA – Bez instalowania Android Studio)
 
-Aplikacja w katalogu `app_preview/` została przygotowana jako w pełni certyfikowana aplikacja **PWA (Progressive Web App)** z obsługą instalacji na pulpicie smartfona.
+Aplikacja w katalogu `app_preview/` została przygotowana jako w pełni certyfikowana aplikacja **PWA (Progressive Web App)** z automatyczną adaptacją do ekranu smartfona.
 
 1. **Uruchom serwer na komputerze:**
-   W terminalu na komputerze uruchom:
-   ```bash
-   python start_preview.py
-   ```
+   Kliknij dwukrotnie plik:
+   👉 **`Uruchom_SmartCUS.bat`**
+   *(lub wpisz w terminalu `python start_preview.py`)*.
 2. **Otwórz stronę na telefonie:**
-   Upewnij się, że telefon jest połączony z tą samą siecią Wi-Fi co komputer, i wpisz w przeglądarce Chrome na telefonie adres Twojego komputera:
-   👉 **`http://192.168.1.152:8080`**
-3. **Kliknij "Zainstaluj aplikację":**
-   Przeglądarka Chrome wyświetli na dole komunikat: **„Dodaj Smart CUS do ekranu głównego”** lub **„Zainstaluj aplikację”**.
+   Upewnij się, że telefon jest połączony z tą samą siecią Wi-Fi co komputer, i wpisz w przeglądarce Chrome na telefonie adres wyświetlony w oknie konsoli:
+   👉 **`http://<TWOJ_ADRES_IP>:8080`**
+3. **Kliknij "Zainstaluj aplikację" / "Dodaj do ekranu głównego":**
+   Przeglądarka Chrome wyświetli na dole komunikat o możliwości instalacji aplikacji.
 4. **Efekt:**
-   Aplikacja pojawi się w menu Twojego telefonu z oficjalną zielono-złotą ikoną Wieliszewa, otwiera się na pełnym ekranie (bez pasków przeglądarki) i działa jak klasyczna aplikacja Android!
+   Aplikacja automatycznie dopasuje się do ekranu Twojego smartfona (usuwając komputerową ramkę symulatora), doda oficjalną zielono-złotą ikonę Wieliszewa na pulpicie i będzie działać w trybie pełnoekranowym bez pasków przeglądarki!
 
 ---
 
-## ☁️ Metoda 2: Automatyczna kompilacja .APK w chmurze (GitHub Actions – 2 minuty)
+## 📱 Metoda 2: Gotowy plik instalacyjny APK (Android 8.0+)
 
-W projekcie przygotowano gotowy skrypt automatycznej budowy pliku APK: [`.github/workflows/build-apk.yml`](file:///c:/Users/jjatkowski/Desktop/Aplikacja/.github/workflows/build-apk.yml).
+W głównym katalogu projektu znajduje się już skompilowany plik pakietu instalacyjnego dla systemu Android:
+👉 **`SmartCUS_Wieliszew.apk`** *(oraz `apk_output/SmartCUS-Wieliszew-Debug-APK/app-debug.apk`)*.
 
-1. Umieść folder projektu w repozytorium GitHub (publicznym lub prywatnym).
-2. Wejdź w zakładkę **Actions** na GitHubie.
-3. Serwery GitHub (z preinstalowanym Ubuntu, JDK 17 i Android SDK 35) automatycznie skompilują kod źródłowy za pomocą Gradle.
-4. Po zakończeniu zadania (ok. 2–3 minuty) w sekcji **Artifacts** pobierzesz gotowy plik:
-   📦 **`SmartCUS-Wieliszew-Debug-APK.zip`**  
-   zawierający instalator `app-debug.apk`.
-5. Prześlij plik `.apk` na telefon i kliknij go, aby zainstalować.
+1. Prześlij plik `SmartCUS_Wieliszew.apk` na swój smartfon (przez kabel USB, Dysk Google, Bluetooth lub e-mail).
+2. Na smartfonie kliknij pobrany plik `.apk`.
+3. Jeśli system wyświetli pytanie o instalację z nieznanych źródeł, wybierz **„Zezwalaj”**.
+4. Aplikacja Smart CUS Wieliszew zainstaluje się na urządzeniu z pełnym zestawem modułów.
 
 ---
 
-## 💻 Metoda 3: Samodzielna kompilacja w Android Studio (Lokalnie)
+## ☁️ Metoda 3: Automatyczna kompilacja .APK w chmurze (GitHub Actions)
 
-Jeśli chcesz skompilować plik `.apk` lokalnie na komputerze programistycznym:
+W projekcie przygotowano zaktualizowany skrypt automatycznej budowy pliku APK: [`.github/workflows/build-apk.yml`](../.github/workflows/build-apk.yml).
 
-1. **Pobierz i zainstaluj darmowe środowisko Android Studio:**
+1. Umieść repozytorium na platformie GitHub.
+2. Przejdź do zakładki **Actions** w repozytorium GitHub.
+3. Serwery GitHub (z Ubuntu, JDK 17 i Android SDK 35) automatycznie skompilują kod źródłowy za pomocą Gradle.
+4. Po zakończeniu zadania (ok. 2–3 minuty) w sekcji **Artifacts** pobierzesz świeżo wygenerowany plik `SmartCUS_Wieliszew_v1.0.0.apk`.
+
+---
+
+## 💻 Metoda 4: Samodzielna kompilacja w Android Studio (Lokalnie)
+
+1. **Pobierz środowisko Android Studio:**
    - [Pobierz Android Studio (Oficjalna strona)](https://developer.android.com/studio)
 2. **Otwórz projekt:**
    - W Android Studio wybierz **Open...**
-   - Wskaż folder: `c:\Users\jjatkowski\Desktop\Aplikacja\android_native`
+   - Wskaż folder: `android_native/`
 3. **Poczekaj na synchronizację Gradle:**
-   - Android Studio automatycznie pobierze wymagane biblioteki (Jetpack Compose, Material 3, Android SDK 35).
+   - Środowisko automatycznie pobierze wymagane biblioteki (Jetpack Compose BOM, Material 3, Android SDK 35).
 4. **Wygeneruj plik APK:**
    - Z górnego menu wybierz: **Build** ➔ **Build Bundle(s) / APK(s)** ➔ **Build APK(s)**.
-5. **Lokalizacja gotowego pliku APK:**
-   Po zakończeniu kompilacji plik znajdziesz pod ścieżką:
-   `android_native\app\build\outputs\apk\debug\app-debug.apk`
-6. Prześlij go na telefon (kablem USB, e-mailem lub Dyskiem Google) i kliknij **Zainstaluj**.
-
+5. Plik wyjściowy znajdziesz pod ścieżką:
+   `android_native/app/build/outputs/apk/debug/app-debug.apk`

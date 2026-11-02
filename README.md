@@ -1,35 +1,63 @@
-# Smart CUS & AI – Cyfrowy Hub Usług Społecznych Gminy Wieliszew
-## Projekt Wielomodułowej Aplikacji Zintegrowanej (Budżet: 1 500 000 zł)
+# 🏛️ Smart CUS & AI – Cyfrowy Hub Usług Społecznych Gminy Wieliszew
+## Oficjalna Platforma Społeczna dla Mieszkańców i Centrum Usług Społecznych
+**Budżet projektu:** 1 500 000 PLN • **Horyzont:** 2026–2029 (Plan Rozwoju Usług Społecznych) • **Wersja:** 2.0 (Gotowy Produkt)
 
-Projekt dedykowany dla mieszkańców i Centrum Usług Społecznych w Wieliszewie w oparciu o Plan Rozwoju Usług Społecznych 2026–2029, łączący e-opiekę, mikrowolontariat, bank czasu, asystę sztucznej inteligencji oraz pełną integrację z **Wieliszewską Kartą Mieszkańca (WKM)**.
+Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztucznej inteligencji, bezpieczeństwo seniora (moduł SOS) oraz integrację z **Wieliszewską Kartą Mieszkańca (WKM)** w oparciu o wytyczne dostępności cyfrowej **WCAG 2.1 AA** oraz standardy RODO.
 
 ---
 
-## 📱 1. Kluczowe Moduły Systemu
+## 📱 1. Kluczowe Moduły i Funkcjonalności
 
-1. **🤖 Wirtualny Asystent AI i Silnik Rekomendacji:**
-   - Inteligentny chatbot i polski voicebot (sterowanie mową) ułatwiający obsługę seniorom i osobom z niepełnosprawnościami.
-   - Algorytmy personalizujące ofertę prozdrowotną i kulturalną (np. zajęcia „Zdrowy Kręgosłup 60+”).
-2. **💳 Zapisy na wydarzenia i e-Wieliszewska Karta Mieszkańca:**
-   - Cyfrowy e-portfel z dynamicznym, bezpiecznym kodem QR (TOTP odświeżany co 45s) oraz emulacją NFC.
-   - 1-klikowa rejestracja na warsztaty CUS i bezbiletowy wstęp na wydarzenia gminne.
-3. **📍 Interaktywna Mapa Potrzeb (Mikrowolontariat):**
-   - Geoprzestrzenna mapa w czasie rzeczywistym z zanonimizowanymi pinezkami potrzeb sąsiedzkich (Wieliszew, Skrzeszew, Michałów-Reginów, Łajski, Komornica, Kałuszyn, Góra).
-   - Ochrona RODO – rozmycie lokalizacji do czasu podjęcia zlecenia przez wolontariusza.
-4. **⏳ Lokalny Bank Czasu (Wymiana Umiejętności):**
-   - Wymiana usług w formule „czas za czas” (1h pomocy = 1h w portfelu).
-   - Transparentny rejestr transakcji i dopasowywanie kompetencji mieszkańców.
-5. **🏆 Grywalizacja i System Nagród Mieszkańca:**
-   - Wirtualne punkty i odznaki („Serce Wieliszewa”, „Aktywny Sąsiad”, „Mistrz Ekologii”).
-   - Wymiana punktów na realne zniżki u lokalnych partnerów (kajaki nad Zegrzem, bilety GCK Łajski, lokalna gastronomia).
-6. **🩺 Telekonsultacje i e-Wsparcie:**
-   - Szyfrowane połączenia wideorozmów (WebRTC E2E) ze specjalistami CUS (psycholog, radca prawny, koordynator usług społecznych).
-   - Dostępność dla osób z barierami mobilności bez konieczności dojazdu do urzędu.
-7. **♻️ Moduł Współdzielenia Rzeczy i Cyrkularności:**
-   - Bezpłatna wypożyczalnia sprzętu rehabilitacyjnego (wózki, balkoniki, kule).
-   - Gminna Jadłodzielnia Wieliszew (walka z marnowaniem żywności) i wymiana odzieży.
-8. **👁️ Tryb Seniora / WCAG 2.1 AA:**
-   - Dedykowany tryb wysokiego kontrastu (żółto-czarny), powiększone fonty (+40%) i minimalne pola dotykowe 56 dp.
+1. **🤖 Wirtualny Asystent AI i Polski Voicebot:**
+   - Inteligentny asystent z obszerną bazą wiedzy o procedurach i świadczeniach CUS Wieliszew (kryteria dochodowe 2026 r., zasiłki stałe/celowe, usługi opiekuńcze, wypożyczalnia sprzętu, transport door-to-door).
+   - Sterowanie mową (Web Speech API) oraz synteza mowy w języku polskim z wizualizacją fal dźwiękowych.
+   - Płynna nawigacja kontekstowa z kartami rekomendacji.
+
+2. **💳 e-Wieliszewska Karta Mieszkańca (WKM) & Portfel Voucherów:**
+   - **Interaktywna Karta 3D (Flip):** Kliknięcie obraca kartę, ukazując rewers z kodem kreskowym, kontaktem ratunkowym ICE i podpisem.
+   - **Dynamiczny Kod QR (TOTP):** Odświeżany co 45 sekund z animowaną matrycą bezpieczeństwa (ochrona przed zrzutami ekranu).
+   - **Powiększenie QR na pełnym ekranie:** Ułatwione skanowanie w autobusach L-komunikacji i kasach obiektów sportowych.
+   - **Emulacja NFC:** Dźwiękowa i haptyczna weryfikacja zbliżeniowa.
+   - **Portfel Voucherów:** Zapis pobranych nagród z unikalnymi kodami promocyjnymi.
+
+3. **🚨 Moduł Bezpieczeństwa Seniora & SOS:**
+   - Przycisk alarmowy 1-klik w nagłówku aplikacji.
+   - Szybkie połączenie: Numer Alarmowy 112, Całodobowy Dyżur CUS Wieliszew (22 782 01 00).
+   - Gotowy szablon SMS ratunkowego do bliskiego (ICE) wraz ze współrzędnymi GPS i adresem.
+
+4. **📍 Interaktywna Mapa Potrzeb (Mikrowolontariat):**
+   - Geoprzestrzenna mapa OpenStreetMap z realnymi zgłoszeniami w sołectwach Gminy Wieliszew.
+   - **Ochrona RODO:** Dynamiczny bufor rozmycia współrzędnych (promień 200 m).
+   - Pełny cykl życia zlecenia: *Zgłoszenie ➔ Podjęcie pomocy ➔ Potwierdzenie realizacji ➔ Przyznanie punktów*.
+
+5. **⏳ Lokalny Bank Czasu (Wymiana Umiejętności):**
+   - Wymiana usług sąsiedzkich w formule „1 godzina za 1 godzinę”.
+   - Interaktywny rejestr transakcji czasowych z saldem w portfelu.
+   - Filtrowanie ofert mieszkańców i zapotrzebowania na pomoc.
+
+6. **🏆 Grywalizacja i Katalog Nagród Mieszkańca:**
+   - 4 poziomy zaangażowania społecznego (*Nowy Mieszkaniec ➔ Aktywny Mieszkaniec ➔ Zasłużony Sąsiad ➔ Lider Społeczności*).
+   - Interaktywne odznaki („Serce Wieliszewa”, „Aktywny Sąsiad”, „Mistrz Ekologii”) z opisem warunków odblokowania.
+   - Wymiana punktów na realne zniżki (kajaki nad Zalewem Zegrzyńskim, bilety do GCK Łajski, kawiarnia).
+
+7. **🩺 Teleopieka i Konsultacje Wideo (WebRTC):**
+   - Bezpieczne wideorozmowy ze specjalistami CUS (psycholog, radca prawny, koordynator usług).
+   - Podgląd z kamery lokalnej (PIP) z fallbackiem do awatara.
+   - System rezerwacji wizyty na kolejne dni.
+
+8. **♻️ Magazyn Współdzielenia & Jadłodzielnia:**
+   - Bezpłatne wypożyczanie sprzętu rehabilitacyjnego (wózki aluminiowe, balkoniki, kule) z generowaniem kodu odbioru.
+   - Gminna Jadłodzielnia Wieliszew (ul. Modlińska 65) czynna 24/7.
+   - Formularz „Przekaż dar” umożliwiający mieszkańcom dzielenie się żywnością i sprzętem.
+
+9. **👁️ Dostępność Cyfrowa (WCAG 2.1 AA / AAA):**
+   - Dedykowany tryb seniora: żółto-czarny wysoki kontrast, powiększone fonty, obramowania 3px, minimalne pola dotykowe 56 dp.
+   - Selektor rozmiaru czcionki (A- / A / A+).
+   - Pełna semantyka ARIA i obsługa czytników ekranu (TalkBack / NVDA).
+
+10. **💾 Trwałość Danych i Tryb Offline (PWA):**
+    - Pełny stan aplikacji zapisywany w `localStorage` (edycja profilu, vouchery, zgłoszenia, punkty).
+    - Service Worker buforujący zasoby do pracy bez dostępu do Internetu.
 
 ---
 
@@ -37,7 +65,21 @@ Projekt dedykowany dla mieszkańców i Centrum Usług Społecznych w Wieliszewie
 
 ```
 Aplikacja/
-├── android_native/             # Kompletny natywny projekt Android (Kotlin + Jetpack Compose)
+├── Uruchom_SmartCUS.bat          # 1-klikowy launcher dla systemu Windows
+├── start_preview.py             # Automatyczny serwer HTTP z wykrywaniem IP w sieci Wi-Fi
+├── SmartCUS_Wieliszew.apk       # Gotowy plik instalacyjny APK dla Androida
+├── SmartCUS_Wieliszew_Source.zip# Kompletne skompresowane archiwum źródeł
+│
+├── app_preview/                 # Produkcyjna aplikacja Web & Progressive Web App (PWA)
+│   ├── index.html               # Responsywny interfejs z obsługą Mobile & Desktop Simulator
+│   ├── css/styles.css           # Design System Wieliszew, animacje 3D, tryb WCAG
+│   ├── js/app.js                # Silnik aplikacji: AI, TOTP QR, Leaflet GPS, WebRTC, PWA
+│   ├── manifest.json            # PWA manifest z obsługą skrótów ekranowych
+│   ├── sw.js                    # Service Worker (buforowanie offline, stale-while-revalidate)
+│   └── icons/                   # Ikony PWA 192x192 i 512x512
+│
+├── android_native/              # Natywny projekt Android (Kotlin 2.0 + Jetpack Compose)
+│   ├── gradlew & gradlew.bat    # Skrypty kompilatora Gradle Wrapper
 │   ├── app/
 │   │   ├── src/main/java/pl/wieliszew/smartcus/
 │   │   │   ├── MainActivity.kt
@@ -45,57 +87,56 @@ Aplikacja/
 │   │   │   ├── SmartCusApplication.kt
 │   │   │   ├── data/model/Models.kt
 │   │   │   ├── data/repository/SmartCusRepository.kt
-│   │   │   ├── modules/assistant/AiAssistantScreen.kt
-│   │   │   ├── modules/card/WieliszewCardScreen.kt
-│   │   │   ├── modules/map/NeedMapScreen.kt
-│   │   │   ├── modules/timebank/TimeBankScreen.kt
-│   │   │   ├── modules/gamification/GamificationScreen.kt
-│   │   │   ├── modules/telehealth/TelehealthScreen.kt
-│   │   │   ├── modules/sharing/SharingHubScreen.kt
-│   │   │   └── ui/theme/ & components/
+│   │   │   ├── modules/ (assistant, card, map, timebank, gamification, telehealth, sharing)
+│   │   │   └── ui/ (theme, components)
 │   │   ├── build.gradle.kts
 │   │   └── AndroidManifest.xml
 │   ├── build.gradle.kts
 │   └── settings.gradle.kts
 │
-├── app_preview/                # Interaktywny symulator aplikacji mobilnej w przeglądarce
-│   ├── index.html              # Pixel-perfect widok smartfona z dynamicznymi modułami
-│   ├── css/styles.css          # Design System Wieliszew, animacje, tryb seniora WCAG
-│   └── js/app.js               # Voicebot (Web Speech API), Leaflet GPS, QR TOTP, WebRTC
+├── .github/workflows/
+│   └── build-apk.yml            # CI/CD: Automatyczna kompilacja APK w chmurze GitHub
 │
-├── docs/                       # Kompletna dokumentacja projektowa i przetargowa
-│   ├── STUDIUM_WYKONALNOSCI_I_ARCHITEKTURA.md  # Feasibility study, KRI, RODO, mObywatel SSO
-│   ├── KOSZTORYS_I_HARMONOGRAM_WDROZENIA.md    # Podział 1.5M zł na etapy 2026-2029 (WBS)
-│   └── SPEC_INTEGRACJI_API_WKM_CUS.md          # Kontrakty REST API, tokeny TOTP, WebSockets
-│
-├── start_preview.py            # Skrypt uruchamiający symulator z automatyczną przeglądarką
-└── README.md
+└── docs/                        # Kompleksowa dokumentacja projektowa i przetargowa
+    ├── JAK_ZBUDOWAC_PLIK_APK.md
+    ├── STUDIUM_WYKONALNOSCI_I_ARCHITEKTURA.md
+    ├── KOSZTORYS_I_HARMONOGRAM_WDROZENIA.md
+    └── SPEC_INTEGRACJI_API_WKM_CUS.md
 ```
 
 ---
 
-## 🚀 3. Szybkie Uruchomienie i Instalacja na Telefonie
+## 🚀 3. Szybkie Uruchomienie i Dystrybucja
 
-### Opcja 1: Natychmiastowa instalacja na smartfonie (PWA)
+### Metoda 1: 1-Klikowe Uruchomienie na Komputerze (Windows)
+Wystarczy dwukrotnie kliknąć plik:
+👉 **`Uruchom_SmartCUS.bat`**
+Skrypt automatycznie uruchomi lokalny serwer i otworzy aplikację w Twojej domyślnej przeglądarce.
+
+### Metoda 2: Uruchomienie na Smartfonie (Jako Aplikacja PWA)
 1. Uruchom serwer na komputerze:
    ```bash
    python start_preview.py
    ```
-2. Na smartfonie z Androidem połączonym z domowym Wi-Fi wpisz w przeglądarce Chrome adres:
-   👉 **`http://192.168.1.152:8080`**
-3. Kliknij **„Dodaj do ekranu głównego” / „Zainstaluj aplikację”**. Smart CUS zainstaluje się na telefonie z oficjalną ikoną i działa w trybie pełnoekranowym!
+2. W oknie konsoli wyświetli się dynamicznie wykryty adres IP w Twojej sieci domowej Wi-Fi, np.:
+   👉 **`http://192.168.1.X:8080`**
+3. Otwórz ten adres w przeglądarce Chrome na smartfonie.
+4. Kliknij **„Dodaj do ekranu głównego” / „Zainstaluj aplikację”**.
+5. **Efekt:** Aplikacja automatycznie dopasuje się do pełnego ekranu Twojego smartfona (bez sztucznej ramki komputera), zainstaluje oficjalną ikonę Gminy Wieliszew i będzie działać jak natywna aplikacja ze sklepu!
 
-### Opcja 2: Wygenerowanie pliku .APK
-Szczegółowy przewodnik znajduje się w: [`docs/JAK_ZBUDOWAC_PLIK_APK.md`](docs/JAK_ZBUDOWAC_PLIK_APK.md).
-- **W chmurze (GitHub Actions):** Gotowy plik [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml) kompiluje `.apk` automatycznie po wrzuceniu kodu na GitHub.
-- **Lokalnie w Android Studio:** Otwórz folder `android_native` ➔ menu `Build` ➔ `Build APK(s)`. Plik wyjściowy: `android_native/app/build/outputs/apk/debug/app-debug.apk`.
+### Metoda 3: Instalacja pliku .APK na telefonie z Androidem
+Gotowy plik instalacyjny znajduje się bezpośrednio w głównym katalogu:
+👉 **`SmartCUS_Wieliszew.apk`**
+Prześlij go na smartfon z systemem Android i zainstaluj.
 
 ---
 
-## 🛠️ 4. Otwarcie w Android Studio
+## 🛠️ 4. Kompilacja ze Źródeł (Android Studio / CI)
 
-1. Otwórz **Android Studio Ladybug / Koala (lub nowsze)**.
-2. Wybierz **Open...** i wskaż folder: `c:\Users\jjatkowski\Desktop\Aplikacja\android_native`.
-3. Gradle dokona synchronizacji zależności (Jetpack Compose BOM, Material 3, Navigation, Coroutines).
-4. Uruchom aplikację na emulatorze Androida (API 26+) lub fizycznym urządzeniu.
+### W chmurze (GitHub Actions):
+Repozytorium posiada gotowy plik [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml). Po wypchnięciu kodu na GitHub akcja automatycznie buduje pakiet `SmartCUS_Wieliszew_v1.0.0.apk` w sekcji *Artifacts*.
 
+### Lokalnie w Android Studio:
+1. Otwórz **Android Studio Ladybug / Koala** lub nowsze.
+2. Wybierz **Open...** i wskaż folder `android_native`.
+3. Z górnego menu wybierz **Build ➔ Build Bundle(s) / APK(s) ➔ Build APK(s)**.

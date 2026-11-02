@@ -1,12 +1,13 @@
 {
   "name": "Smart CUS Wieliszew",
   "short_name": "Smart CUS",
-  "description": "Cyfrowy Hub Usług Społecznych Gminy Wieliszew",
+  "description": "Cyfrowy Hub Usług Społecznych Gminy Wieliszew – e-Karta Mieszkańca, Asystent AI, Wolontariat, Bank Czasu, Teleopieka",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#137547",
   "theme_color": "#137547",
   "orientation": "portrait-primary",
+  "categories": ["social", "government", "health", "community"],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -20,6 +21,28 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "e-Karta Mieszkańca",
+      "short_name": "e-Karta",
+      "description": "Otwórz dynamiczny kod QR i uprawnienia",
+      "url": "./index.html#pane-card",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pomoc SOS",
+      "short_name": "SOS",
+      "description": "Natychmiastowy kontakt ratunkowy",
+      "url": "./index.html#sos",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mapa Potrzeb",
+      "short_name": "Mapa",
+      "description": "Mikrowolontariat sąsiedzki",
+      "url": "./index.html#pane-map",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }
-

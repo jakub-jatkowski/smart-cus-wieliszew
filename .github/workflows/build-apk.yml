@@ -1,4 +1,4 @@
-name: Build Android APK (Smart CUS Wieliszew)
+name: Build & Release Android APK (Smart CUS Wieliszew)
 
 on:
   push:
@@ -7,12 +7,16 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Source Code
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -20,6 +24,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -28,14 +33,24 @@ jobs:
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Build Debug APK with Gradle
+      - name: Ensure Gradle Wrapper Exists
+        working-directory: ./android_native
+        run: |
+          gradle wrapper --gradle-version 8.10.2 || true
+
+      - name: Build Debug APK
         working-directory: ./android_native
         run: |
           gradle assembleDebug --stacktrace
 
+      - name: Rename APK for Distribution
+        working-directory: ./android_native/app/build/outputs/apk/debug
+        run: |
+          cp app-debug.apk SmartCUS_Wieliszew_v1.0.0.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SmartCUS-Wieliszew-Debug-APK
-          path: android_native/app/build/outputs/apk/debug/*.apk
-          retention-days: 30
+          name: SmartCUS-Wieliszew-APK
+          path: android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
+          retention-days: 60

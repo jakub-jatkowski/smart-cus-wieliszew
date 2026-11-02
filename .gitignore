@@ -10,6 +10,11 @@
 .cxx
 android_native/build/
 android_native/app/build/
+apk_output/
+
+# Binaries & packages (published via GitHub Releases)
+*.apk
+*.zip
 
 # Python
 __pycache__/

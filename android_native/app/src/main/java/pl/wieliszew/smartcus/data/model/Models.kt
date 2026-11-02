@@ -4,6 +4,7 @@ data class UserProfile(
     val id: String = "usr_001",
     val fullName: String = "Janina Kowalska",
     val village: String = "Wieliszew",
+    val iceContact: String = "Córka Anna: +48 601 234 567",
     val isSenior: Boolean = true,
     val isVolunteer: Boolean = true,
     val timeBankBalanceHours: Double = 5.5,
@@ -19,11 +20,29 @@ data class ResidentCard(
     val dynamicToken: String = "WKM-SEC-8921-X9",
     val isNfcReady: Boolean = true,
     val benefits: List<String> = listOf(
-        "Zniżka 50% na basen i hale sportową w Wieliszewie",
+        "Zniżka 50% na basen i halę sportową w Wieliszewie",
         "Bezpłatne wejścia na warsztaty CUS Wieliszew",
         "Zniżka 20% na wypożyczalnie kajaków i rowerów wodnych",
         "Bezpłatna komunikacja lokalna L-komunikacja"
     )
+)
+
+data class Voucher(
+    val id: String,
+    val title: String,
+    val partnerName: String,
+    val code: String,
+    val validUntil: String = "31.12.2026",
+    val isUsed: Boolean = false
+)
+
+data class MunicipalNotification(
+    val id: String,
+    val title: String,
+    val description: String,
+    val timeAgo: String,
+    val isAlert: Boolean = false,
+    val isRead: Boolean = false
 )
 
 data class CusEvent(
@@ -143,7 +162,8 @@ data class SharedItem(
     val isFree: Boolean = true,
     val condition: String,
     val description: String,
-    val isReserved: Boolean = false
+    val isReserved: Boolean = false,
+    val reservationCode: String? = null
 )
 
 enum class MessageSender {
@@ -166,4 +186,3 @@ data class AiMessage(
     val timestamp: String,
     val recommendations: List<Recommendation> = emptyList()
 )
-

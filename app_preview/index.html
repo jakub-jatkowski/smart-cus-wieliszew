@@ -2,429 +2,470 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#137547">
-  <title>Smart CUS Wieliszew – Symulator Aplikacji Android</title>
+  <meta name="description" content="Smart CUS Wieliszew - Cyfrowy Hub Usług Społecznych Gminy Wieliszew. E-opiekun, e-Karta Mieszkańca, wolontariat, bank czasu.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Smart CUS Wieliszew – Hub Usług Społecznych</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body>
+<body class="font-scale-md">
 
-  <!-- Simulator Top Controls -->
-  <div class="simulator-header">
+  <!-- Desktop Simulator Top Bar -->
+  <header class="simulator-header" role="banner">
     <h1>🏛️ Smart CUS & AI – Gmina Wieliszew</h1>
-    <p>Interaktywny Symulator Aplikacji Android (Wielomodułowy Hub Usług Społecznych)</p>
-    <div class="simulator-controls">
-      <button class="control-pill" id="btn-toggle-senior" onclick="toggleSeniorMode()">
-        <span>👁️</span> Przełącz Tryb Seniora / WCAG 2.1 AA
+    <p>Oficjalna Aplikacja Społeczna Mieszkańców i Centrum Usług Społecznych</p>
+    <div class="simulator-controls" role="toolbar" aria-label="Narzędzia symulatora">
+      <button class="control-pill" id="btn-toggle-senior" onclick="toggleSeniorMode()" title="Włącz tryb wysokiego kontrastu i powiększonego tekstu">
+        <span>👁️</span> Tryb Seniora (WCAG 2.1 AA)
       </button>
-      <button class="control-pill" onclick="simulateNfcTap()">
-        <span>📶</span> Symuluj Zbliżenie NFC
+      <button class="control-pill" onclick="simulateNfcTap()" title="Przetestuj zbliżenie NFC do czytnika">
+        <span>📶</span> Test NFC
       </button>
-      <button class="control-pill" onclick="speakCurrentAssistantMessage()">
-        <span>🔊</span> Odsłuchaj Voicebota
+      <button class="control-pill control-pill-danger" onclick="openSosModal()" title="Przetestuj procedurę ratunkową SOS">
+        <span>🚨</span> Test SOS
+      </button>
+      <button class="control-pill" id="btn-toggle-viewport" onclick="toggleViewportSize()" title="Przełącz rozmiar okna (Standard / Tablet / 100%)">
+        <span>📱</span> Widok Ekranu
+      </button>
+      <button class="control-pill" onclick="resetAppData()" title="Przywróć dane domyślne aplikacji">
+        <span>🔄</span> Reset Danych
       </button>
     </div>
-  </div>
+  </header>
 
-  <!-- Android Phone Frame -->
-  <div class="phone-frame" id="phone-frame">
+  <!-- Android Smartphone Frame -->
+  <main class="phone-frame" id="phone-frame">
 
-    <!-- Android Status Bar -->
-    <div class="android-status-bar">
-      <span id="android-clock">11:40</span>
+    <!-- Android Status Bar (Simulated for Desktop) -->
+    <div class="android-status-bar" aria-hidden="true">
+      <span id="android-clock">12:00</span>
       <div class="camera-hole"></div>
       <div class="status-icons">
         <span>5G</span>
         <span>📶</span>
-        <span>🔋 98%</span>
+        <span>🔋 100%</span>
       </div>
     </div>
 
-    <!-- App Top Bar -->
-    <div class="app-header">
-      <div class="header-brand">
-        <h2>Smart CUS Wieliszew</h2>
-        <p>Centrum Usług Społecznych</p>
+    <!-- App Top Navigation Bar -->
+    <header class="app-header">
+      <div class="header-brand" onclick="switchTab('pane-assistant')" title="Przejdź do ekranu głównego">
+        <span class="header-logo-icon">🌿</span>
+        <div>
+          <h2>Smart CUS Wieliszew</h2>
+          <p>Centrum Usług Społecznych</p>
+        </div>
       </div>
       <div class="header-actions">
-        <button class="senior-toggle-btn" onclick="toggleSeniorMode()">
-          Aa Tryb Seniora
+        <!-- SOS Emergency Beacon -->
+        <button class="header-btn sos-btn" onclick="openSosModal()" title="Wezwij natychmiastową pomoc SOS" aria-label="Pomoc SOS">
+          🚨 SOS
+        </button>
+
+        <!-- Notification Bell -->
+        <button class="header-btn" onclick="openNotificationsModal()" title="Powiadomienia i alerty gminne" aria-label="Powiadomienia">
+          <span>🔔</span>
+          <span class="notif-badge" id="notif-count">2</span>
+        </button>
+
+        <!-- Senior Mode Toggle in Header -->
+        <button class="header-btn" onclick="toggleSeniorMode()" title="Tryb powiększonego tekstu i kontrastu" aria-label="Przełącz tryb seniora">
+          Aa
+        </button>
+
+        <!-- User Profile Avatar -->
+        <button class="header-btn" onclick="openProfileModal()" title="Profil mieszkańca i ustawienia" aria-label="Mój profil">
+          <div class="avatar-circle" id="user-avatar-initials">JK</div>
         </button>
       </div>
-    </div>
+    </header>
 
-    <!-- Main Content Panes -->
-    <div class="app-content" id="app-content">
+    <!-- Main Content Area -->
+    <div class="app-content" id="app-content" role="region" aria-live="polite">
 
       <!-- ================= TAB 1: ASYSTENT AI & VOICEBOT ================= -->
-      <div class="tab-pane active" id="pane-assistant">
+      <section class="tab-pane active" id="pane-assistant" aria-labelledby="tab-btn-assistant">
         <div class="smart-card" style="background: var(--primary-container); border: none;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 24px;">🤖</span>
+              <span style="font-size: 26px;">🤖</span>
               <div>
-                <strong style="color: var(--on-primary-container);">Wirtualny Asystent i Voicebot</strong>
-                <p style="font-size: 11px; color: var(--on-primary-container);">Nawigacja głosowa i rekomendacje CUS</p>
+                <strong style="color: var(--on-primary-container); font-size: 14px;">Wirtualny Asystent CUS & Voicebot</strong>
+                <p style="font-size: 11px; color: var(--on-primary-container); opacity: 0.85;">Dostępny 24/7 • Sterowanie głosem po polsku</p>
               </div>
             </div>
-            <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="triggerVoiceInput()">
-              🎙️ Mów
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm" onclick="clearAiChat()" title="Wyczyść historię czatu">
+                🧹
+              </button>
+              <button class="btn btn-primary btn-sm" onclick="triggerVoiceInput()" title="Aktywuj mikrofon">
+                🎙️ Mów
+              </button>
+            </div>
+          </div>
+
+          <!-- Soundwave Animation -->
+          <div class="audio-wave-container" id="audio-wave-visualizer">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span style="font-size: 11px; font-weight: bold; color: var(--primary); margin-left: 6px;">Voicebot mówi...</span>
+          </div>
+        </div>
+
+        <!-- Chat messages container -->
+        <div class="chat-messages" id="chat-messages-container" role="log" aria-live="polite">
+          <!-- Populated dynamically by app.js -->
+        </div>
+
+        <!-- Quick prompts chips -->
+        <div class="chips-row">
+          <button class="chip" onclick="askAi('Jak wyrobić e-Kartę Mieszkańca?')">Jak wyrobić e-Kartę?</button>
+          <button class="chip" onclick="askAi('Jakie są kryteria dochodowe do zasiłku?')">Kryteria dochodowe CUS</button>
+          <button class="chip" onclick="askAi('Potrzebuję pomocy w zakupach i lekach')">Pomoc w zakupach</button>
+          <button class="chip" onclick="askAi('Gdzie jest wolny wózek inwalidzki?')">Wolny wózek inwalidzki</button>
+          <button class="chip" onclick="askAi('Kiedy dyżuruje psycholog CUS?')">Dyżur psychologa</button>
+          <button class="chip" onclick="askAi('Jak działa Jadłodzielnia Wieliszew?')">Jadłodzielnia</button>
+        </div>
+
+        <!-- Chat input bar -->
+        <div class="chat-input-bar">
+          <input type="text" id="ai-chat-input" class="chat-input" placeholder="Zadaj pytanie asystentowi lub podyktuj..." onkeydown="if(event.key==='Enter') sendAiMessage()" aria-label="Wpisz treść pytania">
+          <button class="voice-btn" id="voice-record-btn" onclick="triggerVoiceInput()" title="Podyktuj pytanie głosem" aria-label="Nagraj pytanie głosowe">
+            🎤
+          </button>
+          <button class="voice-btn" onclick="sendAiMessage()" title="Wyślij wiadomość" aria-label="Wyślij">
+            ➤
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: E-KARTA & WYDARZENIA ================= -->
+      <section class="tab-pane" id="pane-card" aria-labelledby="tab-btn-card">
+        
+        <!-- Sub-tabs within e-Karta -->
+        <div class="subtabs-bar">
+          <button class="subtab-btn active" id="subtab-btn-card" onclick="switchCardSubtab('card-view')">
+            💳 Twoja e-Karta
+          </button>
+          <button class="subtab-btn" id="subtab-btn-vouchers" onclick="switchCardSubtab('vouchers-view')">
+            🎟️ Moje Vouchery (<span id="user-vouchers-count">0</span>)
+          </button>
+        </div>
+
+        <!-- View 1: Main e-Card & TOTP -->
+        <div id="card-subtab-main">
+          <!-- 3D Interactive Flip Card -->
+          <div class="wkm-card-container" onclick="flipWkmCard()" title="Kliknij, aby odwrócić kartę (przód/tył)">
+            <div class="wkm-card-wallet" id="wkm-card-wallet">
+              
+              <!-- Card Front -->
+              <div class="wkm-card-front">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; z-index: 2;">
+                  <div>
+                    <span style="font-size: 11px; letter-spacing: 1.5px; color: var(--accent-gold); font-weight: 800;">GMINA WIELISZEW</span>
+                    <h3 style="font-size: 19px; font-weight: 900; margin-top: 1px;">e-Karta Mieszkańca</h3>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 11px; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3);">WKM-NFC</span>
+                    <span style="font-size: 24px;">📶</span>
+                  </div>
+                </div>
+
+                <div style="margin: 18px 0 10px 0; z-index: 2;">
+                  <div style="font-size: 20px; font-weight: 800;" id="card-holder-name">Janina Kowalska</div>
+                  <div style="font-size: 12px; opacity: 0.9; font-family: monospace; letter-spacing: 0.5px;" id="card-num-village">
+                    WKM-2026-88492 • Sołectwo Wieliszew
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+                  <span class="badge" style="background: #2e7d32; color: #ffffff;">✓ STATUS: AKTYWNA</span>
+                  <span style="font-size: 11px; opacity: 0.9;">Ważna: 31.12.2028</span>
+                </div>
+
+                <div class="flip-hint-pill">
+                  <span>↻ Kliknij, aby sprawdzić rewers (kontakt ICE)</span>
+                </div>
+              </div>
+
+              <!-- Card Back -->
+              <div class="wkm-card-back">
+                <div class="magnetic-strip"></div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px;">
+                  <span>Centrum Usług Społecznych Wieliszew</span>
+                  <span>tel. 22 782 01 00</span>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; margin: 6px 0; font-size: 11px;">
+                  <strong style="color: var(--accent-gold);">🚨 KONTAKT RATUNKOWY (ICE):</strong>
+                  <div id="card-ice-display">Córka Anna: +48 601 234 567</div>
+                  <div style="font-size: 10px; opacity: 0.8; margin-top: 2px;">Grupa krwi: 0 Rh+ • Nadciśnienie</div>
+                </div>
+
+                <div class="barcode-box">
+                  <svg id="card-barcode-svg" width="180" height="28" viewBox="0 0 180 28" style="display: block; margin: 0 auto;"></svg>
+                  <span style="font-size: 9px; font-family: monospace; letter-spacing: 2px;">*WKM-88492-2026*</span>
+                </div>
+
+                <div class="flip-hint-pill" style="left: 14px; right: auto;">
+                  <span>↻ Kliknij, aby wrócić na przód</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Dynamic QR TOTP Card -->
+          <div class="smart-card" style="text-align: center;">
+            <div class="smart-card-title">Dynamiczny Kod QR do Weryfikacji</div>
+            <p class="smart-card-sub">Kod odświeża się co 45s (ochrona przed zrzutem ekranu). Kliknij, aby powiększyć.</p>
+
+            <div class="qr-container" onclick="openFullscreenQrModal()" title="Kliknij, aby powiększyć do skanowania">
+              <svg id="qr-code-svg" width="160" height="160" viewBox="0 0 160 160" aria-label="Dynamiczny kod QR"></svg>
+              <div class="totp-bar">
+                <div class="totp-progress" id="totp-progress-bar"></div>
+              </div>
+              <div style="font-size: 11.5px; margin-top: 7px; color: var(--text-muted); font-weight: 600;">
+                Ważność kodu: <strong id="totp-seconds" style="color: var(--primary);">45</strong> sekund
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button class="btn btn-outline" onclick="openFullscreenQrModal()">
+                🔍 Powiększ kod QR
+              </button>
+              <button class="btn btn-secondary" onclick="simulateNfcTap()">
+                📶 Emulacja NFC
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 2: Moje Vouchery (Zrealizowane nagrody) -->
+        <div id="card-subtab-vouchers" style="display: none;">
+          <div class="smart-card" style="background: var(--surface-variant);">
+            <div class="smart-card-title">Portfel Zniżek i Voucherów Mieszkańca</div>
+            <p class="smart-card-sub">Pokaż poniższy kod QR lub kod kreskowy partnerowi podczas realizacji usługi w Gminie Wieliszew.</p>
+          </div>
+          <div id="vouchers-list-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Section: Zapisy na wydarzenia CUS -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px 0;">
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--primary);">
+            📅 Wydarzenia & Warsztaty CUS
+          </h3>
+          <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Wstęp z e-Kartą</span>
+        </div>
+
+        <!-- Category filter for events -->
+        <div class="chips-row">
+          <button class="chip active" onclick="filterEvents('ALL', this)">Wszystkie</button>
+          <button class="chip" onclick="filterEvents('Zdrowie', this)">Zdrowie i Sport</button>
+          <button class="chip" onclick="filterEvents('Cyfrowe', this)">Edukacja Cyfrowa</button>
+          <button class="chip" onclick="filterEvents('Kultura', this)">Kultura & Sztuka</button>
+        </div>
+
+        <!-- Events Container -->
+        <div id="events-list-container">
+          <!-- Populated by JS -->
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 3: MAPA POTRZEB ================= -->
+      <section class="tab-pane" id="pane-map" aria-labelledby="tab-btn-map">
+        <div class="smart-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div class="smart-card-title">📍 Interaktywna Mapa Potrzeb</div>
+              <p class="smart-card-sub">Mikrowolontariat sąsiedzki w sołectwach Gminy Wieliszew</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openAddNeedModal()">
+              + Zgłoś potrzebę
             </button>
           </div>
         </div>
 
-        <div class="chat-messages" id="chat-messages-container">
-          <div class="chat-bubble assistant">
-            Dzień dobry Pani Janino! Jestem inteligentnym asystentem Smart CUS Wieliszew. W czym mogę dziś pomóc? Mogę sprawdzić Pani e-Kartę, zapisać na gimnastykę dla seniorów lub połączyć z psychologiem.
-            <div class="recommendation-card" onclick="switchTab('pane-events')">
-              <strong>✨ Rekomendacja dla Ciebie:</strong>
-              <div>Zajęcia gimnastyczne "Zdrowy Kręgosłup 60+" (Hala Wieliszew)</div>
-            </div>
-            <div class="recommendation-card" onclick="switchTab('pane-card')">
-              <strong>💳 Twoja e-Karta:</strong>
-              <div>Sprawdź aktywny kod QR i zniżki mieszkańca</div>
-            </div>
+        <!-- RODO Safety Zone Explainer -->
+        <div class="rodo-info-banner">
+          <span style="font-size: 18px;">🛡️</span>
+          <div>
+            <strong>Ochrona Prywatności RODO:</strong> Dokładny adres jest chroniony. Na mapie widoczny jest przybliżony rejon sołectwa z losowym rozmyciem ok. 200 m.
           </div>
         </div>
 
-        <!-- Quick prompts -->
+        <!-- Search Bar -->
+        <div style="margin-bottom: 10px;">
+          <input type="text" id="map-search-input" class="chat-input" placeholder="🔍 Szukaj po nazwie (np. woda, leki, kran)..." oninput="filterMapBySearch(this.value)">
+        </div>
+
+        <!-- Village filter chips -->
         <div class="chips-row">
-          <div class="chip" onclick="askAi('Jak wyrobić e-Kartę?')">Jak wyrobić e-Kartę?</div>
-          <div class="chip" onclick="askAi('Gdzie jest wolny wózek inwalidzki?')">Wolny wózek inwalidzki</div>
-          <div class="chip" onclick="askAi('Potrzebuję pomocy w zakupach')">Pomoc w zakupach</div>
-          <div class="chip" onclick="askAi('Dyżur psychologa')">Dyżur psychologa</div>
+          <button class="chip active" onclick="filterMapVillage('Wszystkie', this)">Wszystkie Sołectwa</button>
+          <button class="chip" onclick="filterMapVillage('Wieliszew', this)">Wieliszew</button>
+          <button class="chip" onclick="filterMapVillage('Skrzeszew', this)">Skrzeszew</button>
+          <button class="chip" onclick="filterMapVillage('Michałów-Reginów', this)">Michałów-Reginów</button>
+          <button class="chip" onclick="filterMapVillage('Łajski', this)">Łajski</button>
+          <button class="chip" onclick="filterMapVillage('Komornica', this)">Komornica</button>
+          <button class="chip" onclick="filterMapVillage('Kałuszyn', this)">Kałuszyn</button>
+          <button class="chip" onclick="filterMapVillage('Góra', this)">Góra</button>
         </div>
 
-        <!-- Input Bar -->
-        <div class="chat-input-bar">
-          <input type="text" id="ai-chat-input" class="chat-input" placeholder="Wpisz pytanie lub podyktuj..." onkeydown="if(event.key==='Enter') sendAiMessage()">
-          <button class="voice-btn" id="voice-record-btn" onclick="triggerVoiceInput()" title="Podyktuj pytanie">
-            🎤
-          </button>
-          <button class="voice-btn" onclick="sendAiMessage()" title="Wyślij">
-            ➤
-          </button>
+        <!-- Leaflet Map Container -->
+        <div id="leaflet-map" role="application" aria-label="Interaktywna mapa potrzeb sąsiedzkich"></div>
+
+        <!-- Pins List below map -->
+        <div id="need-pins-list">
+          <!-- Populated by JS -->
         </div>
-      </div>
+      </section>
 
-      <!-- ================= TAB 2: E-KARTA & WYDARZENIA ================= -->
-      <div class="tab-pane" id="pane-card">
-        <!-- Digital Wallet e-Card -->
-        <div class="wkm-card-wallet">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <span style="font-size: 11px; letter-spacing: 1px; color: var(--accent-gold); font-weight: bold;">GMINA WIELISZEW</span>
-              <h3 style="font-size: 20px; font-weight: 800; margin-top: 2px;">e-Karta Mieszkańca</h3>
-            </div>
-            <span style="font-size: 28px;">📶</span>
-          </div>
-
-          <div style="margin: 20px 0 10px 0;">
-            <div style="font-size: 20px; font-weight: bold;">Janina Kowalska</div>
-            <div style="font-size: 13px; opacity: 0.9; font-family: monospace;">WKM-2026-88492 • Sołectwo Wieliszew</div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="badge" style="background: #2e7d32; color: #fff;">UPRAWNIENIA: AKTYWNE</span>
-            <span style="font-size: 11px; opacity: 0.85;">Ważna: 31.12.2028</span>
-          </div>
-        </div>
-
-        <!-- Dynamic QR TOTP Card -->
-        <div class="smart-card" style="text-align: center; margin-top: 14px;">
-          <div class="smart-card-title">Dynamiczny Kod QR (e-Portfel)</div>
-          <p class="smart-card-sub">Kod odświeża się automatycznie, chroniąc przed fałszowaniem.</p>
-
-          <div class="qr-container">
-            <svg id="qr-code-svg" width="160" height="160" viewBox="0 0 160 160">
-              <!-- Animated QR pattern -->
-              <rect width="160" height="160" fill="#ffffff"/>
-              <!-- Corner 1 -->
-              <rect x="10" y="10" width="40" height="40" fill="#137547"/>
-              <rect x="18" y="18" width="24" height="24" fill="#ffffff"/>
-              <rect x="24" y="24" width="12" height="12" fill="#137547"/>
-              <!-- Corner 2 -->
-              <rect x="110" y="10" width="40" height="40" fill="#137547"/>
-              <rect x="118" y="18" width="24" height="24" fill="#ffffff"/>
-              <rect x="124" y="24" width="12" height="12" fill="#137547"/>
-              <!-- Corner 3 -->
-              <rect x="10" y="110" width="40" height="40" fill="#137547"/>
-              <rect x="18" y="118" width="24" height="24" fill="#ffffff"/>
-              <rect x="24" y="124" width="12" height="12" fill="#137547"/>
-              <!-- Center pattern with dynamic rotating hash -->
-              <circle cx="80" cy="80" r="14" fill="#dda72a"/>
-              <text x="80" y="85" text-anchor="middle" font-size="10" font-weight="bold" fill="#000">WKM</text>
-              <!-- Data dots -->
-              <rect x="60" y="20" width="10" height="10" fill="#000"/>
-              <rect x="80" y="30" width="10" height="10" fill="#000"/>
-              <rect x="60" y="50" width="10" height="10" fill="#000"/>
-              <rect x="90" y="60" width="10" height="10" fill="#000"/>
-              <rect x="120" y="70" width="10" height="10" fill="#000"/>
-              <rect x="70" y="100" width="10" height="10" fill="#000"/>
-              <rect x="100" y="110" width="10" height="10" fill="#000"/>
-              <rect x="130" y="130" width="10" height="10" fill="#000"/>
-            </svg>
-            <div class="totp-bar">
-              <div class="totp-progress" id="totp-progress-bar"></div>
-            </div>
-            <div style="font-size: 11px; margin-top: 6px; color: var(--text-muted);">
-              Ważność tokenu: <strong id="totp-seconds">45</strong>s
-            </div>
-          </div>
-
-          <button class="btn btn-outline" style="margin-top: 12px;" onclick="simulateNfcTap()">
-            📶 Zbliż telefon do czytnika NFC
-          </button>
-        </div>
-
-        <!-- Section: Zapisy na wydarzenia CUS -->
-        <h3 style="font-size: 16px; font-weight: 700; margin: 16px 0 8px 0; color: var(--primary);">
-          📅 Zapisy na Wydarzenia CUS Wieliszew
-        </h3>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-green">Profilaktyka Zdrowia</span>
-            <span id="event-status-1" class="badge badge-green">✓ ZAPISANY</span>
-          </div>
-          <h4 style="font-size: 15px; margin: 8px 0 4px 0;">Gimnastyka "Zdrowy Kręgosłup 60+"</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">📅 Czwartki, godz. 10:00 • Hala Sportowa Wieliszew</p>
-          <p style="font-size: 13px; margin: 6px 0;">Ćwiczenia usprawniające dla seniorów z fizjoterapeutą CUS. Wstęp z e-Kartą.</p>
-          <button class="btn btn-secondary" id="btn-event-1" onclick="toggleEventRegistration(1)">
-            Wypisz się z zajęć
-          </button>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-blue">Edukacja Cyfrowa</span>
-            <span id="event-status-2" class="badge badge-gold">Wolne miejsca: 7</span>
-          </div>
-          <h4 style="font-size: 15px; margin: 8px 0 4px 0;">Smartfon bez tajemnic dla seniora</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">📅 12 Listopada, 11:30 • Biblioteka w Skrzeszewie</p>
-          <p style="font-size: 13px; margin: 6px 0;">Praktyczna obsługa e-Karty, telemedycyny i bezpieczeństwa w sieci.</p>
-          <button class="btn btn-primary" id="btn-event-2" onclick="toggleEventRegistration(2)">
-            Zapisz się z e-Kartą
-          </button>
-        </div>
-      </div>
-
-      <!-- ================= TAB 3: MAPA POTRZEB ================= -->
-      <div class="tab-pane" id="pane-map">
-        <div class="smart-card">
+      <!-- ================= TAB 4: BANK CZASU ================= -->
+      <section class="tab-pane" id="pane-timebank" aria-labelledby="tab-btn-timebank">
+        <!-- Time Wallet Card -->
+        <div class="smart-card" style="background: var(--primary-container); border: none;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <div class="smart-card-title">Interaktywna Mapa Potrzeb</div>
-              <p class="smart-card-sub">Mikrowolontariat w sołectwach Gminy Wieliszew</p>
+              <span style="font-size: 11px; font-weight: 800; color: var(--primary); letter-spacing: 0.5px;">TWÓJ PORTFEL BANKU CZASU</span>
+              <div style="font-size: 30px; font-weight: 900; color: var(--on-primary-container); margin: 2px 0;" id="timebank-balance">
+                5.5 godz.
+              </div>
+              <p style="font-size: 11.5px; color: var(--on-primary-container); opacity: 0.9;">Zasada: 1 godzina pomocy sąsiedzkiej = 1 godzina w portfelu</p>
             </div>
-            <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 12px;" onclick="openAddNeedModal()">
-              + Zgłoś
+            <button class="btn btn-primary btn-sm" onclick="openAddTimeBankModal()">
+              + Dodaj wpis
             </button>
           </div>
         </div>
 
         <!-- Filter chips -->
         <div class="chips-row">
-          <div class="chip active" onclick="filterMapVillage('Wszystkie', this)">Wszystkie</div>
-          <div class="chip" onclick="filterMapVillage('Wieliszew', this)">Wieliszew</div>
-          <div class="chip" onclick="filterMapVillage('Skrzeszew', this)">Skrzeszew</div>
-          <div class="chip" onclick="filterMapVillage('Michałów-Reginów', this)">Michałów-Reginów</div>
-          <div class="chip" onclick="filterMapVillage('Łajski', this)">Łajski</div>
-          <div class="chip" onclick="filterMapVillage('Komornica', this)">Komornica</div>
+          <button class="chip active" onclick="filterTimeBank('ALL', this)">Wszystkie oferty</button>
+          <button class="chip" onclick="filterTimeBank('OFFERING', this)">Mieszkańcy Oferują</button>
+          <button class="chip" onclick="filterTimeBank('REQUESTING', this)">Poszukiwana Pomoc</button>
+          <button class="chip" onclick="toggleTimeBankHistory()">📜 Historia Transakcji</button>
         </div>
 
-        <!-- Real Leaflet OpenStreetMap Container -->
-        <div id="leaflet-map"></div>
-
-        <!-- Pins List -->
-        <div id="need-pins-list">
-          <!-- Dynamically populated -->
+        <!-- Transaction history accordion -->
+        <div id="timebank-history-box" style="display: none; margin-bottom: 14px;">
+          <div class="smart-card" style="background: var(--surface-variant);">
+            <div class="smart-card-title" style="font-size: 14px;">Historia Ostatnich Rozliczeń Czasu</div>
+            <ul id="timebank-history-list" style="list-style: none; font-size: 12px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+              <!-- Populated by JS -->
+            </ul>
+          </div>
         </div>
-      </div>
 
-      <!-- ================= TAB 4: BANK CZASU ================= -->
-      <div class="tab-pane" id="pane-timebank">
-        <!-- Time Wallet Banner -->
-        <div class="smart-card" style="background: var(--primary-container); border: none;">
+        <!-- Time bank listings -->
+        <div id="timebank-items-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: GRYWALIZACJA & NAGRODY ================= -->
+      <section class="tab-pane" id="pane-gamification" aria-labelledby="tab-btn-gamification">
+        <!-- Level & Points Card -->
+        <div class="smart-card" style="background: linear-gradient(135deg, #137547 0%, #0a4d2e 100%); color: #ffffff; border: none;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <span style="font-size: 11px; font-weight: bold; color: var(--primary);">TWÓJ PORTFEL CZASU</span>
-              <div style="font-size: 28px; font-weight: 800; color: var(--on-primary-container);" id="timebank-balance">
-                5.5 godz.
-              </div>
-              <p style="font-size: 11px; color: var(--on-primary-container);">Wymieniaj usługi: 1h pomocy = 1h zysku</p>
+              <span style="font-size: 11px; font-weight: 800; color: var(--accent-gold); letter-spacing: 0.5px;">POZIOM ZAANGAŻOWANIA SPOŁECZNEGO</span>
+              <h3 style="font-size: 18px; font-weight: 900; margin: 2px 0;" id="user-level-title">Zasłużony Sąsiad Wieliszewa</h3>
+              <p style="font-size: 14px; color: var(--accent-gold); font-weight: 800;" id="gamification-points-display">
+                ⭐ 420 punktów aktywności
+              </p>
             </div>
-            <button class="btn btn-primary" style="width: auto; padding: 8px 12px; font-size: 12px;" onclick="openAddTimeBankModal()">
-              + Dodaj ofertę
+            <span style="font-size: 40px;">🏆</span>
+          </div>
+
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="level-progress-bar" style="width: 70%;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 10.5px; opacity: 0.85;">
+            <span>Aktualnie: 420 pkt</span>
+            <span>Do poziomu "Lider Społeczności": 600 pkt</span>
+          </div>
+        </div>
+
+        <!-- Interactive Badges Carousel/Grid -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 14px 0 6px 0;">
+          <h4 style="font-size: 15px; font-weight: 800;">Odznaki Mieszkańca</h4>
+          <span style="font-size: 11px; color: var(--text-muted);">Kliknij odznakę po szczegóły</span>
+        </div>
+        <div class="badges-grid" id="badges-grid-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Rewards Catalog -->
+        <h4 style="font-size: 15px; font-weight: 800; margin: 18px 0 8px 0; color: var(--primary);">
+          🎁 Katalog Zniżek i Voucherów u Partnerów
+        </h4>
+        <div id="rewards-list-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 6: TELEKONSULTACJE ================= -->
+      <section class="tab-pane" id="pane-telehealth" aria-labelledby="tab-btn-telehealth">
+        <div class="smart-card">
+          <div class="smart-card-title">🩺 Telekonsultacje i e-Wsparcie CUS</div>
+          <p class="smart-card-sub">Bezpieczny, szyfrowany kontakt wideo i audio ze specjalistami wsparcia społecznego w Gminie Wieliszew.</p>
+        </div>
+
+        <div id="specialists-list-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 7: WSPÓŁDZIELENIE ================= -->
+      <section class="tab-pane" id="pane-sharing" aria-labelledby="tab-btn-sharing">
+        <div class="smart-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div class="smart-card-title">♻️ Magazyn Współdzielenia & Jadłodzielnia</div>
+              <p class="smart-card-sub">Wypożyczalnia sprzętu rehabilitacyjnego i gminna wymiana żywności</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openDonateModal()">
+              + Przekaż dar
             </button>
           </div>
         </div>
 
-        <!-- Filter buttons -->
+        <!-- Category filter chips -->
         <div class="chips-row">
-          <div class="chip active" onclick="filterTimeBank('ALL', this)">Wszystkie oferty</div>
-          <div class="chip" onclick="filterTimeBank('OFFERING', this)">Mieszkańcy Oferują</div>
-          <div class="chip" onclick="filterTimeBank('REQUESTING', this)">Poszukiwana Pomoc</div>
-        </div>
-
-        <div id="timebank-items-list">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- ================= TAB 5: GRYWALIZACJA & NAGRODY ================= -->
-      <div class="tab-pane" id="pane-gamification">
-        <!-- Points & Level Card -->
-        <div class="smart-card" style="background: var(--primary); color: #fff; border: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <span style="font-size: 11px; font-weight: bold; color: var(--accent-gold);">POZIOM ZAANGAŻOWANIA</span>
-              <h3 style="font-size: 19px; font-weight: 800; margin: 2px 0;">Zasłużony Sąsiad Wieliszewa</h3>
-              <p style="font-size: 14px; color: var(--accent-gold); font-weight: bold;" id="gamification-points-display">
-                ⭐ 420 punktów aktywności
-              </p>
-            </div>
-            <span style="font-size: 38px;">🏆</span>
-          </div>
-        </div>
-
-        <!-- Badges Carousel -->
-        <h4 style="font-size: 15px; margin: 12px 0 8px 0;">Twoje Odznaki Społeczne</h4>
-        <div class="chips-row" style="padding-bottom: 4px;">
-          <div class="smart-card" style="min-width: 120px; text-align: center; padding: 10px; margin: 0 4px 0 0;">
-            <div style="font-size: 28px;">❤️</div>
-            <strong style="font-size: 12px; display: block;">Serce Wieliszewa</strong>
-            <span style="font-size: 10px; color: #2e7d32;">Odblokowana</span>
-          </div>
-          <div class="smart-card" style="min-width: 120px; text-align: center; padding: 10px; margin: 0 4px 0 0;">
-            <div style="font-size: 28px;">🤝</div>
-            <strong style="font-size: 12px; display: block;">Aktywny Sąsiad</strong>
-            <span style="font-size: 10px; color: #2e7d32;">Odblokowana</span>
-          </div>
-          <div class="smart-card" style="min-width: 120px; text-align: center; padding: 10px; margin: 0 4px 0 0;">
-            <div style="font-size: 28px;">🌱</div>
-            <strong style="font-size: 12px; display: block;">Mistrz Ekologii</strong>
-            <span style="font-size: 10px; color: #2e7d32;">Odblokowana</span>
-          </div>
-          <div class="smart-card" style="min-width: 120px; text-align: center; padding: 10px; margin: 0 4px 0 0; opacity: 0.6;">
-            <div style="font-size: 28px;">🏅</div>
-            <strong style="font-size: 12px; display: block;">Promotor Zdrowia</strong>
-            <span style="font-size: 10px; color: #888;">1/3 zajęć</span>
-          </div>
-        </div>
-
-        <!-- Redeemable rewards -->
-        <h4 style="font-size: 15px; margin: 14px 0 8px 0; color: var(--primary);">Katalog Zniżek i Nagród</h4>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-gold">Rekreacja i Sport</span>
-            <strong style="color: #f57f17;">250 pkt</strong>
-          </div>
-          <h4 style="font-size: 15px; margin: 6px 0;">Karnet 1h: Kajak lub Rower Wodny nad Narwią</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">Partner: OSiR & Przystań Wieliszew</p>
-          <button class="btn btn-primary" style="margin-top: 10px;" onclick="redeemReward('Kajak 1h', 250)">
-            Odbierz voucher (250 pkt)
-          </button>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-blue">Kultura</span>
-            <strong style="color: #f57f17;">150 pkt</strong>
-          </div>
-          <h4 style="font-size: 15px; margin: 6px 0;">Zniżka 30% na bilet na spektakl</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">Partner: Gminne Centrum Kultury w Łajskach</p>
-          <button class="btn btn-primary" style="margin-top: 10px;" onclick="redeemReward('Bilet GCK 30%', 150)">
-            Odbierz voucher (150 pkt)
-          </button>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-green">Gastronomia</span>
-            <strong style="color: #f57f17;">100 pkt</strong>
-          </div>
-          <h4 style="font-size: 15px; margin: 6px 0;">Darmowa kawa sąsiedzka i ciastko</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">Partner: Piekarnia-Kawiarnia Słoneczna</p>
-          <button class="btn btn-primary" style="margin-top: 10px;" onclick="redeemReward('Kawa sąsiedzka', 100)">
-            Odbierz voucher (100 pkt)
-          </button>
-        </div>
-      </div>
-
-      <!-- ================= TAB 6: TELEKONSULTACJE ================= -->
-      <div class="tab-pane" id="pane-telehealth">
-        <div class="smart-card">
-          <div class="smart-card-title">🩺 Telekonsultacje i e-Wsparcie</div>
-          <p class="smart-card-sub">Bezpieczny, szyfrowany kontakt wideo ze specjalistami CUS Wieliszew.</p>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-green">Dyżur Dzisiaj</span>
-            <span class="badge badge-blue">Psycholog CUS</span>
-          </div>
-          <h4 style="font-size: 15px; margin: 8px 0 4px 0;">mgr Anna Wiśniewska</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">🕒 Najbliższy wolny slot: Dzisiaj, godz. 13:30</p>
-          <p style="font-size: 13px; margin: 6px 0;">Wsparcie emocjonalne dla seniorów i opiekunów, pomoc w kryzysie.</p>
-          <button class="btn btn-primary" onclick="startVideoCall('mgr Anna Wiśniewska', 'Psycholog CUS')">
-            🎥 Rozpocznij połączenie wideo
-          </button>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-green">Dyżur Dzisiaj</span>
-            <span class="badge badge-blue">Radca Prawny</span>
-          </div>
-          <h4 style="font-size: 15px; margin: 8px 0 4px 0;">mec. Piotr Dąbrowski</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">🕒 Najbliższy wolny slot: Dzisiaj, godz. 15:00</p>
-          <p style="font-size: 13px; margin: 6px 0;">Nieodpłatna pomoc prawna: sprawy majątkowe, spadkowe, socjalne.</p>
-          <button class="btn btn-primary" onclick="startVideoCall('mec. Piotr Dąbrowski', 'Radca Prawny')">
-            🎥 Rozpocznij połączenie wideo
-          </button>
-        </div>
-
-        <div class="smart-card">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="badge badge-gold">Zapisy na jutro</span>
-            <span class="badge badge-blue">Koordynator CUS</span>
-          </div>
-          <h4 style="font-size: 15px; margin: 8px 0 4px 0;">mgr Elżbieta Zielińska</h4>
-          <p style="font-size: 12px; color: var(--text-muted);">🕒 Najbliższy wolny slot: Jutro, 09:00</p>
-          <p style="font-size: 13px; margin: 6px 0;">Indywidualne plany usług społecznych, pomoc opiekuńcza.</p>
-          <button class="btn btn-secondary" onclick="showToast('Wizyta została zaplanowana na jutro o 09:00')">
-            📅 Zarezerwuj termin na jutro
-          </button>
-        </div>
-      </div>
-
-      <!-- ================= TAB 7: WSPÓŁDZIELENIE ================= -->
-      <div class="tab-pane" id="pane-sharing">
-        <div class="smart-card">
-          <div class="smart-card-title">♻️ Magazyn Współdzielenia i Jadłodzielnia</div>
-          <p class="smart-card-sub">Cyrkularna wymiana dóbr i bezpłatne wypożyczanie sprzętu CUS.</p>
+          <button class="chip active" onclick="filterSharing('ALL', this)">Wszystko</button>
+          <button class="chip" onclick="filterSharing('Sprzęt Rehabilitacyjny', this)">Sprzęt Rehabilitacyjny</button>
+          <button class="chip" onclick="filterSharing('Jadłodzielnia', this)">Jadłodzielnia Wieliszew</button>
+          <button class="chip" onclick="filterSharing('Inne', this)">Ubrania i Książki</button>
         </div>
 
         <div id="sharing-items-container">
           <!-- Populated by JS -->
         </div>
-      </div>
+      </section>
 
     </div>
 
-    <!-- Active Video Consultation Overlay -->
-    <div class="video-call-screen" id="video-call-screen">
-      <div style="display: flex; justify-content: space-between; align-items: center; color: #fff;">
+    <!-- Active Video Consultation Overlay (WebRTC Simulator) -->
+    <div class="video-call-screen" id="video-call-screen" role="dialog" aria-modal="true" aria-label="Wideorozmowa ze specjalistą">
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #ffffff;">
         <div>
           <span style="font-size: 11px; color: #81c784;">🔒 Szyfrowanie End-to-End WebRTC CUS</span>
-          <h4 id="video-specialist-name" style="font-size: 16px;">mgr Anna Wiśniewska</h4>
-          <span id="video-specialist-role" style="font-size: 12px; color: #aaa;">Psycholog CUS</span>
+          <h4 id="video-specialist-name" style="font-size: 16px; font-weight: 800;">mgr Anna Wiśniewska</h4>
+          <span id="video-specialist-role" style="font-size: 12px; color: #cbd5e1;">Psycholog CUS</span>
         </div>
         <span class="badge badge-red" id="call-timer">LIVE 00:01</span>
       </div>
@@ -432,66 +473,183 @@
       <div class="video-feed-main">
         <div style="font-size: 72px;">👩‍⚕️</div>
         <div style="margin-top: 10px; font-weight: bold; font-size: 18px;" id="video-main-label">mgr Anna Wiśniewska</div>
-        <div style="font-size: 12px; color: #80cbc4;">Sygnał audio i wideo: Optymalny</div>
+        <div style="font-size: 12px; color: #80cbc4;">Jakość połączenia: Doskonała (HD)</div>
 
-        <div class="video-feed-pip">
-          <div style="font-size: 28px;">🧓</div>
-          <span>Twój obraz</span>
+        <div class="video-feed-pip" id="video-pip-box">
+          <video id="local-video-preview" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+          <div id="local-video-fallback" style="text-align: center;">
+            <div style="font-size: 26px;">🧓</div>
+            <span>Ty</span>
+          </div>
         </div>
       </div>
 
       <div class="call-controls">
-        <button class="call-btn call-btn-control" id="btn-toggle-mic" onclick="toggleCallMic()" title="Wycisz mikrofon">
+        <button class="call-btn call-btn-control" id="btn-toggle-mic" onclick="toggleCallMic()" title="Wycisz mikrofon" aria-label="Wycisz mikrofon">
           🎤
         </button>
-        <button class="call-btn call-btn-control" id="btn-toggle-cam" onclick="toggleCallCam()" title="Wyłącz kamerę">
+        <button class="call-btn call-btn-control" id="btn-toggle-cam" onclick="toggleCallCam()" title="Wyłącz kamerę" aria-label="Przełącz kamerę">
           📹
         </button>
-        <button class="call-btn call-btn-danger" onclick="endVideoCall()" title="Zakończ konsultację">
+        <button class="call-btn call-btn-danger" onclick="endVideoCall()" title="Zakończ konsultację" aria-label="Rozłącz rozmowę">
           📞
         </button>
       </div>
     </div>
 
     <!-- Bottom Navigation Bar -->
-    <div class="android-nav-bar">
-      <button class="nav-item active" onclick="switchTab('pane-assistant', this)">
+    <nav class="android-nav-bar" role="navigation" aria-label="Główna nawigacja aplikacji">
+      <button class="nav-item active" id="tab-btn-assistant" onclick="switchTab('pane-assistant', this)">
         <span class="icon">🤖</span>
         <span>Asystent</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-card', this)">
+      <button class="nav-item" id="tab-btn-card" onclick="switchTab('pane-card', this)">
         <span class="icon">💳</span>
         <span>e-Karta</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-map', this)">
+      <button class="nav-item" id="tab-btn-map" onclick="switchTab('pane-map', this)">
         <span class="icon">📍</span>
         <span>Mapa</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-timebank', this)">
+      <button class="nav-item" id="tab-btn-timebank" onclick="switchTab('pane-timebank', this)">
         <span class="icon">⏳</span>
         <span>Bank Czasu</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-gamification', this)">
+      <button class="nav-item" id="tab-btn-gamification" onclick="switchTab('pane-gamification', this)">
         <span class="icon">🏆</span>
         <span>Nagrody</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-telehealth', this)">
+      <button class="nav-item" id="tab-btn-telehealth" onclick="switchTab('pane-telehealth', this)">
         <span class="icon">🩺</span>
         <span>Teleopieka</span>
       </button>
-      <button class="nav-item" onclick="switchTab('pane-sharing', this)">
+      <button class="nav-item" id="tab-btn-sharing" onclick="switchTab('pane-sharing', this)">
         <span class="icon">♻️</span>
         <span>Dzielenie</span>
       </button>
+    </nav>
+
+    <!-- Floating Toast Notification -->
+    <div class="toast-msg" id="toast-msg" role="status" aria-live="polite">Powiadomienie</div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Modal 1: SOS Emergency Dialog -->
+    <div class="modal-overlay" id="modal-sos" role="dialog" aria-modal="true" aria-labelledby="sos-modal-title">
+      <div class="modal-dialog" style="border: 2px solid #d32f2f;">
+        <div class="modal-title" id="sos-modal-title">
+          <span style="color: #d32f2f;">🚨 POMOC RATUNKOWA SOS</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Potrzebujesz pilnej pomocy? Wybierz jedną z opcji szybkiego kontaktu:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="tel:112" class="btn btn-danger" style="text-decoration: none; font-size: 16px;" onclick="logSosAction('112')">
+            📞 Zadzwoń pod 112 (Służby Ratunkowe)
+          </a>
+          <a href="tel:227820100" class="btn btn-primary" style="text-decoration: none;" onclick="logSosAction('CUS')">
+            🏛️ Dyżur CUS Wieliszew (22 782 01 00)
+          </a>
+          <button class="btn btn-secondary" onclick="sendIceEmergencySms()">
+            📩 Wyślij alert SMS do osoby ICE z moją pozycją GPS
+          </button>
+          <div style="background: var(--surface-variant); padding: 10px; border-radius: 10px; font-size: 11px;">
+            <strong>Twoja bieżąca lokalizacja GPS:</strong>
+            <div id="sos-gps-location">Gmina Wieliszew, rejon ul. Modlińskiej (52.457° N, 20.978° E)</div>
+          </div>
+          <button class="btn btn-outline" onclick="closeModals()">Zamknij</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Toast message -->
-    <div class="toast-msg" id="toast-msg">Powiadomienie</div>
-
-    <!-- Modal: Dodaj potrzebę -->
-    <div class="modal-overlay" id="modal-add-need">
+    <!-- Modal 2: Gminne Powiadomienia -->
+    <div class="modal-overlay" id="modal-notifications" role="dialog" aria-modal="true">
       <div class="modal-dialog">
-        <div class="modal-title">Zgłoś potrzebę pomocy sąsiedzkiej</div>
+        <div class="modal-title">
+          <span>🔔 Powiadomienia & Alerty</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="notifications-list">
+          <div class="smart-card" style="margin: 0; border-left: 4px solid #d32f2f;">
+            <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-muted);">
+              <span>⚠️ ALERT POGODOWY</span>
+              <span>10 min temu</span>
+            </div>
+            <strong style="font-size: 13px; display: block; margin: 3px 0;">Ostrzeżenie IMGW: Silny wiatr nad Zalewem Zegrzyńskim</strong>
+            <p style="font-size: 12px; color: var(--text-muted);">Zalecana ostrożność dla spacerowiczów w rejonie wałów w Wieliszewie i Komornicy.</p>
+          </div>
+
+          <div class="smart-card" style="margin: 0; border-left: 4px solid var(--primary);">
+            <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-muted);">
+              <span>🏛️ CUS WIELISZEW</span>
+              <span>Dziś, 09:30</span>
+            </div>
+            <strong style="font-size: 13px; display: block; margin: 3px 0;">Ruszyły zapisy na bezpłatną rehabilitację domową</strong>
+            <p style="font-size: 12px; color: var(--text-muted);">Dla seniorów 70+ z orzeczoną barierą mobilności. Skontaktuj się z koordynatorem.</p>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="margin-top: 14px;" onclick="closeModals()">Zamknij</button>
+      </div>
+    </div>
+
+    <!-- Modal 3: Profil Mieszkańca i Ustawienia -->
+    <div class="modal-overlay" id="modal-profile" role="dialog" aria-modal="true">
+      <div class="modal-dialog">
+        <div class="modal-title">
+          <span>⚙️ Mój Profil i Ustawienia</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div>
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Imię i Nazwisko:</label>
+            <input type="text" id="profile-name-input" class="chat-input" value="Janina Kowalska" style="width: 100%; margin-top: 4px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Sołectwo zamieszkania:</label>
+            <select id="profile-village-select" class="chat-input" style="width: 100%; margin-top: 4px;">
+              <option value="Wieliszew">Wieliszew</option>
+              <option value="Skrzeszew">Skrzeszew</option>
+              <option value="Michałów-Reginów">Michałów-Reginów</option>
+              <option value="Łajski">Łajski</option>
+              <option value="Komornica">Komornica</option>
+              <option value="Kałuszyn">Kałuszyn</option>
+              <option value="Góra">Góra</option>
+              <option value="Olszewnica Stara">Olszewnica Stara</option>
+              <option value="Olszewnica Nowa">Olszewnica Nowa</option>
+              <option value="Poddębie">Poddębie</option>
+              <option value="Sikory">Sikory</option>
+              <option value="Topolina">Topolina</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Kontakt ratunkowy ICE (np. córka, syn):</label>
+            <input type="text" id="profile-ice-input" class="chat-input" value="Córka Anna: +48 601 234 567" style="width: 100%; margin-top: 4px;">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted);">Rozmiar tekstu (Dostępność):</label>
+            <div style="display: flex; gap: 6px; margin-top: 4px;">
+              <button class="btn btn-secondary btn-sm" onclick="setFontScale('font-scale-sm')">A- (Mały)</button>
+              <button class="btn btn-secondary btn-sm" onclick="setFontScale('font-scale-md')">A (Standard)</button>
+              <button class="btn btn-secondary btn-sm" onclick="setFontScale('font-scale-lg')">A+ (Duży)</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn btn-secondary" onclick="closeModals()">Anuluj</button>
+            <button class="btn btn-primary" onclick="saveUserProfile()">Zapisz zmiany</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 4: Dodaj potrzebę na Mapę -->
+    <div class="modal-overlay" id="modal-add-need" role="dialog" aria-modal="true">
+      <div class="modal-dialog">
+        <div class="modal-title">
+          <span>+ Zgłoś potrzebę sąsiedzką</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <input type="text" id="new-need-title" class="chat-input" placeholder="W czym potrzebujesz pomocy?">
           <textarea id="new-need-desc" class="chat-input" rows="3" placeholder="Krótki opis sytuacji..."></textarea>
@@ -502,6 +660,14 @@
             <option value="Komornica">Komornica</option>
             <option value="Kałuszyn">Kałuszyn</option>
             <option value="Łajski">Łajski</option>
+            <option value="Góra">Góra</option>
+          </select>
+          <select id="new-need-category" class="chat-input">
+            <option value="Zakupy">🛒 Zakupy i apteka</option>
+            <option value="Transport">🚗 Transport i dojazd</option>
+            <option value="Drobna naprawa">🔧 Drobna naprawa / hydraulik</option>
+            <option value="Opieka">🐕 Opieka / spacer ze zwierzęciem</option>
+            <option value="Ogród">🌱 Ogród / liście / odśnieżanie</option>
           </select>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
             <button class="btn btn-secondary" onclick="closeModals()">Anuluj</button>
@@ -511,10 +677,13 @@
       </div>
     </div>
 
-    <!-- Modal: Dodaj ofertę do Banku Czasu -->
-    <div class="modal-overlay" id="modal-add-timebank">
+    <!-- Modal 5: Dodaj wpis do Banku Czasu -->
+    <div class="modal-overlay" id="modal-add-timebank" role="dialog" aria-modal="true">
       <div class="modal-dialog">
-        <div class="modal-title">Dodaj wpis w Banku Czasu</div>
+        <div class="modal-title">
+          <span>+ Dodaj wpis w Banku Czasu</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <select id="new-tb-type" class="chat-input">
             <option value="OFFERING">Oferuję umiejętność (godzina za godzinę)</option>
@@ -524,15 +693,95 @@
           <textarea id="new-tb-desc" class="chat-input" rows="2" placeholder="Opis i dostępność czasowa..."></textarea>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
             <button class="btn btn-secondary" onclick="closeModals()">Anuluj</button>
-            <button class="btn btn-primary" onclick="submitNewTimeBank()">Dodaj wpis</button>
+            <button class="btn btn-primary" onclick="submitNewTimeBank()">Opublikuj wpis</button>
           </div>
         </div>
       </div>
     </div>
 
-  </div>
+    <!-- Modal 6: Przekaż dar do Jadłodzielni / CUS -->
+    <div class="modal-overlay" id="modal-donate" role="dialog" aria-modal="true">
+      <div class="modal-dialog">
+        <div class="modal-title">
+          <span>♻️ Przekaż dar do CUS</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <input type="text" id="donate-title" class="chat-input" placeholder="Nazwa przedmiotu lub żywności">
+          <select id="donate-category" class="chat-input">
+            <option value="Jadłodzielnia Wieliszew">🍏 Jadłodzielnia (nadwyżki żywności, słoiki)</option>
+            <option value="Sprzęt Rehabilitacyjny">🦽 Sprzęt Rehabilitacyjny (kule, balkonik, wózek)</option>
+            <option value="Ubrania i Książki">📚 Ubrania, książki, gry dla dzieci</option>
+          </select>
+          <input type="text" id="donate-location" class="chat-input" placeholder="Miejsce przekazania (np. Punkt CUS Wieliszew)">
+          <textarea id="donate-desc" class="chat-input" rows="2" placeholder="Krótki opis stanu i ilości..."></textarea>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn btn-secondary" onclick="closeModals()">Anuluj</button>
+            <button class="btn btn-primary" onclick="submitDonation()">Zgłoś darowiznę</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 7: Fullscreen QR do skanowania -->
+    <div class="modal-overlay" id="modal-qr-fullscreen" role="dialog" aria-modal="true">
+      <div class="modal-dialog qr-fullscreen-modal">
+        <div class="modal-title">
+          <span>Dynamiczny Kod e-WKM</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted);">
+          Zbliż ekran do czytnika biletowego lub kontrolera. Kod chroniony TOTP.
+        </p>
+        <svg id="qr-code-fullscreen-svg" width="220" height="220" viewBox="0 0 160 160"></svg>
+        <div style="font-size: 13px; font-weight: bold; margin-top: 6px; color: var(--primary);">
+          Ważność: <span id="totp-seconds-modal">45</span>s
+        </div>
+        <button class="btn btn-secondary" style="margin-top: 14px;" onclick="closeModals()">Zamknij</button>
+      </div>
+    </div>
+
+    <!-- Modal 8: Szczegóły Odznaki -->
+    <div class="modal-overlay" id="modal-badge-detail" role="dialog" aria-modal="true">
+      <div class="modal-dialog" style="text-align: center;">
+        <div style="font-size: 54px;" id="badge-modal-icon">❤️</div>
+        <h3 style="font-size: 17px; margin: 8px 0;" id="badge-modal-title">Serce Wieliszewa</h3>
+        <span class="badge badge-green" id="badge-modal-status">ODBLOKOWANA</span>
+        <p style="font-size: 13px; margin: 12px 0; color: var(--text-muted);" id="badge-modal-desc">
+          Opis odznaki...
+        </p>
+        <button class="btn btn-primary" onclick="closeModals()">Rozumiem</button>
+      </div>
+    </div>
+
+    <!-- Modal 9: Rezerwacja Telekonsultacji -->
+    <div class="modal-overlay" id="modal-book-consultation" role="dialog" aria-modal="true">
+      <div class="modal-dialog">
+        <div class="modal-title">
+          <span>📅 Rezerwacja Telekonsultacji</span>
+          <button class="modal-close-x" onclick="closeModals()">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 13px; font-weight: bold;" id="booking-specialist-info">Specjalista CUS</div>
+          <label style="font-size: 12px; color: var(--text-muted);">Wybierz preferowany dzień:</label>
+          <select id="booking-day-select" class="chat-input">
+            <option value="Jutro, 09:00">Jutro, godz. 09:00</option>
+            <option value="Jutro, 12:30">Jutro, godz. 12:30</option>
+            <option value="Pojutrze, 10:00">Pojutrze, godz. 10:00</option>
+            <option value="Pojutrze, 14:00">Pojutrze, godz. 14:00</option>
+          </select>
+          <label style="font-size: 12px; color: var(--text-muted);">Temat rozmowy (opcjonalnie):</label>
+          <input type="text" id="booking-topic-input" class="chat-input" placeholder="np. pomoc socjalna, wsparcie seniora">
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn btn-secondary" onclick="closeModals()">Anuluj</button>
+            <button class="btn btn-primary" onclick="confirmConsultationBooking()">Potwierdź rezerwację</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 
   <script src="js/app.js"></script>
 </body>
 </html>
-
