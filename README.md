@@ -50,49 +50,54 @@ Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztu
    - Dynamiczny wybór motywów Material Design 3: Wieliszew 🌿, Bursztyn ☀️, Zalew 🌊.
    - Pełna semantyka ARIA i obsługa czytników ekranu (TalkBack / NVDA).
 
-9. **💾 Trwałość Danych i Tryb Offline (PWA):**
-   - Pełny stan aplikacji zapisywany w `localStorage` (edycja profilu, vouchery, zgłoszenia, punkty).
-   - Service Worker buforujący zasoby do pracy bez dostępu do Internetu.
+9. **💾 Architektura Natywna Kotlin & Reactive State:**
+   - 100% natywny kod w języku **Kotlin** z deklaratywnym UI w **Jetpack Compose**.
+   - Architektura oparta o wzorzec Repository, `StateFlow` oraz asynchroniczne `Kotlin Coroutines`.
+   - Zgodność z najnowszymi standardami Material Design 3 (Material You).
 
 ---
 
-## 📂 2. Struktura Repozytorium
+## 📂 2. Struktura Repozytorium (100% Natywny Kotlin Android)
 
 ```
 Aplikacja/
-├── Uruchom_SmartCUS.bat          # 1-klikowy launcher dla systemu Windows
-├── start_preview.py             # Automatyczny serwer HTTP z wykrywaniem IP w sieci Wi-Fi
-├── SmartCUS_Wieliszew.apk       # Gotowy plik instalacyjny APK dla Androida
-├── SmartCUS_Wieliszew_Source.zip# Kompletne skompresowane archiwum źródeł
+├── build.gradle.kts             # Główny skrypt konfiguracji projektu Gradle (Kotlin DSL)
+├── settings.gradle.kts          # Konfiguracja repozytoriów i modułów (:app)
+├── gradle.properties            # Parametry optymalizacji pamięci i demonów kompilatora
+├── gradlew & gradlew.bat        # Skrypty kompilatora Gradle Wrapper (8.10.2)
+├── gradle/wrapper/              # Dystrybucja i weryfikacja Gradle
+├── SmartCUS_Wieliszew.apk       # Gotowy produkcyjny plik instalacyjny APK dla Androida
+├── SmartCUS_Wieliszew_Source.zip# Kompletne archiwum kodów źródłowych
 │
-├── app_preview/                 # Produkcyjna aplikacja Web & Progressive Web App (PWA)
-│   ├── index.html               # Responsywny interfejs z obsługą Mobile & Desktop Simulator
-│   ├── css/styles.css           # Design System Wieliszew, animacje 3D, tryb WCAG
-│   ├── js/app.js                # Silnik aplikacji: AI, TOTP QR, Leaflet GPS, WebRTC, PWA
-│   ├── manifest.json            # PWA manifest z obsługą skrótów ekranowych
-│   ├── sw.js                    # Service Worker (buforowanie offline, stale-while-revalidate)
-│   └── icons/                   # Ikony PWA 192x192 i 512x512
-│
-├── android_native/              # Natywny projekt Android (Kotlin 2.0 + Jetpack Compose)
-│   ├── gradlew & gradlew.bat    # Skrypty kompilatora Gradle Wrapper
-│   ├── app/
-│   │   ├── src/main/java/pl/wieliszew/smartcus/
-│   │   │   ├── MainActivity.kt
-│   │   │   ├── SmartCusApp.kt
-│   │   │   ├── SmartCusApplication.kt
-│   │   │   ├── data/model/Models.kt
-│   │   │   ├── data/repository/SmartCusRepository.kt
-│   │   │   ├── modules/ (assistant, card, map, timebank, gamification, telehealth, sharing)
-│   │   │   └── ui/ (theme, components)
-│   │   ├── build.gradle.kts
-│   │   └── AndroidManifest.xml
-│   ├── build.gradle.kts
-│   └── settings.gradle.kts
+├── app/                         # Główny moduł aplikacji natywnej Android
+│   ├── build.gradle.kts         # Zależności: Compose BOM, Material 3, Navigation, ZXing
+│   ├── src/main/
+│   │   ├── AndroidManifest.xml  # Manifest aplikacji z uprawnieniami (NFC, Camera, Biometrics)
+│   │   ├── java/pl/wieliszew/smartcus/
+│   │   │   ├── MainActivity.kt                  # Punkt wejścia z Edge-to-Edge
+│   │   │   ├── SmartCusApp.kt                   # Główny szkielet UI (Scaffold, NavigationBar M3)
+│   │   │   ├── SmartCusApplication.kt           # Kontener DI i inicjalizacja repozytoriów
+│   │   │   ├── data/
+│   │   │   │   ├── model/Models.kt              # Modele danych Kotlin (WKM, HelpRequest, Service)
+│   │   │   │   └── repository/SmartCusRepository.kt # Zarządzanie stanem i baza danych w pamięci
+│   │   │   ├── modules/
+│   │   │   │   ├── assistant/AiAssistantScreen.kt   # Moduł Wirtualnego Doradcy AI i Voicebota
+│   │   │   │   ├── card/WieliszewCardScreen.kt      # Moduł e-WKM 3D Flip & TOTP QR Code
+│   │   │   │   ├── gamification/GamificationScreen.kt # Grywalizacja i katalog nagród
+│   │   │   │   ├── map/NeedMapScreen.kt             # Geoprzestrzenna mapa potrzeb (RODO buffer)
+│   │   │   │   ├── sharing/SharingHubScreen.kt      # Jadłodzielnia i Magazyn Sprzętu
+│   │   │   │   ├── telehealth/TelehealthScreen.kt   # E-Teleopieka i wideokonsultacje
+│   │   │   │   └── timebank/TimeBankScreen.kt       # Sąsiedzki Bank Czasu (1h za 1h)
+│   │   │   └── ui/
+│   │   │       ├── components/CommonComponents.kt   # Komponenty M3, SeniorAccessibleCard
+│   │   │       └── theme/ (Color.kt, Shape.kt, Theme.kt, Type.kt) # Design System Material You
+│   │   └── res/
+│   │       └── values/ (colors.xml, strings.xml, themes.xml)
 │
 ├── .github/workflows/
-│   └── build-apk.yml            # CI/CD: Automatyczna kompilacja APK w chmurze GitHub
+│   └── build-apk.yml            # CI/CD: Automatyczna kompilacja APK i publikacja do Releases
 │
-└── docs/                        # Kompleksowa dokumentacja projektowa i przetargowa
+└── docs/                        # Kompleksowa dokumentacja techniczna i formalna
     ├── JAK_ZBUDOWAC_PLIK_APK.md
     ├── STUDIUM_WYKONALNOSCI_I_ARCHITEKTURA.md
     ├── KOSZTORYS_I_HARMONOGRAM_WDROZENIA.md
@@ -103,38 +108,32 @@ Aplikacja/
 
 ## 🚀 3. Szybkie Uruchomienie i Dystrybucja
 
-### Metoda 1: 1-Klikowe Uruchomienie na Komputerze (Windows)
-Wystarczy dwukrotnie kliknąć plik:
-👉 **`Uruchom_SmartCUS.bat`**
-Skrypt automatycznie uruchomi lokalny serwer i otworzy aplikację w Twojej domyślnej przeglądarce.
-
-### Metoda 2: Uruchomienie na Smartfonie (Jako Aplikacja PWA)
-1. Uruchom serwer na komputerze:
-   ```bash
-   python start_preview.py
-   ```
-2. W oknie konsoli wyświetli się dynamicznie wykryty adres IP w Twojej sieci domowej Wi-Fi, np.:
-   👉 **`http://192.168.1.X:8080`**
-3. Otwórz ten adres w przeglądarce Chrome na smartfonie.
-4. Kliknij **„Dodaj do ekranu głównego” / „Zainstaluj aplikację”**.
-5. **Efekt:** Aplikacja automatycznie dopasuje się do pełnego ekranu Twojego smartfona (bez sztucznej ramki komputera), zainstaluje oficjalną ikonę Gminy Wieliszew i będzie działać jak natywna aplikacja ze sklepu!
-
-### Metoda 3: Pobranie i instalacja pliku .APK z GitHub Releases
+### Metoda 1: Pobranie i instalacja pliku .APK z GitHub Releases (Rekomendowane)
 Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z oficjalnego wydania:
-👉 **[Pobierz SmartCUS_Wieliszew.apk (GitHub Releases)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.0.0/SmartCUS_Wieliszew.apk)**
-lub z poziomu strony wydań:
-👉 **[Strona Wydań (Releases v1.0.0)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.0.0)**
+👉 **[Pobierz SmartCUS_Wieliszew.apk (GitHub Releases)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.0.0/SmartCUS_Wieliszew.apk)**  
+Strona wydania: 👉 **[GitHub Releases v1.0.0](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.0.0)**
 
 Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 
+### Metoda 2: Otwarcie i uruchomienie w Android Studio
+1. Zainstaluj **Android Studio** (wersja Koala / Ladybug lub nowsza).
+2. W oknie startowym wybierz **Open** i wskaż główny katalog repozytorium `Aplikacja`.
+3. Środowisko automatycznie zsynchronizuje projekt z wykorzystaniem `build.gradle.kts`.
+4. Podłącz telefon z włączonym debugowaniem USB lub uruchom wbudowany emulator i naciśnij zielony przycisk **Run (Shift+F10)**.
+
 ---
 
-## 🛠️ 4. Kompilacja ze Źródeł (Android Studio / CI)
+## 🛠️ 4. Kompilacja ze Źródeł (Gradle / CI)
 
 ### W chmurze (GitHub Actions):
-Repozytorium posiada gotowy plik [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml). Po wypchnięciu kodu na GitHub akcja automatycznie buduje pakiet `SmartCUS_Wieliszew_v1.0.0.apk` w sekcji *Artifacts*.
+Repozytorium posiada w pełni skonfigurowany workflow [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml). Po każdym pchnięciu do gałęzi `main`:
+1. Serwery GitHub (Ubuntu + Temurin JDK 17 + Android SDK 35) kompilują czysty kod w Kotlinie.
+2. Gotowy plik `.apk` jest automatycznie publikowany w sekcji **Releases** pod tagiem `v1.0.0` oraz jako artefakt kompilacji.
 
-### Lokalnie w Android Studio:
-1. Otwórz **Android Studio Ladybug / Koala** lub nowsze.
-2. Wybierz **Open...** i wskaż folder `android_native`.
-3. Z górnego menu wybierz **Build ➔ Build Bundle(s) / APK(s) ➔ Build APK(s)**.
+### Lokalnie w wierszu poleceń (Gradle):
+W głównym katalogu projektu wykonaj polecenie:
+```bash
+./gradlew assembleDebug
+```
+Wygenerowany plik znajdziesz w:
+`app/build/outputs/apk/debug/app-debug.apk`

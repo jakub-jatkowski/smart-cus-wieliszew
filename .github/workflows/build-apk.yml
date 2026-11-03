@@ -34,17 +34,15 @@ jobs:
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Ensure Gradle Wrapper Exists
-        working-directory: ./android_native
         run: |
           gradle wrapper --gradle-version 8.10.2 || true
 
       - name: Build Debug APK
-        working-directory: ./android_native
         run: |
           gradle assembleDebug --stacktrace
 
       - name: Rename APK for Distribution
-        working-directory: ./android_native/app/build/outputs/apk/debug
+        working-directory: ./app/build/outputs/apk/debug
         run: |
           cp app-debug.apk SmartCUS_Wieliszew_v1.0.0.apk
           cp app-debug.apk SmartCUS_Wieliszew.apk
@@ -54,8 +52,8 @@ jobs:
         with:
           name: SmartCUS-Wieliszew-APK
           path: |
-            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk
-            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
+            app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk
+            app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
           retention-days: 60
 
       - name: Publish APK to GitHub Release
@@ -64,7 +62,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload v1.0.0 \
-            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
-            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk \
+            app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
+            app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk \
             --clobber
 
