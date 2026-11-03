@@ -230,7 +230,7 @@ fun WieliszewCardScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .graphicsLayer { rotationY = 180f }
+                                .graphicsLayer { this.rotationY = 180f }
                                 .background(Color(0xFF1E293B))
                                 .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(22.dp))
                                 .padding(16.dp)

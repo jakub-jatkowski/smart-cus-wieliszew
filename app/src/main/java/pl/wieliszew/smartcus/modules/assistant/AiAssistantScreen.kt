@@ -144,7 +144,7 @@ fun AiAssistantScreen(
             items(quickQuestions) { question ->
                 SuggestionChip(
                     onClick = {
-                        val clean = question.replace(Regex("^[^\sa-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9]+"), "").trim()
+                        val clean = question.replace(Regex("^[^\\sa-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9]+"), "").trim()
                         repository.sendUserMessage(clean)
                     },
                     label = {
