@@ -17,3 +17,4 @@ object BackendConfig {
     const val GAMIFICATION_CLAIM_ENDPOINT = "/api/gamification/claim-voucher"
     const val CHAT_ENDPOINT = "/api/assistant/chat"
 }
+

@@ -74,3 +74,4 @@ Serwer uruchomi się pod adresem:
 ## 🗄️ Baza Danych:
 Baza danych tworzona jest automatycznie jako plik SQLite: `backend/smart_cus.db`.
 Wszystkie tabele są wstępnie zainicjalizowane realistycznymi danymi dla Gminy Wieliszew.
+

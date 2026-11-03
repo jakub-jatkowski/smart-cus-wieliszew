@@ -243,3 +243,4 @@ def chat_with_assistant(req: ChatQueryRequest):
         "module_hint": module_hint,
         "timestamp": "Teraz"
     }
+

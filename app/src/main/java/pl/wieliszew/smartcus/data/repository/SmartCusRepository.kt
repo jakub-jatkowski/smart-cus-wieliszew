@@ -367,9 +367,10 @@ class SmartCusRepository {
                     )
                 )
             }
-            _chatMessages.update { it + botResponse }
         }
+        _chatMessages.update { it + botResponse }
     }
+}
 
     private companion object {
         fun initialNotifications() = listOf(

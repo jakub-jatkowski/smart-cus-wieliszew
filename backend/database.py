@@ -386,3 +386,4 @@ def claim_voucher(title, partner, discount):
     conn.commit()
     conn.close()
     return {"id": voucher_id, "code": code}
+
