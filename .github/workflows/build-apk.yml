@@ -54,3 +54,11 @@ jobs:
           name: SmartCUS-Wieliszew-APK
           path: android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
           retention-days: 60
+
+      - name: Publish APK to GitHub Release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload v1.0.0 android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk#SmartCUS_Wieliszew.apk --clobber
+

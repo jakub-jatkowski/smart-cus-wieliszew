@@ -19,7 +19,7 @@ import pl.wieliszew.smartcus.ui.theme.M3Shapes
 
 /**
  * Material Design 3 Accessible Card
- * Conforms to M3 Elevated & Outlined Card specifications
+ * Conforms to M3 Card & Outlined Card specifications
  */
 @Composable
 fun SeniorAccessibleCard(
@@ -35,15 +35,15 @@ fun SeniorAccessibleCard(
     }
     val shape = if (isSenior) RoundedCornerShape(12.dp) else M3Shapes.large
 
-    ElevatedCard(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         shape = shape,
-        colors = CardDefaults.elevatedCardColors(
+        colors = CardDefaults.cardColors(
             containerColor = if (isSenior) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainerLow
         ),
-        elevation = CardDefaults.elevatedCardElevation(
+        elevation = CardDefaults.cardElevation(
             defaultElevation = if (isSenior) 0.dp else 1.dp,
             hoveredElevation = 2.dp,
             pressedElevation = 2.dp
@@ -51,9 +51,10 @@ fun SeniorAccessibleCard(
         border = border
     ) {
         Column(
-            modifier = Modifier.padding(if (isSenior) 20.dp else 16.dp),
-            content = content
-        )
+            modifier = Modifier.padding(if (isSenior) 20.dp else 16.dp)
+        ) {
+            content()
+        }
     }
 }
 
@@ -86,7 +87,20 @@ fun AccessibleButton(
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp, pressedElevation = 1.dp),
             border = if (isSenior) BorderStroke(3.dp, MaterialTheme.colorScheme.outline) else null
         ) {
-            ButtonContent(text, icon, isSenior)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (icon != null) {
+                    icon()
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = text,
+                    style = if (isSenior) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     } else {
         FilledTonalButton(
@@ -102,30 +116,21 @@ fun AccessibleButton(
             elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 0.dp, pressedElevation = 1.dp),
             border = if (isSenior) BorderStroke(3.dp, MaterialTheme.colorScheme.outline) else null
         ) {
-            ButtonContent(text, icon, isSenior)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (icon != null) {
+                    icon()
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = text,
+                    style = if (isSenior) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
-    }
-}
-
-@Composable
-private fun ButtonContent(
-    text: String,
-    icon: @Composable (() -> Unit)?,
-    isSenior: Boolean
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        if (icon != null) {
-            icon()
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-        Text(
-            text = text,
-            style = if (isSenior) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
