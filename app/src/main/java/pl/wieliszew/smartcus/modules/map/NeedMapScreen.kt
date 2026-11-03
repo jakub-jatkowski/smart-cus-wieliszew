@@ -150,7 +150,7 @@ fun NeedMapScreen(
             }
 
             // Interactive Map Marker with custom vector pin
-            val isUrgent = pin.urgency == Urgency.HIGH || pin.urgency == Urgency.CRITICAL
+            val isUrgent = pin.urgency == Urgency.TODAY
             val marker = Marker(mapView).apply {
                 position = point
                 icon = createCustomNeedMarkerDrawable(context, pin.category, isUrgent)
