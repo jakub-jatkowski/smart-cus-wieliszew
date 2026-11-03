@@ -541,7 +541,7 @@ fun ProfileScreen(
             }
         )
     }
-}
+
     // Modal: Edycja Profilu Mieszkańca i Kontaktu ICE
     if (showEditProfileDialog) {
         var editName by remember { mutableStateOf(userProfile.fullName) }

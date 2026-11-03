@@ -14,6 +14,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -239,10 +241,6 @@ val context = LocalContext.current
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(20.dp),
-                                verticalArrangement = Arrangement.SpaceBetween
-                            ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Row(

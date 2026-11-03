@@ -15,3 +15,4 @@ if errorlevel 1 (
     echo Wystapil blad podczas uruchamiania serwera.
     pause
 )
+
