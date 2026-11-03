@@ -3,7 +3,13 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from . import database as db
+try:
+    from . import database as db
+except ImportError:
+    try:
+        import database as db
+    except ImportError:
+        from backend import database as db
 
 # Initialize SQLite database on module load
 db.init_db()
