@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 
 import androidx.compose.material3.*
 
@@ -112,7 +113,7 @@ fun SharingHubScreen(
 
                     ) {
 
-                        Text("♻️", fontSize = 24.sp)
+                        Icon(imageVector = Icons.Outlined.VolunteerActivism, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
 
                     }
 
@@ -176,7 +177,7 @@ fun SharingHubScreen(
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
 
-                            Text("🥗", fontSize = 24.sp)
+                            Icon(imageVector = Icons.Outlined.Restaurant, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
 
                             Spacer(modifier = Modifier.width(8.dp))
 
@@ -628,7 +629,7 @@ fun SharedItemCard(
 
             Text(
 
-                text = "📍 Odbiór: ${item.pickupLocation}",
+                text = "Odbiór: ${item.pickupLocation}",
 
                 style = MaterialTheme.typography.bodySmall,
 
@@ -735,4 +736,3 @@ fun SharedItemCard(
     }
 
 }
-

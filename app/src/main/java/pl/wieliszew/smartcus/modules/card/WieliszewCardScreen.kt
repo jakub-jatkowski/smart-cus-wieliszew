@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -149,7 +150,7 @@ fun WieliszewCardScreen(
                                                 .background(Color.White.copy(alpha = 0.2f)),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text("🏛️", fontSize = 20.sp)
+                                            Icon(imageVector = Icons.Outlined.AccountBalance, contentDescription = null, tint = WieliszewGold, modifier = Modifier.size(22.dp))
                                         }
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Column {
@@ -412,7 +413,7 @@ fun WieliszewCardScreen(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("🎟️", fontSize = 28.sp)
+                        Icon(imageVector = Icons.Outlined.ConfirmationNumber, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Brak aktywnych voucherów",
@@ -420,7 +421,7 @@ fun WieliszewCardScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Text(
-                            text = "Zbieraj punkty zaangażowania na Mapie Potrzeb i wymieniaj je na nagrody w zakładce 'Usługi ➔ Nagrody'.",
+                            text = "Zbieraj punkty zaangażowania na Mapie Potrzeb i wymieniaj je na nagrody w zakładce 'Usługi CUS' pod zakładką Klub Mieszkańca.",
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -529,13 +530,13 @@ fun WieliszewCardScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "📅 ${event.dateText}",
+                        text = event.dateText,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = "📍 ${event.location}",
+                        text = event.location,
                         style = MaterialTheme.typography.bodySmall
                     )
 

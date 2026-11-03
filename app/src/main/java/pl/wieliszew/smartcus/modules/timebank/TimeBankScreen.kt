@@ -610,7 +610,7 @@ fun TimeBankScreen(
 
             onDismissRequest = { exchangeSuccessMsg = null },
 
-            title = { Text("Transakcja zrealizowana! 🎉", fontWeight = FontWeight.Bold) },
+            title = { Text("Wymiana zrealizowana", fontWeight = FontWeight.Bold) },
 
             text = { Text(exchangeSuccessMsg!!) },
 
@@ -670,7 +670,7 @@ fun TimeBankEntryCard(
 
                 Text(
 
-                    text = "⏳ ${entry.hours} godz.",
+                    text = "${entry.hours} godz.",
 
                     fontWeight = FontWeight.ExtraBold,
 
@@ -696,7 +696,7 @@ fun TimeBankEntryCard(
 
             Text(
 
-                text = "Mieszkaniec: ${entry.authorName} (${entry.village}) • Kategoria: ${entry.category} • ⭐ ${entry.rating}",
+                text = "Mieszkaniec: ${entry.authorName} (${entry.village}) • ${entry.category} • Ocena: ${entry.rating}",
 
                 style = MaterialTheme.typography.bodySmall,
 
@@ -753,4 +753,3 @@ fun TimeBankEntryCard(
     }
 
 }
-

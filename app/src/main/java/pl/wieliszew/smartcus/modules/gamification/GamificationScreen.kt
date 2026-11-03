@@ -140,7 +140,7 @@ fun GamificationScreen(
 
                             Text(
 
-                                text = "POZIOM ZAANGAŻOWANIA SPOŁECZNEGO",
+                                text = "Poziom zaangażowania",
 
                                 color = WieliszewGold,
 
@@ -458,7 +458,7 @@ fun GamificationScreen(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Text("Nagroda odebrana! 🎉", fontWeight = FontWeight.Bold)
+                    Text("Nagroda została odebrana", fontWeight = FontWeight.Bold)
 
                 }
 
@@ -745,4 +745,3 @@ fun RewardCard(
     }
 
 }
-

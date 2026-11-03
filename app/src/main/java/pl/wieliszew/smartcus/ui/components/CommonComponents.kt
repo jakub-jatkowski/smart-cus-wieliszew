@@ -22,6 +22,42 @@ import pl.wieliszew.smartcus.data.model.MunicipalNotification
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 import pl.wieliszew.smartcus.ui.theme.M3Shapes
 import pl.wieliszew.smartcus.ui.theme.MunicipalTheme
+import androidx.compose.material.icons.outlined.*
+import pl.wieliszew.smartcus.data.model.NeedCategory
+import pl.wieliszew.smartcus.data.model.ShareCategory
+import pl.wieliszew.smartcus.data.model.SpecialistType
+
+@Composable
+fun NeedCategoryIcon(
+    category: NeedCategory,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    val icon = when (category) {
+        NeedCategory.SHOPPING -> Icons.Outlined.ShoppingCart
+        NeedCategory.TRANSPORT -> Icons.Outlined.DirectionsCar
+        NeedCategory.REPAIR -> Icons.Outlined.Build
+        NeedCategory.COMPANIONSHIP -> Icons.Outlined.Forum
+        NeedCategory.PET_CARE -> Icons.Outlined.Pets
+        NeedCategory.GARDEN -> Icons.Outlined.Yard
+    }
+    Icon(imageVector = icon, contentDescription = category.label, modifier = modifier, tint = tint)
+}
+
+@Composable
+fun ShareCategoryIcon(
+    category: ShareCategory,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
+    val icon = when (category) {
+        ShareCategory.REHAB_EQUIPMENT -> Icons.Outlined.MedicalServices
+        ShareCategory.FOOD_SHARING -> Icons.Outlined.Restaurant
+        ShareCategory.CLOTHING_GOODS -> Icons.Outlined.Checkroom
+        ShareCategory.TOOLS_EQUIPMENT -> Icons.Outlined.HomeRepairService
+    }
+    Icon(imageVector = icon, contentDescription = category.label, modifier = modifier, tint = tint)
+}
 
 /**
  * Material Design 3 Accessible Card
@@ -217,6 +253,13 @@ fun HeaderBanner(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AccountBalance,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = title,
                         modifier = Modifier.weight(1f, fill = false),

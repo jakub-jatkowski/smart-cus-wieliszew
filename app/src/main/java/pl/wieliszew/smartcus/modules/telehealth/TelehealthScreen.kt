@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 
 import androidx.compose.material3.*
 
@@ -208,7 +209,7 @@ fun TelehealthScreen(
 
                         ) {
 
-                            Text("👩‍⚕️", fontSize = 48.sp)
+                            Icon(imageVector = Icons.Outlined.SupportAgent, contentDescription = null, tint = Color.White, modifier = Modifier.size(48.dp))
 
                         }
 
@@ -250,7 +251,7 @@ fun TelehealthScreen(
 
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                                Text("🧓", fontSize = 28.sp)
+                                Icon(imageVector = Icons.Outlined.Person, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
 
                                 Text("Ty", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
 
@@ -404,7 +405,7 @@ fun TelehealthScreen(
 
                         ) {
 
-                            Text("🩺", fontSize = 24.sp)
+                            Icon(imageVector = Icons.Outlined.MedicalServices, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
 
                         }
 
@@ -638,7 +639,7 @@ fun SpecialistCard(
 
                 StatusBadge(
 
-                    text = if (specialist.availableToday) "DYŻUR TERAZ" else "ZAPISY NA JUTRO",
+                    text = if (specialist.availableToday) "Dostępny dzisiaj" else "Zapisy na jutro",
 
                     containerColor = if (specialist.availableToday) Color(0xFFE8F5E9) else Color(0xFFEDE7F6),
 
@@ -662,7 +663,7 @@ fun SpecialistCard(
 
             Text(
 
-                text = "🕒 Wolny termin: ${specialist.nextFreeSlot}",
+                text = "Wolny termin: ${specialist.nextFreeSlot}",
 
                 style = MaterialTheme.typography.bodySmall,
 
@@ -741,4 +742,3 @@ fun SpecialistCard(
     }
 
 }
-

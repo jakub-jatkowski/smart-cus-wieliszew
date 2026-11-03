@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import pl.wieliszew.smartcus.data.model.NeedPin
 import pl.wieliszew.smartcus.data.model.NeedStatus
 import pl.wieliszew.smartcus.data.model.Urgency
 import pl.wieliszew.smartcus.data.repository.SmartCusRepository
+import pl.wieliszew.smartcus.ui.components.NeedCategoryIcon
 import pl.wieliszew.smartcus.ui.components.SeniorAccessibleCard
 import pl.wieliszew.smartcus.ui.components.StatusBadge
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
@@ -143,7 +145,7 @@ fun NeedMapScreen(
             val marker = Marker(mapView).apply {
                 position = point
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                title = "${pin.category.icon} ${pin.title}"
+                title = "${pin.category.label}: ${pin.title}"
                 snippet = "Sołectwo ${pin.village} • ${pin.urgency.label}"
                 setOnMarkerClickListener { _, _ ->
                     selectedPinForDetail = pin
@@ -231,7 +233,7 @@ fun NeedMapScreen(
                                 FilterChip(
                                     selected = selectedCategoryFilter == cat,
                                     onClick = { selectedCategoryFilter = if (selectedCategoryFilter == cat) null else cat },
-                                    label = { Text("${cat.icon} ${cat.label}", fontSize = 11.sp, maxLines = 1, softWrap = false) }
+                                    label = { Text(cat.label, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                                 )
                             }
                         }
@@ -299,7 +301,7 @@ fun NeedMapScreen(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("🛡️", fontSize = 11.sp)
+                        Icon(imageVector = Icons.Outlined.Shield, contentDescription = null, tint = Color.White, modifier = Modifier.size(13.dp))
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "Pinezki z buforem RODO 200m",
@@ -353,7 +355,7 @@ fun NeedMapScreen(
                                     modifier = Modifier.padding(24.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text("🌿", fontSize = 32.sp)
+                                    Icon(imageVector = Icons.Outlined.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text("Brak zgłoszeń w wybranym filtrze", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
                                     Text("Wszystkie prośby w tym rejonie zostały zaopiekowane!", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -401,7 +403,7 @@ fun NeedMapScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(pin.category.icon, fontSize = 24.sp)
+                        NeedCategoryIcon(category = pin.category, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(6.dp))
                         StatusBadge(
                             text = pin.category.label,
@@ -440,7 +442,7 @@ fun NeedMapScreen(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "📍 Sołectwo ${pin.village} • ${pin.approximateAddress}",
+                    text = "Sołectwo ${pin.village} • ${pin.approximateAddress}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
@@ -471,7 +473,7 @@ fun NeedMapScreen(
                     when {
                         isCompleted -> {
                             Text(
-                                text = "Dziękujemy za pomoc! 🎉",
+                                text = "Pomoc zrealizowana — dziękujemy!",
                                 color = Color(0xFF2E7D32),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -569,7 +571,7 @@ fun NeedMapScreen(
                             FilterChip(
                                 selected = category == cat,
                                 onClick = { category = cat },
-                                label = { Text("${cat.icon} ${cat.label}", fontSize = 11.sp, maxLines = 1, softWrap = false) }
+                                label = { Text(cat.label, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                             )
                         }
                     }
@@ -621,7 +623,7 @@ fun NeedPinCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(pin.category.icon, fontSize = 22.sp)
+                    NeedCategoryIcon(category = pin.category, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(6.dp))
                     StatusBadge(
                         text = pin.category.label,
@@ -658,7 +660,7 @@ fun NeedPinCard(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "📍 Sołectwo ${pin.village} • ${pin.approximateAddress}",
+                text = "Sołectwo ${pin.village} • ${pin.approximateAddress}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium,
@@ -692,7 +694,7 @@ fun NeedPinCard(
                 when {
                     isCompleted -> {
                         Text(
-                            text = "Zrealizowane 🎉",
+                            text = "Zrealizowano",
                             color = Color(0xFF2E7D32),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp

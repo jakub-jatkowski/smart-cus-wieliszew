@@ -129,4 +129,3 @@ val LakeOnPrimaryContainer = Color(0xFF001E2D)
 val LakeSecondary = Color(0xFF4E616D)
 val LakeSecondaryContainer = Color(0xFFE7EFF6)
 val LakeSurface = Color(0xFFF6FAFE)
-

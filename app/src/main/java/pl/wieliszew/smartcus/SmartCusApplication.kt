@@ -11,4 +11,3 @@ class SmartCusApplication : Application() {
         repository = pl.wieliszew.smartcus.data.repository.SmartCusRepository()
     }
 }
-
