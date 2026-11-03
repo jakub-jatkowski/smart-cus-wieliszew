@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -35,8 +34,9 @@ import pl.wieliszew.smartcus.ui.components.StatusBadge
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 
 /**
- * Nowoczesny Pulpit Mieszkańca Gminy Wieliszew
- * Zaprojektowany w standardzie nowoczesnych aplikacji konsumenckich (czysty, przestronny, intuicyjny).
+ * Oficjalny Pulpit Mieszkańca Centrum Usług Społecznych w Wieliszewie
+ * Poważna, profesjonalna platforma usług społecznych:
+ * sprawy mieszkańca, wnioski CUS, wypożyczalnia sprzętu, dyżury specjalistów i pomoc sąsiedzka.
  */
 @Composable
 fun HomeScreen(
@@ -55,17 +55,6 @@ fun HomeScreen(
     val events by repository.events.collectAsState()
     val isSenior = LocalSeniorMode.current
 
-    val firstName = remember(userProfile.fullName) {
-        userProfile.fullName.split(" ").firstOrNull() ?: "Mieszkańcu"
-    }
-
-    val initials = remember(userProfile.fullName) {
-        userProfile.fullName.split(" ")
-            .mapNotNull { it.firstOrNull()?.toString() }
-            .take(2)
-            .joinToString("")
-    }
-
     val miniQrBitmap = remember(card.cardNumber) {
         val payload = "WIELISZEW-WKM://${card.cardNumber}?token=${card.dynamicToken}"
         generateQrBitmap(payload, 256)
@@ -77,13 +66,20 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Sekcja: Powitanie & Szybkie Statystyki
+        // 1. Nagłówek Tożsamości Mieszkańca
         item {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -94,12 +90,15 @@ fun HomeScreen(
                         Surface(
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(46.dp)
+                            modifier = Modifier.size(48.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Text(
-                                    text = initials,
-                                    fontWeight = FontWeight.ExtraBold,
+                                    text = userProfile.fullName.split(" ")
+                                        .mapNotNull { it.firstOrNull()?.toString() }
+                                        .take(2)
+                                        .joinToString(""),
+                                    fontWeight = FontWeight.Bold,
                                     fontSize = 17.sp,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
@@ -108,94 +107,52 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Cześć, $firstName 👋",
-                                style = MaterialTheme.typography.titleLarge,
+                                text = "Dzień dobry,",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = userProfile.fullName,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = if (isSenior) 22.sp else 20.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                fontSize = if (isSenior) 19.sp else 17.sp
                             )
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Outlined.LocationOn,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(13.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = "Sołectwo ${userProfile.village}",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.Medium
+                                    fontSize = 11.sp
                                 )
                             }
                         }
                     }
 
-                    // Szybkie statystyki jako interaktywne pigułki
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = Color(0xFFD1FAE5),
-                            contentColor = Color(0xFF065F46),
-                            modifier = Modifier.clickable { onNavigateToTimeBank() }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Schedule,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "${userProfile.timeBankBalanceHours}h",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = Color(0xFFFEF3C7),
-                            contentColor = Color(0xFF92400E),
-                            modifier = Modifier.clickable { onNavigateToRewards() }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Star,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "${userProfile.gamificationPoints} pkt",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
+                    // Pigułka statusu rezydenta
+                    StatusBadge(
+                        text = "Mieszkaniec CUS",
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }
 
-        // Sekcja: Hero Digital Pass (Elegancka Karta Mieszkańca - Apple Wallet Style)
+        // 2. Oficjalny Paszport Mieszkańca (Elegancki Digital Pass)
         item {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable { onNavigateToCard() }
-                    .shadow(elevation = 6.dp, shape = RoundedCornerShape(24.dp)),
+                    .clip(RoundedCornerShape(22.dp))
+                    .clickable { onNavigateToCard() },
                 color = Color.Transparent
             ) {
                 Box(
@@ -204,56 +161,37 @@ fun HomeScreen(
                         .background(
                             Brush.linearGradient(
                                 colors = listOf(
-                                    Color(0xFF064E3B), // Deep Forest Green
-                                    Color(0xFF047857), // Rich Emerald
-                                    Color(0xFF059669)  // Modern Emerald
+                                    Color(0xFF064E3B),
+                                    Color(0xFF047857),
+                                    Color(0xFF059669)
                                 )
                             )
                         )
-                        .padding(20.dp)
+                        .padding(18.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        // Top Header inside card
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(Color.White.copy(alpha = 0.15f)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Spa,
-                                        contentDescription = null,
-                                        tint = Color(0xFFFDE047),
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text(
-                                        text = "GMINA WIELISZEW",
-                                        color = Color(0xFFFDE047),
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        letterSpacing = 1.2.sp
-                                    )
-                                    Text(
-                                        text = "KARTA MIESZKAŃCA",
-                                        color = Color.White,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.ExtraBold
-                                    )
-                                }
+                            Column {
+                                Text(
+                                    text = "GMINA WIELISZEW",
+                                    color = Color(0xFFFDE047),
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    text = "KARTA MIESZKAŃCA (WKM)",
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
                             }
-
                             Surface(
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(10.dp),
                                 color = Color.White.copy(alpha = 0.2f)
                             ) {
                                 Text(
@@ -261,87 +199,69 @@ fun HomeScreen(
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    letterSpacing = 0.5.sp
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(18.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
-                        // Middle Row: User Details & Mini QR
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
+                            Column {
                                 Text(
                                     text = card.holderName,
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = if (isSenior) 20.sp else 18.sp
+                                    fontSize = if (isSenior) 19.sp else 17.sp
                                 )
-                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = card.cardNumber,
                                     color = Color.White.copy(alpha = 0.85f),
-                                    fontSize = 13.sp,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontSize = 12.sp,
+                                    fontFamily = FontFamily.Monospace
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = "Ważność: ${card.validUntil}",
                                     color = Color.White.copy(alpha = 0.7f),
-                                    fontSize = 11.sp
+                                    fontSize = 10.sp
                                 )
                             }
 
                             if (miniQrBitmap != null) {
                                 Surface(
-                                    shape = RoundedCornerShape(12.dp),
+                                    shape = RoundedCornerShape(10.dp),
                                     color = Color.White,
-                                    modifier = Modifier.size(64.dp)
+                                    modifier = Modifier.size(56.dp)
                                 ) {
                                     Image(
                                         bitmap = miniQrBitmap.asImageBitmap(),
-                                        contentDescription = "Mini QR",
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(5.dp)
+                                        contentDescription = "Kod QR",
+                                        modifier = Modifier.fillMaxSize().padding(4.dp)
                                     )
                                 }
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                        // Bottom Action Cue inside pass
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Nfc,
-                                    contentDescription = null,
-                                    tint = Color.White.copy(alpha = 0.85f),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "Bilet elektroniczny • Zbliż NFC",
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-
+                            Text(
+                                text = "Ulgi gminne • Wypożyczalnia CUS • OSiR",
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 11.sp
+                            )
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "Otwórz kartę",
+                                    text = "Szczegóły",
                                     color = Color(0xFFFDE047),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold
@@ -351,7 +271,7 @@ fun HomeScreen(
                                     imageVector = Icons.Filled.ChevronRight,
                                     contentDescription = null,
                                     tint = Color(0xFFFDE047),
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(15.dp)
                                 )
                             }
                         }
@@ -360,10 +280,70 @@ fun HomeScreen(
             }
         }
 
-        // Sekcja: Szybkie Usługi CUS (Siatka 2x2 z nowoczesnymi pastelowymi akcentami)
+        // 3. Sekcja: Twoje Sprawy i Wnioski w CUS (Intake / Case Status)
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Moje Sprawy i Wnioski CUS",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 17.sp
+                )
+                TextButton(onClick = onNavigateToAssistant) {
+                    Text("+ Nowy wniosek", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Sprawa 1: Sprzęt rehabilitacyjny
+                CusCaseItemCard(
+                    icon = Icons.Outlined.MedicalServices,
+                    title = "Wypożyczenie wózka inwalidzkiego",
+                    subtitle = "Wniosek rozpatrzony pozytywnie",
+                    statusText = "Gotowy do odbioru",
+                    statusColor = Color(0xFF059669),
+                    statusBg = Color(0xFFD1FAE5),
+                    locationOrDate = "Siedziba CUS: ul. Modlińska 65",
+                    onClick = onNavigateToSharing
+                )
+
+                // Sprawa 2: Dyżur specjalisty
+                CusCaseItemCard(
+                    icon = Icons.Outlined.SupportAgent,
+                    title = "Konsultacja z psychologiem CUS",
+                    subtitle = "Dyżur specjalistyczny dla mieszkańców",
+                    statusText = "Zaplanowana wizyta",
+                    statusColor = Color(0xFF2563EB),
+                    statusBg = Color(0xFFDBEAFE),
+                    locationOrDate = "Najbliższy czwartek • godz. 14:00",
+                    onClick = onNavigateToTelehealth
+                )
+
+                // Sprawa 3: Pomoc sąsiedzka
+                CusCaseItemCard(
+                    icon = Icons.Outlined.VolunteerActivism,
+                    title = "Pomoc w zakupach leków (Sołectwo Wieliszew)",
+                    subtitle = "Koordynator wolontariatu sąsiedzkiego",
+                    statusText = "W trakcie realizacji",
+                    statusColor = Color(0xFFD97706),
+                    statusBg = Color(0xFFFEF3C7),
+                    locationOrDate = "Wolontariusz przydzielony",
+                    onClick = onNavigateToMap
+                )
+            }
+        }
+
+        // 4. Sekcja: Usługi Społeczne Centrum (Katalog 4 Filarów)
         item {
             Text(
-                text = "Usługi dla Ciebie",
+                text = "Katalog Usług Społecznych CUS",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -377,23 +357,23 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    ModernQuickServiceTile(
+                    CusServiceTile(
                         modifier = Modifier.weight(1f),
-                        title = "Mapa Pomocy",
-                        subtitle = "Sąsiedzi & wolontariat",
-                        icon = Icons.Outlined.Explore,
-                        iconTint = Color(0xFF059669),
-                        containerTint = Color(0xFFD1FAE5),
-                        onClick = onNavigateToMap
+                        title = "Dyżury Specjalistów",
+                        description = "Psycholog, prawnik, koordynator",
+                        icon = Icons.Outlined.MedicalServices,
+                        containerColor = Color(0xFFDBEAFE),
+                        iconColor = Color(0xFF1D4ED8),
+                        onClick = onNavigateToTelehealth
                     )
-                    ModernQuickServiceTile(
+                    CusServiceTile(
                         modifier = Modifier.weight(1f),
-                        title = "Bank Czasu",
-                        subtitle = "Wymiana wiedzy i usług",
-                        icon = Icons.Outlined.Handshake,
-                        iconTint = Color(0xFFD97706),
-                        containerTint = Color(0xFFFEF3C7),
-                        onClick = onNavigateToTimeBank
+                        title = "Wypożyczalnia Sprzętu",
+                        description = "Wózki, łóżka, kule medyczne",
+                        icon = Icons.Outlined.AccessibilityNew,
+                        containerColor = Color(0xFFEDE9FE),
+                        iconColor = Color(0xFF6D28D9),
+                        onClick = onNavigateToSharing
                     )
                 }
 
@@ -401,29 +381,29 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    ModernQuickServiceTile(
+                    CusServiceTile(
                         modifier = Modifier.weight(1f),
-                        title = "Specjaliści CUS",
-                        subtitle = "Psycholog, prawnik, doradca",
-                        icon = Icons.Outlined.SupportAgent,
-                        iconTint = Color(0xFF2563EB),
-                        containerTint = Color(0xFFDBEAFE),
-                        onClick = onNavigateToTelehealth
+                        title = "Mapa Zgłoszeń",
+                        description = "Pomoc sąsiedzka w sołectwach",
+                        icon = Icons.Outlined.Explore,
+                        containerColor = Color(0xFFD1FAE5),
+                        iconColor = Color(0xFF047857),
+                        onClick = onNavigateToMap
                     )
-                    ModernQuickServiceTile(
+                    CusServiceTile(
                         modifier = Modifier.weight(1f),
-                        title = "Sprzęt & Eko",
-                        subtitle = "Wypożyczalnia i jadłodzielnia",
-                        icon = Icons.Outlined.Recycling,
-                        iconTint = Color(0xFF7C3AED),
-                        containerTint = Color(0xFFEDE9FE),
-                        onClick = onNavigateToSharing
+                        title = "Bank Czasu",
+                        description = "Wymiana wiedzy i umiejętności",
+                        icon = Icons.Outlined.Handshake,
+                        containerColor = Color(0xFFFEF3C7),
+                        iconColor = Color(0xFFB45309),
+                        onClick = onNavigateToTimeBank
                     )
                 }
             }
         }
 
-        // Sekcja: Wieliszew Live (Eko-Puls & Komunikacja w jednym czystym komponencie)
+        // 5. Sekcja: Dyżury i Kontakt z Centrum Usług Społecznych
         item {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -431,123 +411,82 @@ fun HomeScreen(
                 color = MaterialTheme.colorScheme.surface,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Left Column: Eko-Puls
-                    Surface(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(modifier = Modifier.padding(10.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Air,
-                                    contentDescription = null,
-                                    tint = Color(0xFF059669),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.AccountBalance,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
                                 Text(
-                                    text = "Powietrze",
-                                    fontSize = 11.sp,
+                                    text = "Centrum Usług Społecznych",
                                     fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.titleSmall,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
+                                Text(
+                                    text = "ul. Modlińska 65, 05-135 Wieliszew",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Bardzo dobre",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF059669)
-                            )
-                            Text(
-                                text = "PM2.5: 8 µg • Zegrze 14°C",
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                         }
                     }
 
-                    // Right Column: L-komunikacja
-                    Surface(
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerLow
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column(modifier = Modifier.padding(10.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.DirectionsBus,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "L-busy Wieliszew",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("Linia L9", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                                Text("za 9 min", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF059669))
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text("Linia L10", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text("za 22 min", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
+                        Column {
+                            Text("Godziny otwarcia:", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text("Pn: 8:00–18:00 • Wt–Czw: 8:00–16:00 • Pt: 8:00–14:00", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Infolinia CUS: 22 782 01 00",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        FilledTonalButton(
+                            onClick = onNavigateToAssistant,
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text("Doradca online", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
         }
 
-        // Sekcja: Wydarzenia i Integracja
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Lokalne Wydarzenia",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 17.sp
-                )
-                Text(
-                    text = "${events.size} w gminie",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        items(events.take(2)) { event ->
-            ModernEventCard(
-                event = event,
-                onToggleRegistration = { repository.toggleEventRegistration(event.id) }
-            )
-        }
-
-        // Sekcja: Komunikaty i Alerty Gminy
+        // 6. Sekcja: Komunikaty i Aktualności Społeczne
         if (notifications.isNotEmpty()) {
             item {
                 Row(
@@ -556,14 +495,14 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Ważne Komunikaty",
+                        text = "Komunikaty CUS i Gminy",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 17.sp
                     )
                     Text(
-                        text = "${notifications.size} alerty",
+                        text = "${notifications.size} aktualne",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -571,25 +510,136 @@ fun HomeScreen(
             }
 
             items(notifications.take(2)) { notif ->
-                ModernNotificationCard(notification = notif)
+                OfficialNotificationCard(notification = notif)
+            }
+        }
+
+        // 7. Wydarzenia CUS
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Warsztaty i Spotkania Społeczne",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 17.sp
+                )
+                Text(
+                    text = "${events.size} wydarzenia",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        items(events.take(2)) { event ->
+            OfficialEventCard(
+                event = event,
+                onToggleRegistration = { repository.toggleEventRegistration(event.id) }
+            )
+        }
+    }
+}
+
+@Composable
+fun CusCaseItemCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    statusText: String,
+    statusColor: Color,
+    statusBg: Color,
+    locationOrDate: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                }
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = statusBg
+                    ) {
+                        Text(
+                            text = statusText,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = statusColor,
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 11.sp
+                )
+                Text(
+                    text = locationOrDate,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 10.sp
+                )
             }
         }
     }
 }
 
 @Composable
-fun ModernQuickServiceTile(
+fun CusServiceTile(
     modifier: Modifier = Modifier,
     title: String,
-    subtitle: String,
+    description: String,
     icon: ImageVector,
-    iconTint: Color,
-    containerTint: Color,
+    containerColor: Color,
+    iconColor: Color,
     onClick: () -> Unit
 ) {
     Surface(
         modifier = modifier
-            .height(108.dp)
+            .height(115.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -603,16 +653,11 @@ fun ModernQuickServiceTile(
         ) {
             Surface(
                 shape = CircleShape,
-                color = containerTint,
-                modifier = Modifier.size(36.dp)
+                color = containerColor,
+                modifier = Modifier.size(38.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconTint,
-                        modifier = Modifier.size(19.dp)
-                    )
+                    Icon(imageVector = icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(20.dp))
                 }
             }
             Column {
@@ -625,7 +670,7 @@ fun ModernQuickServiceTile(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = subtitle,
+                    text = description,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp,
@@ -638,87 +683,7 @@ fun ModernQuickServiceTile(
 }
 
 @Composable
-fun ModernEventCard(
-    event: CusEvent,
-    onToggleRegistration: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                StatusBadge(
-                    text = event.category,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = event.dateText,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = event.title,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-            Text(
-                text = event.location,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Miejsca: ${event.spotsTaken}/${event.spotsTotal}",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Button(
-                    onClick = onToggleRegistration,
-                    colors = if (event.isRegistered) {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    },
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text(
-                        text = if (event.isRegistered) "Zrezygnuj" else "Zapisz się",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ModernNotificationCard(notification: MunicipalNotification) {
+fun OfficialNotificationCard(notification: MunicipalNotification) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
@@ -765,6 +730,86 @@ fun ModernNotificationCard(notification: MunicipalNotification) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun OfficialEventCard(
+    event: CusEvent,
+    onToggleRegistration: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                StatusBadge(
+                    text = event.category,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = event.dateText,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = event.title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = "${event.location} • ${event.organizer}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Miejsca: ${event.spotsTaken}/${event.spotsTotal}",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Button(
+                    onClick = onToggleRegistration,
+                    colors = if (event.isRegistered) {
+                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    } else {
+                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    },
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = if (event.isRegistered) "Zrezygnuj" else "Zapisz się",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
