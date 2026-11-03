@@ -1,6 +1,6 @@
 /**
  * Smart CUS Wieliszew - Production-Ready Multi-Module Web & PWA Engine
- * Complete Social Services Hub of Gmina Wieliszew
+ * Complete Social Services & Municipal Platform of Gmina Wieliszew (v2.0)
  */
 
 // Default Initial State
@@ -78,7 +78,7 @@ const DEFAULT_STATE = {
       points: 50,
       lat: 52.4572,
       lng: 20.9785,
-      status: "OPEN" // OPEN, IN_PROGRESS, COMPLETED
+      status: "OPEN"
     },
     {
       id: "pin-2",
@@ -153,7 +153,7 @@ const DEFAULT_STATE = {
     }
   ],
   badges: [
-    { id: "b-1", title: "Serce Wieliszewa", emoji: "❤️", unlocked: true, desc: "Przyznana za wykonanie co najmniej 3 akcji wolontariatu na rzecz seniorów." },
+    { id: "b-1", title: "Serce Wieliszewa", emoji: "❤️", unlocked: true, desc: "Przyznana za wykonanie co najmniej 3 akcji wolontariatu na rzecz seniorów w gminie." },
     { id: "b-2", title: "Aktywny Sąsiad", emoji: "🤝", unlocked: true, desc: "Przyznana za pierwszą wymianę umiejętności w Banku Czasu." },
     { id: "b-3", title: "Mistrz Ekologii", emoji: "🌱", unlocked: true, desc: "Przyznana za udział w Jadłodzielni Wieliszew i niemarnowanie żywności." },
     { id: "b-4", title: "Promotor Zdrowia", emoji: "🏅", unlocked: false, desc: "Zapisz się i weź udział w 3 warsztatach prozdrowotnych CUS." },
@@ -214,7 +214,7 @@ const DEFAULT_STATE = {
     {
       id: "sp-3",
       name: "mgr Elżbieta Zielińska",
-      role: "Koordynator Indywidualnych Usług CUS",
+      role: "Koordynator Usług CUS",
       today: false,
       slot: "Jutro, godz. 09:00",
       desc: "Opieka wytchnieniowa, asystent osobisty osoby z niepełnosprawnością, plany wsparcia."
@@ -237,7 +237,7 @@ const DEFAULT_STATE = {
       category: "Sprzęt Rehabilitacyjny",
       location: "Świetlica Wiejska w Skrzeszewie",
       status: "Dostępny od ręki (1 szt.)",
-      desc: "Lekka konstrukcja, blokada hamulców, wygodne siedzisko do odpoczynku.",
+      desc: "Lekka konstrukcja, blokada hamulców, wygodne siedzisko do odpoczynku na spacerze.",
       reserved: false,
       reserveCode: null
     },
@@ -247,7 +247,7 @@ const DEFAULT_STATE = {
       category: "Jadłodzielnia Wieliszew",
       location: "Lodówka Jadłodzielni przy CUS (czynna 24/7)",
       status: "Dostępne (8 kg)",
-      desc: "Dar od lokalnego gospodarstwa z Kałuszyna. Zachęcamy do bezpłatnego częstowania się!",
+      desc: "Dar od lokalnego sadownika z Kałuszyna. Zapraszamy do bezpłatnego częstowania się!",
       reserved: false,
       reserveCode: null
     },
@@ -265,10 +265,10 @@ const DEFAULT_STATE = {
   chatHistory: [
     {
       sender: "assistant",
-      text: "Dzień dobry Pani Janino! Jestem wirtualnym asystentem Smart CUS Wieliszew. W czym mogę dziś pomóc? Mogę sprawdzić Pani e-Kartę, zapisać na gimnastykę dla seniorów lub połączyć z psychologiem.",
+      text: "Dzień dobry Pani Janino! Jestem wirtualnym asystentem Smart CUS Wieliszew. W czym mogę dziś pomóc? Mogę sprawdzić kryteria dochodowe do zasiłku, e-Kartę Mieszkańca, wolne terminy gimnastyki lub połączyć z psychologiem.",
       recommendations: [
-        { title: "Zajęcia gimnastyczne Zdrowy Kręgosłup 60+", sub: "Czwartki, Hala Wieliszew", tab: "pane-card" },
-        { title: "Twoja e-Karta Mieszkańca", sub: "Sprawdź kod QR i ulgi gminne", tab: "pane-card" }
+        { title: "Kalkulator Świadczeń CUS 2026", sub: "Oblicz przysługujący zasiłek", action: "calc" },
+        { title: "Zajęcia Zdrowy Kręgosłup 60+", sub: "Czwartki, Hala Wieliszew", action: "card" }
       ]
     }
   ]
@@ -289,10 +289,9 @@ let localCameraStream = null;
 // ==========================================================================
 function loadState() {
   try {
-    const raw = localStorage.getItem("smart_cus_state_v2");
+    const raw = localStorage.getItem("smart_cus_state_v3");
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Merge with default state structure
       return Object.assign({}, DEFAULT_STATE, parsed, {
         user: Object.assign({}, DEFAULT_STATE.user, parsed.user || {})
       });
@@ -305,15 +304,15 @@ function loadState() {
 
 function saveState() {
   try {
-    localStorage.setItem("smart_cus_state_v2", JSON.stringify(state));
+    localStorage.setItem("smart_cus_state_v3", JSON.stringify(state));
   } catch (e) {
     console.error("Błąd zapisu localStorage:", e);
   }
 }
 
 function resetAppData() {
-  if (confirm("Czy na pewno chcesz zresetować dane symulatora do stanu początkowego?")) {
-    localStorage.removeItem("smart_cus_state_v2");
+  if (confirm("Czy na pewno chcesz zresetować stan symulatora do danych początkowych?")) {
+    localStorage.removeItem("smart_cus_state_v3");
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
     saveState();
     location.reload();
@@ -328,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initTotpTimer();
   applyUserPreferences();
   renderChatMessages();
-  renderEvents();
   renderVouchers();
   renderNeedPins();
   renderTimeBank();
@@ -338,16 +336,23 @@ document.addEventListener("DOMContentLoaded", () => {
   renderBarcodeSvg();
   initPwaInstall();
   updateNotificationBadge();
+  recalculateBenefits();
+  updateWasteDisplay(state.user.village || "Wieliszew");
 });
 
-// Apply theme, font scale, user name
 function applyUserPreferences() {
   document.body.classList.toggle("senior-mode", state.user.seniorMode);
   
   document.body.classList.remove("font-scale-sm", "font-scale-md", "font-scale-lg", "font-scale-xl");
   document.body.classList.add(state.user.fontScale || "font-scale-md");
 
-  // User elements
+  // Dashboard elements
+  const dashWelcome = document.getElementById("dashboard-welcome-name");
+  if (dashWelcome) dashWelcome.textContent = `Dzień dobry, ${state.user.name}! 👋`;
+
+  const dashVillage = document.getElementById("dashboard-village-sub");
+  if (dashVillage) dashVillage.textContent = `Sołectwo ${state.user.village} • Karta WKM Aktywna`;
+
   const nameEl = document.getElementById("card-holder-name");
   if (nameEl) nameEl.textContent = state.user.name;
 
@@ -363,19 +368,25 @@ function applyUserPreferences() {
     avatarEl.textContent = initials || "WKM";
   }
 
-  // Senior mode pill in header
+  // Senior mode pill
   const seniorPill = document.getElementById("btn-toggle-senior");
   if (seniorPill) {
     seniorPill.classList.toggle("active", state.user.seniorMode);
     seniorPill.innerHTML = state.user.seniorMode
       ? "<span>👁️</span> Tryb Seniora: WŁĄCZONY"
-      : "<span>👁️</span> Tryb Seniora (WCAG 2.1 AA)";
+      : "<span>👁️</span> Tryb Seniora (WCAG)";
   }
+
+  // Update inline settings fields
+  const inpName = document.getElementById("inline-profile-name");
+  if (inpName) inpName.value = state.user.name;
+  const inpVillage = document.getElementById("inline-profile-village");
+  if (inpVillage) inpVillage.value = state.user.village;
+  const inpIce = document.getElementById("inline-profile-ice");
+  if (inpIce) inpIce.value = state.user.iceContact;
 }
 
-// ==========================================================================
-// PWA SERVICE WORKER
-// ==========================================================================
+// PWA Install
 let deferredPrompt = null;
 function initPwaInstall() {
   if ("serviceWorker" in navigator) {
@@ -388,7 +399,6 @@ function initPwaInstall() {
   });
 }
 
-// Clock in Status Bar
 function initClock() {
   const updateClock = () => {
     const now = new Date();
@@ -402,7 +412,7 @@ function initClock() {
 }
 
 // ==========================================================================
-// TOTP DYNAMIC QR CODE & BARCODE ENGINE
+// TOTP DYNAMIC QR CODE & SVG BARCODE
 // ==========================================================================
 function initTotpTimer() {
   const bar = document.getElementById("totp-progress-bar");
@@ -439,32 +449,32 @@ function generateQrCodePattern() {
   const randOffset2 = Math.abs(Math.floor((hashVal * 2) % 60));
 
   return `
-    <rect width="160" height="160" fill="#ffffff" rx="12"/>
+    <rect width="160" height="160" fill="#ffffff" rx="14"/>
     <!-- Corner Top-Left -->
-    <rect x="12" y="12" width="38" height="38" fill="#137547" rx="6"/>
+    <rect x="12" y="12" width="38" height="38" fill="#11683e" rx="6"/>
     <rect x="20" y="20" width="22" height="22" fill="#ffffff" rx="4"/>
-    <rect x="25" y="25" width="12" height="12" fill="#137547" rx="2"/>
+    <rect x="25" y="25" width="12" height="12" fill="#11683e" rx="2"/>
     <!-- Corner Top-Right -->
-    <rect x="110" y="12" width="38" height="38" fill="#137547" rx="6"/>
+    <rect x="110" y="12" width="38" height="38" fill="#11683e" rx="6"/>
     <rect x="118" y="20" width="22" height="22" fill="#ffffff" rx="4"/>
-    <rect x="123" y="25" width="12" height="12" fill="#137547" rx="2"/>
+    <rect x="123" y="25" width="12" height="12" fill="#11683e" rx="2"/>
     <!-- Corner Bottom-Left -->
-    <rect x="12" y="110" width="38" height="38" fill="#137547" rx="6"/>
+    <rect x="12" y="110" width="38" height="38" fill="#11683e" rx="6"/>
     <rect x="20" y="118" width="22" height="22" fill="#ffffff" rx="4"/>
-    <rect x="25" y="123" width="12" height="12" fill="#137547" rx="2"/>
+    <rect x="25" y="123" width="12" height="12" fill="#11683e" rx="2"/>
     <!-- Central Security Emblem -->
-    <circle cx="80" cy="80" r="16" fill="#dda72a"/>
-    <text x="80" y="84" text-anchor="middle" font-size="9" font-weight="900" fill="#000000">WKM</text>
+    <circle cx="80" cy="80" r="16" fill="#c9931b"/>
+    <text x="80" y="84" text-anchor="middle" font-size="9" font-weight="900" fill="#0f172a">WKM</text>
     <!-- Dynamic Matrix Hash Blocks -->
-    <rect x="${58 + (randOffset1 % 20)}" y="20" width="8" height="8" fill="#141c18"/>
-    <rect x="${80 - (randOffset2 % 15)}" y="32" width="8" height="8" fill="#141c18"/>
-    <rect x="62" y="${50 + (randOffset1 % 10)}" width="8" height="8" fill="#141c18"/>
-    <rect x="90" y="60" width="8" height="8" fill="#141c18"/>
-    <rect x="120" y="${68 + (randOffset2 % 12)}" width="8" height="8" fill="#141c18"/>
-    <rect x="${65 + (randOffset2 % 18)}" y="100" width="8" height="8" fill="#141c18"/>
-    <rect x="100" y="112" width="8" height="8" fill="#141c18"/>
-    <rect x="125" y="128" width="8" height="8" fill="#141c18"/>
-    <rect x="75" y="130" width="8" height="8" fill="#141c18"/>
+    <rect x="${58 + (randOffset1 % 20)}" y="20" width="8" height="8" fill="#0f172a"/>
+    <rect x="${80 - (randOffset2 % 15)}" y="32" width="8" height="8" fill="#0f172a"/>
+    <rect x="62" y="${50 + (randOffset1 % 10)}" width="8" height="8" fill="#0f172a"/>
+    <rect x="90" y="60" width="8" height="8" fill="#0f172a"/>
+    <rect x="120" y="${68 + (randOffset2 % 12)}" width="8" height="8" fill="#0f172a"/>
+    <rect x="${65 + (randOffset2 % 18)}" y="100" width="8" height="8" fill="#0f172a"/>
+    <rect x="100" y="112" width="8" height="8" fill="#0f172a"/>
+    <rect x="125" y="128" width="8" height="8" fill="#0f172a"/>
+    <rect x="75" y="130" width="8" height="8" fill="#0f172a"/>
   `;
 }
 
@@ -475,13 +485,12 @@ function renderBarcodeSvg() {
   let x = 6;
   const pattern = [2, 1, 3, 1, 1, 2, 3, 2, 1, 1, 2, 3, 1, 2, 1, 3, 2, 1, 1, 3, 2, 2, 1, 1, 3];
   pattern.forEach(w => {
-    lines += `<rect x="${x}" y="2" width="${w * 1.5}" height="24" fill="#000000"/>`;
+    lines += `<rect x="${x}" y="2" width="${w * 1.5}" height="22" fill="#000000"/>`;
     x += w * 1.5 + 2.5;
   });
   svg.innerHTML = lines;
 }
 
-// 3D Card Flip
 function flipWkmCard() {
   const card = document.getElementById("wkm-card-wallet");
   if (card) {
@@ -491,16 +500,15 @@ function flipWkmCard() {
   }
 }
 
-// Fullscreen QR Modal
 function openFullscreenQrModal() {
   document.getElementById("modal-qr-fullscreen").classList.add("active");
   playTone(800, 0.1);
 }
 
 // ==========================================================================
-// TAB SWITCHING & SUB-TABS
+// 5-DESTINATION TAB SWITCHING & SUBTABS
 // ==========================================================================
-function switchTab(paneId, btnElement) {
+function switchTab(paneId, btnElement, subView = null) {
   document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
   const target = document.getElementById(paneId);
   if (target) target.classList.add("active");
@@ -509,15 +517,12 @@ function switchTab(paneId, btnElement) {
   if (btnElement) {
     btnElement.classList.add("active");
   } else {
-    // Find matching bottom nav button
     const map = {
-      "pane-assistant": "tab-btn-assistant",
+      "pane-dashboard": "tab-btn-dashboard",
       "pane-card": "tab-btn-card",
       "pane-map": "tab-btn-map",
-      "pane-timebank": "tab-btn-timebank",
-      "pane-gamification": "tab-btn-gamification",
-      "pane-telehealth": "tab-btn-telehealth",
-      "pane-sharing": "tab-btn-sharing"
+      "pane-community": "tab-btn-community",
+      "pane-services": "tab-btn-services"
     };
     const bId = map[paneId];
     if (bId) {
@@ -526,11 +531,14 @@ function switchTab(paneId, btnElement) {
     }
   }
 
-  // Scroll to top of app content
+  // Handle direct subviews if requested
+  if (subView === "vouchers") switchCardSubtab("vouchers-view");
+  if (subView === "sharing") switchCommunitySubtab("sharing-view");
+  if (subView === "telehealth") switchServicesSubtab("telehealth-view");
+
   const content = document.getElementById("app-content");
   if (content) content.scrollTop = 0;
 
-  // Initialize Map if opened
   if (paneId === "pane-map") {
     setTimeout(initLeafletMap, 150);
   }
@@ -556,8 +564,154 @@ function switchCardSubtab(view) {
   }
 }
 
+function switchCommunitySubtab(view) {
+  const btnTb = document.getElementById("subtab-btn-timebank");
+  const btnSh = document.getElementById("subtab-btn-sharing");
+  const viewTb = document.getElementById("community-subtab-timebank");
+  const viewSh = document.getElementById("community-subtab-sharing");
+
+  if (view === "timebank-view") {
+    btnTb.classList.add("active");
+    btnSh.classList.remove("active");
+    viewTb.style.display = "block";
+    viewSh.style.display = "none";
+  } else {
+    btnTb.classList.remove("active");
+    btnSh.classList.add("active");
+    viewTb.style.display = "none";
+    viewSh.style.display = "block";
+    renderSharingItems();
+  }
+}
+
+function switchServicesSubtab(view) {
+  const btnTh = document.getElementById("subtab-btn-telehealth");
+  const btnGm = document.getElementById("subtab-btn-gamification");
+  const btnPr = document.getElementById("subtab-btn-profile");
+  const viewTh = document.getElementById("services-subtab-telehealth");
+  const viewGm = document.getElementById("services-subtab-gamification");
+  const viewPr = document.getElementById("services-subtab-profile");
+
+  btnTh.classList.remove("active");
+  btnGm.classList.remove("active");
+  btnPr.classList.remove("active");
+  viewTh.style.display = "none";
+  viewGm.style.display = "none";
+  viewPr.style.display = "none";
+
+  if (view === "telehealth-view") {
+    btnTh.classList.add("active");
+    viewTh.style.display = "block";
+  } else if (view === "gamification-view") {
+    btnGm.classList.add("active");
+    viewGm.style.display = "block";
+  } else {
+    btnPr.classList.add("active");
+    viewPr.style.display = "block";
+  }
+}
+
 // ==========================================================================
-// SENIOR MODE & ACCESSIBILITY CONTROLS
+// KALKULATOR ŚWIADCZEŃ CUS WIELISZEW 2026
+// ==========================================================================
+function openBenefitCalcModal() {
+  document.getElementById("modal-benefit-calc").classList.add("active");
+  recalculateBenefits();
+}
+
+function recalculateBenefits() {
+  const people = parseInt(document.getElementById("calc-people").value) || 1;
+  const income = parseFloat(document.getElementById("calc-income").value) || 0;
+  const resultBox = document.getElementById("calc-result-container");
+  if (!resultBox) return;
+
+  const thresholdPerPerson = people === 1 ? 1010 : 776;
+  const totalThreshold = thresholdPerPerson * people;
+  const perPersonIncome = income / people;
+
+  if (income <= totalThreshold) {
+    const diff = totalThreshold - income;
+    const estBenefit = Math.max(100, Math.round(diff * 0.85));
+    resultBox.style.background = "var(--primary-container)";
+    resultBox.style.color = "var(--on-primary-container)";
+    resultBox.innerHTML = `
+      <div style="font-size: 15px; font-weight: 800;">✅ Przysługuje Wsparcie Społeczne CUS</div>
+      <div style="font-size: 12px; margin-top: 4px; font-weight: normal;">
+        Dochód na osobę: <strong>${perPersonIncome.toFixed(2)} zł</strong> (Próg ustawowy: ${thresholdPerPerson} zł)<br>
+        Szacowana kwota zasiłku okresowego / stałego: <strong>ok. ${estBenefit} zł / mies.</strong>
+      </div>
+    `;
+  } else {
+    const excess = income - totalThreshold;
+    resultBox.style.background = "#fee2e2";
+    resultBox.style.color = "#991b1b";
+    resultBox.innerHTML = `
+      <div style="font-size: 15px; font-weight: 800;">ℹ️ Przekroczenie Kryterium Dochodowego</div>
+      <div style="font-size: 12px; margin-top: 4px; font-weight: normal;">
+        Dochód na osobę: <strong>${perPersonIncome.toFixed(2)} zł</strong> (Próg: ${thresholdPerPerson} zł)<br>
+        Możesz ubiegać się o niefinansowe formy wsparcia (np. usługi opiekuńcze, Jadłodzielnia, Bank Czasu, bezpłatny sprzęt rehabilitacyjny).
+      </div>
+    `;
+  }
+}
+
+function consultBenefitWithCus() {
+  closeModals();
+  switchTab('pane-services', null, 'telehealth');
+  showToast("Przekierowano do telekonsultacji z koordynatorem CUS Wieliszew.");
+}
+
+// ==========================================================================
+// MODUŁY MIEJSKIE: ROZKŁAD AUTOBUSÓW & HARMONOGRAM ODPADÓW
+// ==========================================================================
+function openBusScheduleModal() {
+  document.getElementById("modal-bus-schedule").classList.add("active");
+}
+
+function openWasteScheduleModal() {
+  document.getElementById("modal-waste-schedule").classList.add("active");
+  updateWasteDisplay(document.getElementById("waste-village-select").value);
+}
+
+function updateWasteDisplay(village) {
+  const cont = document.getElementById("waste-dates-container");
+  if (!cont) return;
+
+  const schedules = {
+    "Wieliszew": [
+      { type: "Odpady zmieszane", date: "Czwartki (najbliższy: 5 Listopada)", badge: "badge-blue" },
+      { type: "Plastik i Metale (żółty worek)", date: "Co drugi wtorek (10 Listopada)", badge: "badge-gold" },
+      { type: "Bioodpady (brązowy worek)", date: "Piątki (6 Listopada)", badge: "badge-green" },
+      { type: "Papier i Szkło", date: "Środa, 18 Listopada", badge: "badge-purple" },
+      { type: "Wielkogabaryty & Elektrośmieci", date: "Sobota, 28 Listopada (PSZOK Wieliszew)", badge: "badge-red" }
+    ],
+    "Skrzeszew": [
+      { type: "Odpady zmieszane", date: "Środy (najbliższy: 4 Listopada)", badge: "badge-blue" },
+      { type: "Plastik i Metale", date: "Poniedziałki (9 Listopada)", badge: "badge-gold" },
+      { type: "Bioodpady", date: "Czwartki (5 Listopada)", badge: "badge-green" },
+      { type: "Papier i Szkło", date: "Wtorek, 17 Listopada", badge: "badge-purple" }
+    ]
+  };
+
+  const list = schedules[village] || schedules["Wieliszew"];
+  cont.innerHTML = "";
+  list.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "gov-card";
+    card.style.margin = "0";
+    card.style.padding = "10px 12px";
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="badge ${item.badge}">${item.type}</span>
+        <span style="font-size: 11.5px; font-weight: bold; color: var(--primary);">${item.date}</span>
+      </div>
+    `;
+    cont.appendChild(card);
+  });
+}
+
+// ==========================================================================
+// SENIOR MODE & WCAG CONTROLS
 // ==========================================================================
 function toggleSeniorMode() {
   state.user.seniorMode = !state.user.seniorMode;
@@ -566,7 +720,7 @@ function toggleSeniorMode() {
 
   showToast(
     state.user.seniorMode
-      ? "👁️ Włączono Tryb Seniora: powiększone czcionki, wysoki kontrast WCAG 2.1 AA"
+      ? "👁️ Włączono Tryb Seniora: powiększone czcionki, wysoki kontrast WCAG 2.1 AAA"
       : "Przywrócono standardowy tryb wyświetlania"
   );
   playTone(state.user.seniorMode ? 659 : 440, 0.15);
@@ -576,11 +730,10 @@ function setFontScale(scaleClass) {
   state.user.fontScale = scaleClass;
   saveState();
   applyUserPreferences();
-  showToast(`Zmieniono rozmiar tekstu aplikacji`);
+  showToast("Dostosowano rozmiar tekstu aplikacji");
 }
 
-// Desktop Simulator Viewport Switcher
-let currentViewportMode = 0; // 0: 412px, 1: 580px, 2: fullscreen
+let currentViewportMode = 0;
 function toggleViewportSize() {
   const frame = document.getElementById("phone-frame");
   const btn = document.getElementById("btn-toggle-viewport");
@@ -589,17 +742,16 @@ function toggleViewportSize() {
   frame.classList.remove("view-expanded", "view-fullscreen");
   if (currentViewportMode === 1) {
     frame.classList.add("view-expanded");
-    if (btn) btn.innerHTML = "<span>📱</span> Widok: Tablet (580px)";
+    if (btn) btn.innerHTML = "<span>📱</span> Widok: Tablet (600px)";
   } else if (currentViewportMode === 2) {
     frame.classList.add("view-fullscreen");
     if (btn) btn.innerHTML = "<span>📱</span> Widok: Pełny Ekran (100%)";
   } else {
-    if (btn) btn.innerHTML = "<span>📱</span> Widok: Smartfon (412px)";
+    if (btn) btn.innerHTML = "<span>📱</span> Widok: Smartfon (416px)";
   }
   if (leafletMap) setTimeout(() => leafletMap.invalidateSize(), 300);
 }
 
-// Toast Notification
 function showToast(msg) {
   const t = document.getElementById("toast-msg");
   if (t) {
@@ -612,7 +764,6 @@ function showToast(msg) {
   }
 }
 
-// Audio synthesizer for feedback
 function playTone(freq, dur) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -626,9 +777,7 @@ function playTone(freq, dur) {
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + dur);
-  } catch (e) {
-    // audio context blocked or unsupported
-  }
+  } catch (e) {}
 }
 
 function simulateNfcTap() {
@@ -647,7 +796,6 @@ function openSosModal() {
   setTimeout(() => playTone(587, 0.3), 260);
   if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
 
-  // Request actual GPS if available
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       pos => {
@@ -656,9 +804,7 @@ function openSosModal() {
           gpsEl.textContent = `Współrzędne: ${pos.coords.latitude.toFixed(4)}° N, ${pos.coords.longitude.toFixed(4)}° E (Dokładność: ±${Math.round(pos.coords.accuracy)}m)`;
         }
       },
-      err => {
-        console.log("GPS denied or unavailable:", err.message);
-      },
+      err => console.log("GPS denied or unavailable:", err.message),
       { timeout: 5000 }
     );
   }
@@ -683,7 +829,6 @@ function sendIceEmergencySms() {
 // ==========================================================================
 function openNotificationsModal() {
   document.getElementById("modal-notifications").classList.add("active");
-  // Mark all as read
   state.notifications.forEach(n => n.read = true);
   saveState();
   updateNotificationBadge();
@@ -699,16 +844,13 @@ function updateNotificationBadge() {
 }
 
 function openProfileModal() {
-  document.getElementById("profile-name-input").value = state.user.name;
-  document.getElementById("profile-village-select").value = state.user.village;
-  document.getElementById("profile-ice-input").value = state.user.iceContact;
-  document.getElementById("modal-profile").classList.add("active");
+  switchTab('pane-services', null, 'profile-view');
 }
 
-function saveUserProfile() {
-  const name = document.getElementById("profile-name-input").value.trim();
-  const village = document.getElementById("profile-village-select").value;
-  const ice = document.getElementById("profile-ice-input").value.trim();
+function saveInlineProfile() {
+  const name = document.getElementById("inline-profile-name").value.trim();
+  const village = document.getElementById("inline-profile-village").value;
+  const ice = document.getElementById("inline-profile-ice").value.trim();
 
   if (!name) {
     alert("Proszę wpisać imię i nazwisko.");
@@ -720,13 +862,17 @@ function saveUserProfile() {
   state.user.iceContact = ice;
   saveState();
   applyUserPreferences();
-  closeModals();
-  showToast("Zaktualizowano profil mieszkańca i sołectwo.");
+  showToast("Zaktualizowano profil mieszkańca i dane e-Karty.");
 }
 
 // ==========================================================================
-// ASYSTENT AI & POLISH VOICEBOT (Comprehensive Knowledge Engine)
+// ASYSTENT AI & POLISH VOICEBOT
 // ==========================================================================
+function openAssistantModal() {
+  document.getElementById("modal-assistant").classList.add("active");
+  renderChatMessages();
+}
+
 function renderChatMessages() {
   const container = document.getElementById("chat-messages-container");
   if (!container) return;
@@ -742,20 +888,21 @@ function renderChatMessages() {
         const card = document.createElement("div");
         card.className = "recommendation-card";
         card.innerHTML = `<strong>✨ ${rec.title}</strong><div>${rec.sub}</div>`;
-        card.onclick = () => switchTab(rec.tab);
+        card.onclick = () => {
+          closeModals();
+          if (rec.action === "calc") openBenefitCalcModal();
+          else if (rec.action === "card") switchTab("pane-card");
+          else if (rec.action === "map") switchTab("pane-map");
+          else if (rec.action === "timebank") switchTab("pane-community", null, "timebank");
+          else if (rec.action === "sharing") switchTab("pane-community", null, "sharing");
+          else if (rec.action === "telehealth") switchTab("pane-services", null, "telehealth");
+        };
         bubble.appendChild(card);
       });
     }
     container.appendChild(bubble);
   });
   container.scrollTop = container.scrollHeight;
-}
-
-function clearAiChat() {
-  state.chatHistory = [DEFAULT_STATE.chatHistory[0]];
-  saveState();
-  renderChatMessages();
-  showToast("Wyczyszczono historię rozmowy z asystentem.");
 }
 
 function askAi(text) {
@@ -769,11 +916,9 @@ function sendAiMessage() {
   if (!text) return;
   input.value = "";
 
-  // Append User message
   state.chatHistory.push({ sender: "user", text: text });
   renderChatMessages();
 
-  // Voice wave visualizer
   const wave = document.getElementById("audio-wave-visualizer");
   if (wave) wave.classList.add("active");
 
@@ -797,39 +942,37 @@ function computeAiResponse(query) {
 
   if (lower.includes("kart") || lower.includes("wkm") || lower.includes("qr") || lower.includes("wyrobić")) {
     reply = "Pani e-Wieliszewska Karta Mieszkańca (WKM) jest w pełni aktywna! Uprawnia do bezpłatnych wejść na warsztaty CUS, zniżki 50% na obiekty sportowe OSiR Wieliszew oraz bezpłatnych przejazdów gminną L-komunikacją. Dynamiczny kod QR odświeża się co 45 sekund dla ochrony danych.";
-    recs.push({ title: "Otwórz e-Kartę", sub: "Zobacz dynamiczny QR i kontakty ICE", tab: "pane-card" });
-    recs.push({ title: "Moje Zniżki i Vouchery", sub: "Sprawdź pobrane zniżki mieszkańca", tab: "pane-card" });
+    recs.push({ title: "Otwórz e-Kartę", sub: "Zobacz dynamiczny QR i kontakty ICE", action: "card" });
   } else if (lower.includes("kryter") || lower.includes("dochod") || lower.includes("zasił") || lower.includes("pomoc")) {
-    reply = "W 2026 r. kryterium dochodowe w pomocy społecznej wynosi 1 010 zł dla osoby samotnie gospodarującej oraz 776 zł na osobę w rodzinie. CUS Wieliszew przyznaje zasiłki stałe, okresowe i celowe (np. na opał, leki, żywność). Wniosek można omówić z pracownikiem socjalnym podczas dyżuru w urzędzie lub telefonicznie (22 782 01 00).";
-    recs.push({ title: "Dyżur Koordynatora CUS", sub: "Zamów rozmowę telefoniczną lub wideo", tab: "pane-telehealth" });
-    recs.push({ title: "Magazyn Współdzielenia", sub: "Bezpłatna żywność i sprzęt rehabilitacyjny", tab: "pane-sharing" });
+    reply = "W 2026 r. kryterium dochodowe w pomocy społecznej wynosi 1 010 zł dla osoby samotnie gospodarującej oraz 776 zł na osobę w rodzinie. CUS Wieliszew przyznaje zasiłki stałe, okresowe i celowe (np. na opał, leki, żywność).";
+    recs.push({ title: "Kalkulator Świadczeń CUS 2026", sub: "Oblicz przysługujący zasiłek", action: "calc" });
+    recs.push({ title: "Dyżur Koordynatora CUS", sub: "Zamów rozmowę wideo lub telefoniczną", action: "telehealth" });
   } else if (lower.includes("wózek") || lower.includes("sprzęt") || lower.includes("chodzik") || lower.includes("kul") || lower.includes("rehabilitac")) {
     reply = "Wypożyczalnia sprzętu rehabilitacyjnego CUS Wieliszew przy ul. Modlińskiej 65 udostępnia bezpłatnie wózki inwalidzkie lekkie, balkoniki z koszykiem oraz kule łokciowe (do 6 miesięcy bez żadnych opłat). Sprzęt można zarezerwować od ręki w aplikacji.";
-    recs.push({ title: "Rezerwacja Sprzętu Rehabilitacyjnego", sub: "Dostępne: wózek, balkonik, kule", tab: "pane-sharing" });
+    recs.push({ title: "Rezerwacja Sprzętu Rehabilitacyjnego", sub: "Dostępne: wózek, balkonik, kule", action: "sharing" });
   } else if (lower.includes("zakup") || lower.includes("wolontariusz") || lower.includes("sąsiad") || lower.includes("pomóc")) {
     reply = "Na Interaktywnej Mapie Potrzeb można zgłaszać i podejmować drobne formy pomocy sąsiedzkiej (np. wniesienie zgrzewki wody, wykup leków z apteki, transport do przychodni). Za każdą pomoc wolontariusz otrzymuje punkty zaangażowania wymienialne na nagrody!";
-    recs.push({ title: "Interaktywna Mapa Potrzeb", sub: "Zobacz 4 aktywne prośby w sołectwach", tab: "pane-map" });
-    recs.push({ title: "Lokalny Bank Czasu", sub: "Wymieniaj usługi 1h za 1h", tab: "pane-timebank" });
+    recs.push({ title: "Interaktywna Mapa Potrzeb", sub: "Zobacz aktywne prośby w sołectwach", action: "map" });
+    recs.push({ title: "Lokalny Bank Czasu", sub: "Wymieniaj usługi 1h za 1h", action: "timebank" });
   } else if (lower.includes("psycholog") || lower.includes("prawnik") || lower.includes("lekarz") || lower.includes("porad")) {
-    reply = "W CUS Wieliszew oferujemy bezpłatne, bezpieczne telekonsultacje wideo. Dziś dyżur pełni psycholog mgr Anna Wiśniewska oraz radca prawny mec. Piotr Dąbrowski (pomoc w sprawach majątkowych, socjalnych i opiekuńczych).";
-    recs.push({ title: "Połącz ze specjalistą", sub: "Szyfrowana wideorozmowa WebRTC", tab: "pane-telehealth" });
+    reply = "W CUS Wieliszew oferujemy bezpłatne i poufne telekonsultacje wideo. Dziś dyżur pełni psycholog mgr Anna Wiśniewska oraz radca prawny mec. Piotr Dąbrowski (pomoc w sprawach majątkowych, socjalnych i opiekuńczych).";
+    recs.push({ title: "Połącz ze specjalistą", sub: "Szyfrowana wideorozmowa WebRTC", action: "telehealth" });
   } else if (lower.includes("jadłodzielni") || lower.includes("jedzeni") || lower.includes("żywnoś") || lower.includes("owoc")) {
     reply = "Gminna Jadłodzielnia Wieliszew znajduje się przy budynku CUS przy ul. Modlińskiej 65 i działa całodobowo (24/7). Każdy mieszkaniec może bezpłatnie poczęstować się świeżą żywnością lub zostawić nadwyżki z własnego ogrodu.";
-    recs.push({ title: "Zobacz zasoby Jadłodzielni", sub: "Świeże jabłka i przetwory w punkcie", tab: "pane-sharing" });
+    recs.push({ title: "Zobacz zasoby Jadłodzielni", sub: "Świeże jabłka i przetwory w punkcie", action: "sharing" });
   } else {
-    reply = "Chętnie pomogę w sprawach Centrum Usług Społecznych Gminy Wieliszew. Mogę sprawdzić Pani e-Kartę, zapisać na gimnastykę \"Zdrowy Kręgosłup 60+\", sprawdzić saldo Banku Czasu lub wezwać pomoc.";
-    recs.push({ title: "Gimnastyka Zdrowy Kręgosłup 60+", sub: "Czwartki, Hala Wieliszew", tab: "pane-card" });
-    recs.push({ title: "Lokalny Bank Czasu", sub: `Twoje saldo: ${state.user.timeHours} godz.`, tab: "pane-timebank" });
+    reply = "Chętnie pomogę w sprawach Centrum Usług Społecznych Gminy Wieliszew. Mogę sprawdzić Pani e-Kartę, przeliczyć kryteria zasiłku, zapisać na gimnastykę \"Zdrowy Kręgosłup 60+\" lub wezwać pomoc.";
+    recs.push({ title: "Kalkulator Świadczeń CUS", sub: "Przelicz dochód rodziny", action: "calc" });
+    recs.push({ title: "Lokalny Bank Czasu", sub: `Twoje saldo: ${state.user.timeHours} godz.`, action: "timebank" });
   }
 
   return { sender: "assistant", text: reply, recommendations: recs };
 }
 
-// Text to speech
 function speakText(text) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
-  const clean = text.replace(/[*_#•🛒🚗🔧☕🐕🌱❤️🤝🏅🏆🩺♻️🚨📶🔍]/g, "");
+  const clean = text.replace(/[*_#•🛒🚗🔧☕🐕🌱❤️🤝🏅🏆🩺♻️🚨📶🔍🧮🚌🍏]/g, "");
   const utterance = new SpeechSynthesisUtterance(clean);
   utterance.lang = "pl-PL";
   utterance.rate = state.user.seniorMode ? 0.88 : 1.0;
@@ -842,7 +985,6 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// Voice input
 function triggerVoiceInput() {
   const btn = document.getElementById("voice-record-btn");
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -885,98 +1027,6 @@ function fallbackVoiceSimulation() {
 }
 
 // ==========================================================================
-// WYDARZENIA CUS & KALENDARZ (.ICS)
-// ==========================================================================
-function renderEvents(filterCat = "ALL") {
-  const cont = document.getElementById("events-list-container");
-  if (!cont) return;
-  cont.innerHTML = "";
-
-  const filtered = state.events.filter(e => filterCat === "ALL" || e.category === filterCat);
-
-  filtered.forEach(ev => {
-    const isRegistered = state.registeredEvents.includes(ev.id);
-    const card = document.createElement("div");
-    card.className = "smart-card";
-    card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <span class="badge ${isRegistered ? 'badge-green' : 'badge-gold'}">${ev.badge}</span>
-        <span class="badge ${isRegistered ? 'badge-green' : 'badge-blue'}">
-          ${isRegistered ? '✓ ZAPISANY' : `Miejsca: ${ev.spotsTotal - ev.spotsTaken}`}
-        </span>
-      </div>
-      <h4 style="font-size: 15px; margin: 8px 0 3px 0; font-weight: 800;">${ev.title}</h4>
-      <p style="font-size: 12px; color: var(--primary); font-weight: 700;">📅 ${ev.dateText}</p>
-      <p style="font-size: 12px; color: var(--text-muted);">📍 ${ev.location}</p>
-      <p style="font-size: 12.5px; margin: 6px 0; line-height: 1.4;">${ev.desc}</p>
-      <div style="display: flex; gap: 8px; margin-top: 10px;">
-        <button class="btn ${isRegistered ? 'btn-secondary' : 'btn-primary'}" onclick="toggleEvent('${ev.id}')">
-          ${isRegistered ? 'Wypisz się' : 'Zapisz się z e-Kartą'}
-        </button>
-        <button class="btn btn-outline" style="width: auto; padding: 0 12px;" onclick="downloadIcsCalendar('${ev.id}')" title="Pobierz przypomnienie do kalendarza">
-          📅 .ICS
-        </button>
-      </div>
-    `;
-    cont.appendChild(card);
-  });
-}
-
-function filterEvents(category, btnEl) {
-  document.querySelectorAll("#pane-card .chip").forEach(c => c.classList.remove("active"));
-  if (btnEl) btnEl.classList.add("active");
-  renderEvents(category);
-}
-
-function toggleEvent(id) {
-  const idx = state.registeredEvents.indexOf(id);
-  const ev = state.events.find(e => e.id === id);
-  if (idx > -1) {
-    state.registeredEvents.splice(idx, 1);
-    if (ev) ev.spotsTaken = Math.max(0, ev.spotsTaken - 1);
-    showToast(`Zrezygnowano z zapisu na: "${ev.title}".`);
-  } else {
-    state.registeredEvents.push(id);
-    if (ev) ev.spotsTaken = Math.min(ev.spotsTotal, ev.spotsTaken + 1);
-    showToast(`🎉 Sukces! Zapisano na: "${ev.title}". Wejściówka dostępna w e-Karcie.`);
-    playTone(660, 0.15);
-  }
-  saveState();
-  renderEvents();
-}
-
-function downloadIcsCalendar(id) {
-  const ev = state.events.find(e => e.id === id);
-  if (!ev) return;
-
-  const icsData = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Smart CUS Wieliszew//NONSGML v1.0//PL",
-    "BEGIN:VEVENT",
-    `SUMMARY:${ev.title}`,
-    `DESCRIPTION:${ev.desc} | Prowadzący: ${ev.instructor}`,
-    `LOCATION:${ev.location}`,
-    "DTSTART:20261112T090000Z",
-    "DTEND:20261112T103000Z",
-    "STATUS:CONFIRMED",
-    "END:VEVENT",
-    "END:VCALENDAR"
-  ].join("\r\n");
-
-  const blob = new Blob([icsData], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `Wydarzenie_CUS_${id}.ics`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast("Pobrano plik kalendarza (.ics) dla wydarzenia!");
-}
-
-// ==========================================================================
 // VOUCHERS WALLET
 // ==========================================================================
 function renderVouchers() {
@@ -989,13 +1039,13 @@ function renderVouchers() {
 
   if (state.vouchers.length === 0) {
     cont.innerHTML = `
-      <div class="smart-card" style="text-align: center; padding: 30px 16px;">
+      <div class="gov-card" style="text-align: center; padding: 30px 16px;">
         <span style="font-size: 40px;">🎟️</span>
         <h4 style="font-size: 15px; margin: 8px 0 4px 0;">Brak aktywnych voucherów</h4>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+        <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 14px;">
           Wymieniaj punkty wolontariatu na darmowe kajaki, bilety do teatru czy zniżki w kawiarniach!
         </p>
-        <button class="btn btn-primary" onclick="switchTab('pane-gamification')">
+        <button class="btn btn-primary" onclick="switchTab('pane-services', null, 'gamification')">
           Przejdź do Katalogu Nagród
         </button>
       </div>
@@ -1005,7 +1055,7 @@ function renderVouchers() {
 
   state.vouchers.forEach(v => {
     const card = document.createElement("div");
-    card.className = "smart-card";
+    card.className = "gov-card";
     card.style.borderLeft = "5px solid var(--accent-gold)";
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between;">
@@ -1014,13 +1064,13 @@ function renderVouchers() {
       </div>
       <h4 style="font-size: 15px; margin: 6px 0 2px 0;">${v.title}</h4>
       <p style="font-size: 12px; color: var(--primary); font-weight: bold;">Partner: ${v.partner}</p>
-      <div style="background: #ffffff; border: 1px dashed #ccc; padding: 10px; border-radius: 10px; text-align: center; margin: 8px 0;">
-        <div style="font-size: 16px; font-weight: 900; letter-spacing: 2px; color: var(--primary-dark); font-family: monospace;">
+      <div style="background: #ffffff; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 10px; text-align: center; margin: 8px 0;">
+        <div style="font-size: 16px; font-weight: 900; letter-spacing: 2px; color: var(--primary-hover); font-family: monospace;">
           ${v.code}
         </div>
-        <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px;">Pokaż ten kod obsłudze przy kasie</div>
+        <div style="font-size: 10px; color: var(--text-secondary); margin-top: 3px;">Pokaż ten kod obsłudze przy kasie</div>
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary);">
         <span>Ważny do: ${v.validUntil}</span>
         <button class="btn btn-secondary btn-sm" onclick="markVoucherUsed('${v.id}')">
           Wykorzystano
@@ -1039,7 +1089,7 @@ function markVoucherUsed(id) {
 }
 
 // ==========================================================================
-// INTERAKTYWNA MAPA POTRZEB (Leaflet OpenStreetMap)
+// INTERAKTYWNA MAPA POTRZEB (Leaflet)
 // ==========================================================================
 function initLeafletMap() {
   if (leafletMap) {
@@ -1050,7 +1100,6 @@ function initLeafletMap() {
   const mapEl = document.getElementById("leaflet-map");
   if (!mapEl) return;
 
-  // Center on Gmina Wieliszew (52.457°N, 20.965°E)
   leafletMap = L.map("leaflet-map").setView([52.457, 20.965], 12);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -1070,7 +1119,7 @@ function renderLeafletMarkers() {
   state.mapPins.forEach(pin => {
     const isCompleted = pin.status === "COMPLETED";
     const isInProgress = pin.status === "IN_PROGRESS";
-    const markerBg = isCompleted ? "#78909c" : isInProgress ? "#0284c7" : "#137547";
+    const markerBg = isCompleted ? "#64748b" : isInProgress ? "#0284c7" : "#11683e";
 
     const customIcon = L.divIcon({
       className: "custom-map-pin",
@@ -1080,8 +1129,7 @@ function renderLeafletMarkers() {
     });
 
     const m = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(leafletMap);
-    
-    // Draw approximate RODO circle buffer (200m)
+
     L.circle([pin.lat, pin.lng], {
       radius: 200,
       color: markerBg,
@@ -1092,10 +1140,10 @@ function renderLeafletMarkers() {
 
     m.bindPopup(`
       <div style="font-family: sans-serif; font-size: 13px; max-width: 200px;">
-        <strong style="color: #137547;">${pin.category} (${pin.village})</strong>
+        <strong style="color: #11683e;">${pin.category} (${pin.village})</strong>
         <p style="margin: 4px 0; font-size: 12px;">${pin.title}</p>
-        <span style="font-size: 11px; font-weight: bold; color: #f57f17;">Nagroda: +${pin.points} pkt</span><br>
-        <button style="background: #137547; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; margin-top: 6px; font-weight: bold; width: 100%;" onclick="acceptNeedFromPopup('${pin.id}')">
+        <span style="font-size: 11px; font-weight: bold; color: #f59e0b;">Nagroda: +${pin.points} pkt</span><br>
+        <button style="background: #11683e; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; margin-top: 6px; font-weight: bold; width: 100%;" onclick="acceptNeedFromPopup('${pin.id}')">
           ${isCompleted ? "✓ Zakończono" : isInProgress ? "✓ Podjęto pomoc" : "Chcę pomóc"}
         </button>
       </div>
@@ -1116,7 +1164,7 @@ function renderNeedPins(filterVillage = "Wszystkie", searchKeyword = "") {
   });
 
   if (filtered.length === 0) {
-    list.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 20px;">Brak zgłoszeń spełniających kryteria.</p>`;
+    list.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Brak zgłoszeń spełniających kryteria.</p>`;
     return;
   }
 
@@ -1125,7 +1173,7 @@ function renderNeedPins(filterVillage = "Wszystkie", searchKeyword = "") {
     const isInProgress = pin.status === "IN_PROGRESS";
 
     const card = document.createElement("div");
-    card.className = "smart-card";
+    card.className = "gov-card";
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span class="badge ${isCompleted ? 'badge-blue' : isInProgress ? 'badge-blue' : 'badge-gold'}">
@@ -1139,7 +1187,7 @@ function renderNeedPins(filterVillage = "Wszystkie", searchKeyword = "") {
       <p style="font-size: 12px; color: var(--primary); font-weight: 700;">📍 ${pin.address}</p>
       <p style="font-size: 12.5px; margin: 6px 0; line-height: 1.4;">${pin.desc}</p>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-        <span style="font-weight: 900; color: #f57f17; font-size: 13px;">+${pin.points} pkt wolontariatu</span>
+        <span style="font-weight: 900; color: #f59e0b; font-size: 13px;">+${pin.points} pkt wolontariatu</span>
         <div style="display: flex; gap: 6px;">
           ${isInProgress ? `
             <button class="btn btn-primary btn-sm" onclick="completeNeed('${pin.id}')">
@@ -1201,8 +1249,10 @@ function completeNeed(id) {
   pin.status = "COMPLETED";
   state.user.points += pin.points;
 
-  // Check badges unlock
-  checkBadgesUnlock();
+  if (state.user.points >= 600) {
+    const b = state.badges.find(x => x.id === "b-6");
+    if (b) b.unlocked = true;
+  }
 
   saveState();
   renderNeedPins();
@@ -1273,7 +1323,7 @@ function renderTimeBank(filterType = "ALL") {
   filtered.forEach(item => {
     const isOffer = item.type === "OFFERING";
     const card = document.createElement("div");
-    card.className = "smart-card";
+    card.className = "gov-card";
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span class="badge ${isOffer ? 'badge-green' : 'badge-blue'}">
@@ -1282,7 +1332,7 @@ function renderTimeBank(filterType = "ALL") {
         <span style="font-weight: 900; color: var(--primary);">⏳ ${item.hours}h</span>
       </div>
       <h4 style="font-size: 15px; margin: 8px 0 2px 0; font-weight: 800;">${item.title}</h4>
-      <p style="font-size: 12px; color: var(--text-muted);">${item.author} • ${item.rating}</p>
+      <p style="font-size: 12px; color: var(--text-secondary);">${item.author} • ${item.rating}</p>
       <p style="font-size: 12.5px; margin: 6px 0; line-height: 1.4;">${item.desc}</p>
       <button class="btn ${isOffer ? 'btn-primary' : 'btn-outline'}" style="margin-top: 8px;" onclick="exchangeTimeBank('${item.id}')">
         ${isOffer ? `Wymień ${item.hours}h ze swojego portfela` : `Zaoferuj pomoc (Zarób +${item.hours}h)`}
@@ -1295,7 +1345,7 @@ function renderTimeBank(filterType = "ALL") {
 }
 
 function filterTimeBank(type, el) {
-  document.querySelectorAll("#pane-timebank .chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll("#community-subtab-timebank .chip").forEach(c => c.classList.remove("active"));
   if (el) el.classList.add("active");
   renderTimeBank(type);
 }
@@ -1312,14 +1362,14 @@ function renderTimeBankHistory() {
 
   state.timeBankHistory.forEach(h => {
     const li = document.createElement("li");
-    li.style.borderBottom = "1px solid #e2e8f0";
+    li.style.borderBottom = "1px solid var(--border-subtle)";
     li.style.paddingBottom = "4px";
     li.innerHTML = `
       <div style="display: flex; justify-content: space-between; font-weight: bold;">
         <span>${h.text}</span>
         <span style="color: ${h.change.startsWith('+') ? 'green' : 'red'};">${h.change}</span>
       </div>
-      <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 11px;">
+      <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 11px;">
         <span>${h.date}</span>
         <span>Saldo: ${h.balance}</span>
       </div>
@@ -1399,9 +1449,11 @@ function submitNewTimeBank() {
 // GRYWALIZACJA, ODZNAKI I VOUCHERY
 // ==========================================================================
 function renderGamification() {
-  // Points & Level Title
   const pDisp = document.getElementById("gamification-points-display");
   if (pDisp) pDisp.textContent = `⭐ ${state.user.points} punktów aktywności`;
+
+  const dashPoints = document.getElementById("dashboard-points-badge");
+  if (dashPoints) dashPoints.textContent = `⭐ ${state.user.points} pkt`;
 
   const lvlTitle = document.getElementById("user-level-title");
   let level = "Aktywny Mieszkaniec";
@@ -1421,7 +1473,6 @@ function renderGamification() {
     bar.style.width = `${percent}%`;
   }
 
-  // Badges grid
   const bGrid = document.getElementById("badges-grid-container");
   if (bGrid) {
     bGrid.innerHTML = "";
@@ -1432,7 +1483,7 @@ function renderGamification() {
       card.innerHTML = `
         <div style="font-size: 32px;">${b.emoji}</div>
         <strong style="font-size: 11px; display: block; margin-top: 4px;">${b.title}</strong>
-        <span style="font-size: 9.5px; color: ${b.unlocked ? '#2e7d32' : '#888'};">
+        <span style="font-size: 9.5px; color: ${b.unlocked ? '#15803d' : '#888'};">
           ${b.unlocked ? 'Odblokowana' : 'Zablokowana'}
         </span>
       `;
@@ -1440,18 +1491,17 @@ function renderGamification() {
     });
   }
 
-  // Rewards catalog
   const rCont = document.getElementById("rewards-list-container");
   if (rCont) {
     rCont.innerHTML = "";
     state.rewards.forEach(rew => {
       const canAfford = state.user.points >= rew.cost;
       const card = document.createElement("div");
-      card.className = "smart-card";
+      card.className = "gov-card";
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between;">
           <span class="badge badge-gold">${rew.category}</span>
-          <strong style="color: #f57f17; font-size: 14px;">${rew.cost} pkt</strong>
+          <strong style="color: #f59e0b; font-size: 14px;">${rew.cost} pkt</strong>
         </div>
         <h4 style="font-size: 15px; margin: 6px 0 2px 0; font-weight: 800;">${rew.title}</h4>
         <p style="font-size: 12px; color: var(--primary); font-weight: 700;">Partner: ${rew.partner}</p>
@@ -1482,7 +1532,6 @@ function redeemReward(rewardId) {
   if (state.user.points >= rew.cost) {
     state.user.points -= rew.cost;
 
-    // Generate unique Voucher Code
     const code = `WKM-${Math.floor(1000 + Math.random() * 9000)}-${Date.now().toString().slice(-4)}`;
     const newVoucher = {
       id: `vouch-${Date.now()}`,
@@ -1505,15 +1554,8 @@ function redeemReward(rewardId) {
   }
 }
 
-function checkBadgesUnlock() {
-  if (state.user.points >= 600) {
-    const b = state.badges.find(x => x.id === "b-6");
-    if (b) b.unlocked = true;
-  }
-}
-
 // ==========================================================================
-// TELEOPIEKA & SZYFROWANE POLACZENIA WIDEO (WebRTC)
+// TELEOPIEKA & SZYFROWANE POŁĄCZENIA WIDEO (WebRTC)
 // ==========================================================================
 function renderSpecialists() {
   const cont = document.getElementById("specialists-list-container");
@@ -1522,7 +1564,7 @@ function renderSpecialists() {
 
   state.specialists.forEach(sp => {
     const card = document.createElement("div");
-    card.className = "smart-card";
+    card.className = "gov-card";
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between;">
         <span class="badge ${sp.today ? 'badge-green' : 'badge-gold'}">
@@ -1555,7 +1597,6 @@ function startVideoCall(name, role) {
   document.getElementById("video-main-label").textContent = name;
   document.getElementById("video-call-screen").classList.add("active");
 
-  // Attempt local camera preview
   const videoEl = document.getElementById("local-video-preview");
   const fallbackEl = document.getElementById("local-video-fallback");
 
@@ -1638,7 +1679,7 @@ function renderSharingItems(filterCategory = "ALL") {
 
   filtered.forEach(item => {
     const card = document.createElement("div");
-    card.className = "smart-card";
+    card.className = "gov-card";
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between;">
         <span class="badge badge-green">${item.category}</span>
@@ -1648,7 +1689,7 @@ function renderSharingItems(filterCategory = "ALL") {
       </div>
       <h4 style="font-size: 15px; margin: 8px 0 2px 0; font-weight: 800;">${item.title}</h4>
       <p style="font-size: 12px; color: var(--primary); font-weight: 700;">📍 ${item.location}</p>
-      <p style="font-size: 12px; color: var(--text-muted);">${item.status}</p>
+      <p style="font-size: 12px; color: var(--text-secondary);">${item.status}</p>
       <p style="font-size: 12.5px; margin: 6px 0; line-height: 1.4;">${item.desc}</p>
       <button class="btn ${item.reserved ? 'btn-secondary' : 'btn-primary'}" style="margin-top: 8px;" onclick="toggleReserveSharing('${item.id}')">
         ${item.reserved ? `✓ Zarezerwowano (Kod: ${item.reserveCode || 'CUS-491'})` : 'Zarezerwuj do bezpłatnego odbioru'}
@@ -1659,7 +1700,7 @@ function renderSharingItems(filterCategory = "ALL") {
 }
 
 function filterSharing(category, el) {
-  document.querySelectorAll("#pane-sharing .chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll("#community-subtab-sharing .chip").forEach(c => c.classList.remove("active"));
   if (el) el.classList.add("active");
   renderSharingItems(category);
 }
@@ -1709,17 +1750,49 @@ function submitDonation() {
   };
 
   state.sharingItems.unshift(newItem);
-  state.user.points += 30; // Volunteer points reward
+  state.user.points += 30;
   saveState();
   closeModals();
   renderSharingItems();
   renderGamification();
-  showToast(`Dziękujemy! Dodano darowiznę do magazynu. Przyznano +30 pkt wolontariatu.`);
+  showToast("Dziękujemy! Dodano darowiznę do magazynu. Przyznano +30 pkt wolontariatu.");
 }
 
 // ==========================================================================
-// MODALS MANAGEMENT
+// KALENDARZ ICS DLA WYDARZEŃ
 // ==========================================================================
+function downloadIcsCalendar(id) {
+  const ev = state.events.find(e => e.id === id);
+  if (!ev) return;
+
+  const icsData = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Smart CUS Wieliszew//NONSGML v2.0//PL",
+    "BEGIN:VEVENT",
+    `SUMMARY:${ev.title}`,
+    `DESCRIPTION:${ev.desc} | Prowadzący: ${ev.instructor}`,
+    `LOCATION:${ev.location}`,
+    "DTSTART:20261112T090000Z",
+    "DTEND:20261112T103000Z",
+    "STATUS:CONFIRMED",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+
+  const blob = new Blob([icsData], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Wydarzenie_CUS_${id}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Pobrano plik kalendarza (.ics) dla wydarzenia!");
+}
+
+// Modals close
 function closeModals() {
   document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("active"));
 }

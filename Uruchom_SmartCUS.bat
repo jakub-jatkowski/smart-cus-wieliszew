@@ -20,3 +20,4 @@ echo [2/2] Uruchamianie serwera i otwieranie aplikacji w przegladarce...
 echo.
 python "%~dp0start_preview.py"
 pause
+

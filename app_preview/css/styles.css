@@ -1,101 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
-  --primary: #137547;
-  --primary-dark: #0a4d2e;
-  --primary-light: #22995e;
-  --primary-container: #d9f3e5;
-  --on-primary-container: #00391f;
+  /* Brand Municipal Colors - Gmina Wieliszew */
+  --primary: #11683e;
+  --primary-hover: #0c4d2d;
+  --primary-light: #198752;
+  --primary-container: #dcf5e7;
+  --on-primary-container: #04381e;
   --accent-gold: #c9931b;
+  --accent-gold-hover: #a8790f;
   --accent-gold-container: #fef4dc;
-  --accent-gold-dark: #8c6307;
-  --surface: #ffffff;
-  --surface-variant: #f4f7f5;
-  --background: #f7faf8;
-  --text-main: #141c18;
-  --text-muted: #526359;
-  --border-color: #dce5df;
-  --card-shadow: 0 4px 16px rgba(10, 40, 25, 0.07);
-  --success: #1b8748;
-  --danger: #d32f2f;
+  --accent-gold-dark: #7a5504;
+
+  /* Neutrals & Surfaces */
+  --bg-page: #0b0f17;
+  --surface-app: #ffffff;
+  --surface-variant: #f8fafc;
+  --surface-muted: #f1f5f9;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Typography Colors */
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-on-primary: #ffffff;
+
+  /* Functional Status */
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
   --warning: #d97706;
+  --warning-bg: #fef3c7;
   --info: #0284c7;
-  --phone-width: 412px;
-  --phone-height: 870px;
-  --font-multiplier: 1.0;
+  --info-bg: #e0f2fe;
+  --purple: #7c3aed;
+  --purple-bg: #ede9fe;
+
+  /* Shadows & Elevations */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 6px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 14px 30px -4px rgba(15, 23, 42, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
+  --shadow-glow: 0 0 24px rgba(17, 104, 62, 0.35);
+
+  /* Dimensions */
+  --phone-width: 416px;
+  --phone-height: 875px;
+  --font-scale: 1.0;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 9999px;
 }
 
-/* Senior / High Contrast Mode (WCAG 2.1 AAA Compliant) */
+/* ==========================================================================
+   SENIOR / HIGH CONTRAST MODE (WCAG 2.1 AAA COMPLIANT)
+   ========================================================================== */
 body.senior-mode {
   --primary: #ffd600;
-  --primary-dark: #b29500;
-  --primary-light: #ffea00;
-  --primary-container: #1e1e1e;
+  --primary-hover: #ffea00;
+  --primary-light: #fff566;
+  --primary-container: #1a1a1a;
   --on-primary-container: #ffd600;
   --accent-gold: #ffd600;
-  --accent-gold-container: #292929;
+  --accent-gold-container: #262626;
   --accent-gold-dark: #fff176;
-  --surface: #121212;
-  --surface-variant: #1a1a1a;
-  --background: #000000;
+
+  --bg-page: #000000;
+  --surface-app: #0a0a0a;
+  --surface-variant: #141414;
+  --surface-muted: #1f1f1f;
+  --border-subtle: #ffd600;
+  --border-strong: #ffd600;
+
   --text-main: #ffffff;
-  --text-muted: #e6e6e6;
-  --border-color: #ffd600;
-  --card-shadow: none;
-  --success: #69f0ae;
-  --danger: #ff5252;
-  --warning: #ffd740;
-  --info: #40c4ff;
-  --font-multiplier: 1.15;
+  --text-secondary: #f4f4f4;
+  --text-muted: #e5e5e5;
+  --text-on-primary: #000000;
+
+  --success: #4ade80;
+  --success-bg: #14532d;
+  --danger: #f87171;
+  --danger-bg: #7f1d1d;
+  --warning: #fbbf24;
+  --warning-bg: #78350f;
+  --info: #38bdf8;
+  --info-bg: #0c4a6e;
+
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-glow: none;
+  --font-scale: 1.25;
 }
 
 body.senior-mode * {
-  font-size: calc(1rem * var(--font-multiplier)) !important;
-  font-weight: 600 !important;
+  font-size: calc(1rem * var(--font-scale)) !important;
+  font-weight: 700 !important;
   letter-spacing: 0.3px !important;
 }
 
 body.senior-mode .btn,
 body.senior-mode button {
   border: 3px solid #ffd600 !important;
-  min-height: 56px !important;
-  font-size: calc(1.05rem * var(--font-multiplier)) !important;
+  min-height: 58px !important;
+  font-size: calc(1.08rem * var(--font-scale)) !important;
 }
 
-body.senior-mode .smart-card {
+body.senior-mode .gov-card,
+body.senior-mode .quick-tile,
+body.senior-mode .wkm-card-wallet {
   border: 2px solid #ffd600 !important;
-  background: #121212 !important;
+  background: #0a0a0a !important;
 }
 
-body.senior-mode .chip {
-  border: 2px solid #ffd600 !important;
-  background: #1a1a1a !important;
-  color: #fff !important;
-  min-height: 44px !important;
-  padding: 8px 16px !important;
+body.senior-mode .nav-item {
+  color: #ffffff !important;
 }
 
-body.senior-mode .chip.active {
-  background: #ffd600 !important;
-  color: #000 !important;
-  font-weight: 800 !important;
+body.senior-mode .nav-item.active {
+  color: #ffd600 !important;
+  background: #222222 !important;
 }
 
-/* Font scale variations */
-body.font-scale-sm { --font-multiplier: 0.9; }
-body.font-scale-md { --font-multiplier: 1.0; }
-body.font-scale-lg { --font-multiplier: 1.15; }
-body.font-scale-xl { --font-multiplier: 1.3; }
+/* Dynamic Font Scales */
+body.font-scale-sm { --font-scale: 0.92; }
+body.font-scale-md { --font-scale: 1.0; }
+body.font-scale-lg { --font-scale: 1.15; }
+body.font-scale-xl { --font-scale: 1.3; }
 
-/* Base Reset & Typography */
-* {
+/* Base Reset & Core Styles */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: #161b22;
+  background: var(--bg-page);
   color: var(--text-main);
   min-height: 100vh;
   display: flex;
@@ -103,11 +150,13 @@ body {
   align-items: center;
   justify-content: center;
   padding: 16px;
-  transition: background 0.25s ease;
   overflow-x: hidden;
+  transition: background 0.3s ease;
 }
 
-/* Desktop Simulator Controls */
+/* ==========================================================================
+   DESKTOP SIMULATOR TOP BAR
+   ========================================================================== */
 .simulator-header {
   color: #ffffff;
   text-align: center;
@@ -117,17 +166,17 @@ body {
 }
 
 .simulator-header h1 {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
 }
 
 .simulator-header p {
-  color: #a0aec0;
+  color: #94a3b8;
   font-size: 13px;
   margin-top: 3px;
 }
@@ -141,11 +190,11 @@ body {
 }
 
 .control-pill {
-  background: #252d3a;
+  background: #1e293b;
   color: #e2e8f0;
-  border: 1px solid #3d495c;
-  padding: 6px 13px;
-  border-radius: 20px;
+  border: 1px solid #334155;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -156,36 +205,38 @@ body {
 }
 
 .control-pill:hover {
-  background: #374458;
+  background: #334155;
   color: #ffffff;
   transform: translateY(-1px);
 }
 
 .control-pill.active {
   background: var(--accent-gold);
-  color: #1a1a1a;
+  color: #0f172a;
   border-color: var(--accent-gold);
   font-weight: 800;
 }
 
 .control-pill-danger {
-  background: #541d1d;
-  color: #ffcdd2;
-  border-color: #8c2a2a;
+  background: #450a0a;
+  color: #fca5a5;
+  border-color: #7f1d1d;
 }
 .control-pill-danger:hover {
-  background: #b71c1c;
+  background: #b91c1c;
   color: #ffffff;
 }
 
-/* Smartphone Container Frame */
+/* ==========================================================================
+   PREMIUM SMARTPHONE HARDWARE CHASSIS
+   ========================================================================== */
 .phone-frame {
   width: var(--phone-width);
   height: var(--phone-height);
-  background: var(--background);
-  border-radius: 46px;
-  border: 12px solid #1f2530;
-  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65), 0 0 0 3px #323d4e;
+  background: var(--surface-app);
+  border-radius: 48px;
+  border: 10px solid #1e293b;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 2px #334155;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -194,8 +245,8 @@ body {
 }
 
 .phone-frame.view-expanded {
-  --phone-width: 580px;
-  --phone-height: 900px;
+  --phone-width: 600px;
+  --phone-height: 920px;
 }
 
 .phone-frame.view-fullscreen {
@@ -206,10 +257,10 @@ body {
   box-shadow: none;
 }
 
-/* Android Status Bar */
+/* Dynamic Status Bar (Punch Hole / Island) */
 .android-status-bar {
-  height: 36px;
-  background: var(--primary-dark);
+  height: 38px;
+  background: var(--primary);
   color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -217,62 +268,84 @@ body {
   padding: 0 20px;
   font-size: 12px;
   font-weight: 700;
-  z-index: 20;
+  z-index: 30;
   flex-shrink: 0;
   user-select: none;
 }
 
 .camera-hole {
-  width: 12px;
-  height: 12px;
+  width: 70px;
+  height: 18px;
   background: #000000;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.camera-lens {
+  width: 9px;
+  height: 9px;
+  background: #111827;
   border-radius: 50%;
-  border: 1.5px solid #2d3748;
+  border: 1px solid #374151;
 }
 
 .status-icons {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-size: 11px;
 }
 
-/* App Header */
+/* ==========================================================================
+   APP HEADER WITH BRAND & REAL-TIME ALERTS
+   ========================================================================== */
 .app-header {
   background: var(--primary);
   color: #ffffff;
-  padding: 10px 14px;
+  padding: 10px 16px 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 16px rgba(17, 104, 62, 0.2);
   flex-shrink: 0;
-  z-index: 15;
+  z-index: 25;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
 }
 
-.header-logo-icon {
-  font-size: 24px;
-  line-height: 1;
+.header-crest {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .header-brand h2 {
   font-size: 16px;
   font-weight: 800;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
   line-height: 1.2;
 }
 
 .header-brand p {
   font-size: 10.5px;
-  opacity: 0.88;
+  opacity: 0.9;
   font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .header-actions {
@@ -281,7 +354,7 @@ body {
   gap: 6px;
 }
 
-.header-btn {
+.header-action-btn {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -298,29 +371,29 @@ body {
   position: relative;
 }
 
-.header-btn:hover {
-  background: rgba(255, 255, 255, 0.28);
+.header-action-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.header-btn.sos-btn {
-  background: #d32f2f;
-  border-color: #ffcdd2;
+.header-action-btn.sos-btn {
+  background: #dc2626;
+  border-color: #fca5a5;
   color: #ffffff;
   font-weight: 900;
   animation: pulseBeacon 2s infinite;
 }
 
 @keyframes pulseBeacon {
-  0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
-  70% { box-shadow: 0 0 0 8px rgba(211, 47, 47, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { box-shadow: 0 0 0 9px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
 .notif-badge {
   position: absolute;
   top: -4px;
   right: -4px;
-  background: #ff1744;
+  background: #ef4444;
   color: #ffffff;
   font-size: 9px;
   font-weight: 900;
@@ -339,7 +412,7 @@ body {
   height: 28px;
   border-radius: 50%;
   background: var(--accent-gold);
-  color: #1a1a1a;
+  color: #0f172a;
   font-weight: 800;
   font-size: 11px;
   display: flex;
@@ -348,19 +421,21 @@ body {
   border: 1.5px solid #ffffff;
 }
 
-/* Screen Content Area */
+/* ==========================================================================
+   APP CONTENT & SECTION CARDS
+   ========================================================================== */
 .app-content {
   flex: 1;
   overflow-y: auto;
   position: relative;
-  background: var(--background);
+  background: var(--surface-variant);
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
 .tab-pane {
   display: none;
-  padding: 14px;
+  padding: 14px 14px 24px 14px;
   animation: fadeIn 0.22s ease-out;
 }
 
@@ -369,57 +444,130 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Common Card Styles */
-.smart-card {
-  background: var(--surface);
-  border-radius: 18px;
+/* Modern Card Primitive */
+.gov-card {
+  background: var(--surface-app);
+  border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--card-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.smart-card:hover {
-  box-shadow: 0 6px 20px rgba(10, 40, 25, 0.1);
+.gov-card:hover {
+  box-shadow: var(--shadow-md);
 }
 
-.smart-card-title {
+.gov-card-title {
   font-size: 16px;
   font-weight: 800;
   color: var(--text-main);
+  letter-spacing: -0.2px;
   margin-bottom: 4px;
 }
 
-.smart-card-sub {
+.gov-card-sub {
   font-size: 12.5px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
+  line-height: 1.45;
   margin-bottom: 8px;
-  line-height: 1.4;
 }
 
+/* Weather & Smog Sensor Pill */
+.eco-sensor-pill {
+  background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.25);
+}
+
+.eco-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.eco-metric-value {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.eco-metric-label {
+  font-size: 10.5px;
+  opacity: 0.85;
+}
+
+/* Quick Action Tiles Grid */
+.quick-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.quick-tile {
+  background: var(--surface-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  box-shadow: var(--shadow-xs);
+}
+
+.quick-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--primary);
+}
+
+.quick-tile .tile-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.quick-tile .tile-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: center;
+}
+
+/* Badges */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
-  padding: 4px 9px;
-  border-radius: 8px;
+  padding: 3.5px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
 }
 
-.badge-green { background: #d6f5e3; color: #0c4a2d; }
-.badge-gold { background: #fff1d0; color: #734c00; }
-.badge-blue { background: #e3f2fd; color: #1565c0; }
-.badge-red { background: #ffebee; color: #c62828; }
-.badge-purple { background: #f3e8ff; color: #6b21a8; }
+.badge-green { background: var(--success-bg); color: var(--success); }
+.badge-gold { background: var(--accent-gold-container); color: var(--accent-gold-dark); }
+.badge-blue { background: var(--info-bg); color: var(--info); }
+.badge-red { background: var(--danger-bg); color: var(--danger); }
+.badge-purple { background: var(--purple-bg); color: var(--purple); }
 
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -427,8 +575,8 @@ body {
   gap: 8px;
   width: 100%;
   padding: 11px 16px;
-  border-radius: 14px;
-  font-size: 14px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   border: none;
@@ -443,17 +591,17 @@ body {
 .btn-primary {
   background: var(--primary);
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(19, 117, 71, 0.3);
+  box-shadow: 0 4px 12px rgba(17, 104, 62, 0.28);
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark);
+  background: var(--primary-hover);
 }
 
 .btn-secondary {
-  background: var(--surface-variant);
+  background: var(--surface-muted);
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-secondary:hover {
@@ -462,7 +610,7 @@ body {
 
 .btn-outline {
   background: transparent;
-  border: 2px solid var(--primary);
+  border: 1.5px solid var(--primary);
   color: var(--primary);
 }
 
@@ -471,21 +619,20 @@ body {
 }
 
 .btn-danger {
-  background: #d32f2f;
+  background: var(--danger);
   color: #ffffff;
-}
-.btn-danger:hover {
-  background: #b71c1c;
 }
 
 .btn-sm {
   padding: 6px 12px;
   font-size: 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   width: auto;
 }
 
-/* 3D Flip e-Card Wallet */
+/* ==========================================================================
+   PRESTIGE 3D HOLOGRAPHIC RESIDENT CARD (APPLE/GOOGLE WALLET STYLE)
+   ========================================================================== */
 .wkm-card-container {
   perspective: 1000px;
   margin-bottom: 14px;
@@ -494,12 +641,12 @@ body {
 
 .wkm-card-wallet {
   width: 100%;
-  min-height: 200px;
-  border-radius: 22px;
+  min-height: 215px;
+  border-radius: 24px;
   position: relative;
-  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
-  box-shadow: 0 12px 30px rgba(19, 117, 71, 0.35);
+  box-shadow: 0 16px 36px rgba(17, 104, 62, 0.35);
 }
 
 .wkm-card-wallet.flipped {
@@ -513,8 +660,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 22px;
-  padding: 20px;
+  border-radius: 24px;
+  padding: 20px 22px;
   box-sizing: border-box;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -525,43 +672,56 @@ body {
 }
 
 .wkm-card-front {
-  background: linear-gradient(135deg, #137547 0%, #0c4a2d 60%, #06301c 100%);
+  background: linear-gradient(135deg, #11683e 0%, #0a4d2e 50%, #042a18 100%);
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Guilloche Pattern & Hologram Sheen */
 .wkm-card-front::before {
   content: "";
   position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(221, 167, 42, 0.25) 0%, transparent 70%);
+  top: -60px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(201, 147, 27, 0.35) 0%, transparent 70%);
   border-radius: 50%;
+  pointer-events: none;
 }
 
-.wkm-card-front::after {
+.emv-chip {
+  width: 38px;
+  height: 28px;
+  background: linear-gradient(135deg, #fce09b 0%, #e5a817 50%, #a8790f 100%);
+  border-radius: 6px;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.emv-chip::before {
   content: "";
   position: absolute;
-  bottom: -50px;
-  left: -20px;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
+  top: 9px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  border-top: 1px solid rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(0,0,0,0.25);
 }
 
 .wkm-card-back {
-  background: linear-gradient(135deg, #0c4a2d 0%, #072919 100%);
+  background: linear-gradient(135deg, #0a4d2e 0%, #062f1a 100%);
   transform: rotateY(180deg);
-  border: 1px solid rgba(221, 167, 42, 0.3);
+  border: 1px solid rgba(201, 147, 27, 0.3);
 }
 
 .magnetic-strip {
-  height: 38px;
-  background: #111111;
-  margin: -10px -20px 8px -20px;
-  width: calc(100% + 40px);
+  height: 40px;
+  background: #0f172a;
+  margin: -10px -22px 8px -22px;
+  width: calc(100% + 44px);
 }
 
 .barcode-box {
@@ -578,22 +738,22 @@ body {
   bottom: 8px;
   right: 14px;
   font-size: 10px;
-  opacity: 0.8;
+  opacity: 0.85;
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 2px 8px;
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
 }
 
 /* Dynamic QR TOTP Container */
 .qr-container {
   background: #ffffff;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   display: inline-block;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -601,13 +761,6 @@ body {
 
 .qr-container:hover {
   transform: scale(1.02);
-}
-
-.qr-code-img {
-  width: 160px;
-  height: 160px;
-  display: block;
-  margin: 0 auto;
 }
 
 .totp-bar {
@@ -625,13 +778,9 @@ body {
   transition: width 1s linear;
 }
 
-/* Assistant Chat */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
+/* ==========================================================================
+   AI ASSISTANT & POLISH VOICEBOT CHAT HUD
+   ========================================================================== */
 .chat-messages {
   flex: 1;
   display: flex;
@@ -645,21 +794,21 @@ body {
 
 .chat-bubble {
   max-width: 86%;
-  padding: 12px 15px;
+  padding: 12px 16px;
   border-radius: 18px;
   font-size: 13.5px;
-  line-height: 1.45;
+  line-height: 1.5;
   position: relative;
   word-break: break-word;
 }
 
 .chat-bubble.assistant {
   align-self: flex-start;
-  background: var(--surface);
+  background: var(--surface-app);
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
   border-bottom-left-radius: 4px;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow-sm);
 }
 
 .chat-bubble.user {
@@ -667,14 +816,14 @@ body {
   background: var(--primary);
   color: #ffffff;
   border-bottom-right-radius: 4px;
-  box-shadow: 0 4px 12px rgba(19, 117, 71, 0.25);
+  box-shadow: 0 4px 12px rgba(17, 104, 62, 0.25);
 }
 
 .recommendation-card {
   background: var(--primary-container);
   border-left: 4px solid var(--primary);
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   margin-top: 8px;
   cursor: pointer;
   color: var(--on-primary-container);
@@ -696,10 +845,10 @@ body {
 .chat-input {
   flex: 1;
   padding: 11px 16px;
-  border-radius: 22px;
-  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
   outline: none;
-  background: var(--surface);
+  background: var(--surface-app);
   color: var(--text-main);
   font-size: 13.5px;
   transition: border-color 0.2s ease;
@@ -707,6 +856,7 @@ body {
 
 .chat-input:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(17, 104, 62, 0.15);
 }
 
 .voice-btn {
@@ -726,17 +876,17 @@ body {
 }
 
 .voice-btn.recording {
-  background: #d32f2f;
+  background: var(--danger);
   animation: pulseRecording 1s infinite;
 }
 
 @keyframes pulseRecording {
   0% { transform: scale(1); }
-  50% { transform: scale(1.12); box-shadow: 0 0 14px rgba(211, 47, 47, 0.6); }
+  50% { transform: scale(1.12); box-shadow: 0 0 14px rgba(220, 38, 38, 0.6); }
   100% { transform: scale(1); }
 }
 
-/* Audio Wave Visualizer */
+/* Sound Wave Animation */
 .audio-wave-container {
   display: none;
   align-items: center;
@@ -770,7 +920,7 @@ body {
   100% { height: 26px; }
 }
 
-/* Filter Chips */
+/* Filter Chips Carousel */
 .chips-row {
   display: flex;
   gap: 6px;
@@ -785,10 +935,10 @@ body {
 }
 
 .chip {
-  padding: 6px 13px;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: var(--surface-app);
+  border: 1px solid var(--border-subtle);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -799,7 +949,7 @@ body {
 }
 
 .chip:hover {
-  background: var(--surface-variant);
+  background: var(--surface-muted);
 }
 
 .chip.active {
@@ -808,30 +958,73 @@ body {
   border-color: var(--primary);
 }
 
-/* Map Screen */
+/* ==========================================================================
+   INTERACTIVE MAP & BOTTOM SHEET FOR VOLUNTEERING
+   ========================================================================== */
 #leaflet-map {
   width: 100%;
-  height: 260px;
-  border-radius: 18px;
+  height: 280px;
+  border-radius: var(--radius-lg);
   margin-bottom: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-subtle);
   z-index: 1;
 }
 
 .rodo-info-banner {
-  background: #eef7f2;
+  background: #f0fdf4;
   border: 1px dashed var(--primary);
-  border-radius: 12px;
-  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
   font-size: 11.5px;
-  color: var(--primary-dark);
+  color: var(--primary-hover);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Telehealth Video Call */
+/* ==========================================================================
+   CUS INTERACTIVE BENEFIT CALCULATOR 2026
+   ========================================================================== */
+.calc-box {
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-top: 10px;
+  border: 1px solid var(--border-subtle);
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.calc-input {
+  width: 120px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong);
+  text-align: right;
+  font-weight: 700;
+}
+
+.calc-result-badge {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   TELEHEALTH & VIDEO SUITE
+   ========================================================================== */
 .video-call-screen {
   position: absolute;
   top: 0;
@@ -853,7 +1046,7 @@ body {
 .video-feed-main {
   flex: 1;
   background: #1e293b;
-  border-radius: 22px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -869,11 +1062,11 @@ body {
   position: absolute;
   bottom: 16px;
   right: 16px;
-  width: 95px;
-  height: 130px;
+  width: 100px;
+  height: 140px;
   background: #334155;
   border: 2px solid #ffffff;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -881,7 +1074,7 @@ body {
   color: #ffffff;
   font-size: 11px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-lg);
 }
 
 .call-controls {
@@ -891,8 +1084,8 @@ body {
 }
 
 .call-btn {
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: none;
   display: flex;
@@ -908,19 +1101,23 @@ body {
   transform: scale(0.92);
 }
 
-.call-btn-danger { background: #d32f2f; }
+.call-btn-danger { background: var(--danger); }
 .call-btn-control { background: #475569; }
 
-/* Bottom Android Navigation Bar */
+/* ==========================================================================
+   CONSOLIDATED 5-DESTINATION BOTTOM NAVIGATION (MUNICIPAL GOVTECH 2.0)
+   ========================================================================== */
 .android-nav-bar {
-  height: 64px;
-  background: var(--surface);
-  border-top: 1px solid var(--border-color);
+  height: 68px;
+  background: var(--surface-app);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-shrink: 0;
-  z-index: 15;
+  z-index: 25;
+  padding: 0 4px;
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.04);
 }
 
 .nav-item {
@@ -928,20 +1125,26 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   color: var(--text-muted);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   background: none;
   border: none;
-  padding: 4px;
+  padding: 8px 12px;
+  border-radius: 16px;
   flex: 1;
-  transition: color 0.15s ease;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--primary);
 }
 
 .nav-item.active {
   color: var(--primary);
+  background: var(--primary-container);
   font-weight: 800;
 }
 
@@ -950,16 +1153,18 @@ body {
   line-height: 1;
 }
 
-/* Modal Popups */
+/* ==========================================================================
+   MODAL DIALOGS WITH BACKDROP BLUR
+   ========================================================================== */
 .modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 250;
   display: none;
   align-items: center;
@@ -972,20 +1177,20 @@ body {
 }
 
 .modal-dialog {
-  background: var(--surface);
-  border-radius: 24px;
-  padding: 22px;
+  background: var(--surface-app);
+  border-radius: 26px;
+  padding: 24px;
   width: 100%;
-  max-width: 360px;
+  max-width: 370px;
   max-height: 85vh;
   overflow-y: auto;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-lg);
   animation: modalSlideUp 0.22s ease-out;
 }
 
 @keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1006,24 +1211,25 @@ body {
   cursor: pointer;
   color: var(--text-muted);
   line-height: 1;
+  padding: 4px;
 }
 
-/* Toast alert notification */
+/* Toast Alert Pill */
 .toast-msg {
   position: absolute;
-  bottom: 78px;
+  bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(18, 24, 32, 0.96);
+  background: rgba(15, 23, 42, 0.96);
   color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 26px;
+  padding: 11px 20px;
+  border-radius: var(--radius-full);
   font-size: 13px;
   font-weight: 600;
   z-index: 300;
   display: none;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-lg);
   border: 1px solid var(--accent-gold);
   max-width: 90%;
   line-height: 1.4;
@@ -1035,7 +1241,36 @@ body {
   to { transform: translate(-50%, 0); opacity: 1; }
 }
 
-/* Gamification Progress & Badges */
+/* Sub-tabs pills within a pane */
+.subtabs-bar {
+  display: flex;
+  background: var(--surface-muted);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.subtab-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.subtab-btn.active {
+  background: var(--surface-app);
+  color: var(--primary);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Progress bar */
 .progress-bar-container {
   height: 8px;
   background: rgba(255, 255, 255, 0.25);
@@ -1051,6 +1286,7 @@ body {
   transition: width 0.4s ease;
 }
 
+/* Badges Grid */
 .badges-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1059,8 +1295,8 @@ body {
 }
 
 .badge-item-card {
-  background: var(--surface);
-  border: 1px solid var(--border-color);
+  background: var(--surface-app);
+  border: 1px solid var(--border-subtle);
   border-radius: 14px;
   padding: 10px 6px;
   text-align: center;
@@ -1077,57 +1313,13 @@ body {
   filter: grayscale(0.8);
 }
 
-/* Sub-tabs pills within a pane */
-.subtabs-bar {
-  display: flex;
-  background: var(--surface-variant);
-  padding: 4px;
-  border-radius: 14px;
-  margin-bottom: 12px;
-  border: 1px solid var(--border-color);
-}
-
-.subtab-btn {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: transparent;
-  border: none;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.subtab-btn.active {
-  background: var(--surface);
-  color: var(--primary);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-/* Fullscreen QR Modal */
-.qr-fullscreen-modal {
-  text-align: center;
-}
-
-.qr-fullscreen-modal svg {
-  width: 240px;
-  height: 240px;
-  margin: 12px auto;
-  display: block;
-  background: #ffffff;
-  padding: 12px;
-  border-radius: 16px;
-}
-
 /* ==========================================================================
    RESPONSIVE DESIGN: TRUE MOBILE PHONES & PWA STANDALONE MODE
    ========================================================================== */
 @media (max-width: 600px), (display-mode: standalone) {
   body {
     padding: 0 !important;
-    background: var(--background) !important;
+    background: var(--surface-app) !important;
     justify-content: flex-start !important;
     height: 100vh;
     height: 100dvh;
@@ -1149,19 +1341,19 @@ body {
   }
 
   .android-status-bar {
-    display: none; /* Let real phone status bar show */
+    display: none;
   }
 
   .app-header {
-    padding-top: calc(10px + env(safe-area-inset-top, 0));
+    padding-top: calc(12px + env(safe-area-inset-top, 0));
   }
 
   .android-nav-bar {
     padding-bottom: env(safe-area-inset-bottom, 0);
-    height: calc(60px + env(safe-area-inset-bottom, 0));
+    height: calc(68px + env(safe-area-inset-bottom, 0));
   }
 
   .toast-msg {
-    bottom: calc(75px + env(safe-area-inset-bottom, 0));
+    bottom: calc(80px + env(safe-area-inset-bottom, 0));
   }
 }

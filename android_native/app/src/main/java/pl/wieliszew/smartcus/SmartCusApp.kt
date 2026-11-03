@@ -22,28 +22,26 @@ import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 import pl.wieliszew.smartcus.ui.theme.SmartCusTheme
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
-    data object Assistant : Screen("assistant", "Asystent AI", Icons.Default.SmartToy)
+    data object Assistant : Screen("assistant", "Start", Icons.Default.Home)
     data object Card : Screen("card", "e-Karta", Icons.Default.CreditCard)
-    data object Map : Screen("map", "Mapa Potrzeb", Icons.Default.Place)
-    data object TimeBank : Screen("timebank", "Bank Czasu", Icons.Default.Schedule)
-    data object Gamification : Screen("gamification", "Nagrody", Icons.Default.EmojiEvents)
-    data object Telehealth : Screen("telehealth", "Teleopieka", Icons.Default.VideoCall)
-    data object Sharing : Screen("sharing", "Współdzielenie", Icons.Default.Autorenew)
+    data object Map : Screen("map", "Mapa", Icons.Default.Place)
+    data object Community : Screen("community", "Wspólnota", Icons.Default.People)
+    data object Services : Screen("services", "Usługi", Icons.Default.Widgets)
 }
 
 @Composable
 fun SmartCusApp(repository: SmartCusRepository) {
     val isSeniorMode by repository.isSeniorMode.collectAsState()
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Assistant) }
+    var communitySubTab by remember { mutableStateOf("timebank") }
+    var servicesSubTab by remember { mutableStateOf("telehealth") }
 
     val navItems = listOf(
         Screen.Assistant,
         Screen.Card,
         Screen.Map,
-        Screen.TimeBank,
-        Screen.Gamification,
-        Screen.Telehealth,
-        Screen.Sharing
+        Screen.Community,
+        Screen.Services
     )
 
     SmartCusTheme(isSeniorMode = isSeniorMode) {
@@ -51,7 +49,7 @@ fun SmartCusApp(repository: SmartCusRepository) {
             topBar = {
                 HeaderBanner(
                     title = "Smart CUS Wieliszew",
-                    subtitle = "Cyfrowy Hub Usług Społecznych",
+                    subtitle = "Cyfrowy Hub Społeczny Gminy",
                     isSeniorMode = isSeniorMode,
                     onToggleSeniorMode = { repository.toggleSeniorMode() }
                 )
@@ -67,7 +65,7 @@ fun SmartCusApp(repository: SmartCusRepository) {
                             label = {
                                 Text(
                                     text = screen.title,
-                                    fontSize = if (isSeniorMode) 12.sp else 10.sp,
+                                    fontSize = if (isSeniorMode) 12.sp else 11.sp,
                                     maxLines = 1
                                 )
                             },
@@ -90,23 +88,72 @@ fun SmartCusApp(repository: SmartCusRepository) {
                             when (target) {
                                 "card" -> currentScreen = Screen.Card
                                 "map" -> currentScreen = Screen.Map
-                                "timebank" -> currentScreen = Screen.TimeBank
-                                "telehealth" -> currentScreen = Screen.Telehealth
-                                "sharing" -> currentScreen = Screen.Sharing
-                                "gamification" -> currentScreen = Screen.Gamification
+                                "timebank" -> {
+                                    communitySubTab = "timebank"
+                                    currentScreen = Screen.Community
+                                }
+                                "sharing" -> {
+                                    communitySubTab = "sharing"
+                                    currentScreen = Screen.Community
+                                }
+                                "telehealth" -> {
+                                    servicesSubTab = "telehealth"
+                                    currentScreen = Screen.Services
+                                }
+                                "gamification" -> {
+                                    servicesSubTab = "gamification"
+                                    currentScreen = Screen.Services
+                                }
                                 "events" -> currentScreen = Screen.Card
                             }
                         }
                     )
                     Screen.Card -> WieliszewCardScreen(repository = repository)
                     Screen.Map -> NeedMapScreen(repository = repository)
-                    Screen.TimeBank -> TimeBankScreen(repository = repository)
-                    Screen.Gamification -> GamificationScreen(repository = repository)
-                    Screen.Telehealth -> TelehealthScreen(repository = repository)
-                    Screen.Sharing -> SharingHubScreen(repository = repository)
+                    Screen.Community -> {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            TabRow(selectedTabIndex = if (communitySubTab == "timebank") 0 else 1) {
+                                Tab(
+                                    selected = communitySubTab == "timebank",
+                                    onClick = { communitySubTab = "timebank" },
+                                    text = { Text("Bank Czasu (1h=1h)") }
+                                )
+                                Tab(
+                                    selected = communitySubTab == "sharing",
+                                    onClick = { communitySubTab = "sharing" },
+                                    text = { Text("Współdzielenie & Eko") }
+                                )
+                            }
+                            if (communitySubTab == "timebank") {
+                                TimeBankScreen(repository = repository)
+                            } else {
+                                SharingHubScreen(repository = repository)
+                            }
+                        }
+                    }
+                    Screen.Services -> {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            TabRow(selectedTabIndex = if (servicesSubTab == "telehealth") 0 else 1) {
+                                Tab(
+                                    selected = servicesSubTab == "telehealth",
+                                    onClick = { servicesSubTab = "telehealth" },
+                                    text = { Text("Teleopieka CUS") }
+                                )
+                                Tab(
+                                    selected = servicesSubTab == "gamification",
+                                    onClick = { servicesSubTab = "gamification" },
+                                    text = { Text("Nagrody & Punkty") }
+                                )
+                            }
+                            if (servicesSubTab == "telehealth") {
+                                TelehealthScreen(repository = repository)
+                            } else {
+                                GamificationScreen(repository = repository)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
-
