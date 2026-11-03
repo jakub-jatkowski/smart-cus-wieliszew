@@ -42,12 +42,12 @@ jobs:
           gradle assembleDebug --stacktrace
 
       - name: Rename APK for Distribution
-        working-directory: ./app/build/outputs/apk/debug
         run: |
-          VERSION=$(grep 'versionName = ' ../../../../app/build.gradle.kts | cut -d '"' -f 2)
+          VERSION=$(grep 'versionName = ' app/build.gradle.kts | cut -d '"' -f 2)
           echo "Building release for version: $VERSION"
-          cp app-debug.apk "SmartCUS_Wieliszew_v${VERSION}.apk"
-          cp app-debug.apk SmartCUS_Wieliszew.apk
+          cp app/build/outputs/apk/debug/app-debug.apk "app/build/outputs/apk/debug/SmartCUS_Wieliszew_v${VERSION}.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk
+          ls -la app/build/outputs/apk/debug/
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -66,17 +66,17 @@ jobs:
           VERSION=$(grep 'versionName = ' app/build.gradle.kts | cut -d '"' -f 2)
           TAG="v${VERSION}"
           echo "Target Release Tag: $TAG"
-          zip -r SmartCUS_Wieliszew_Source.zip . -x "*.git*" "*.gradle*" "app/build/*" "*.apk" "*.zip"
+          zip -r SmartCUS_Wieliszew_Source.zip . -x "*.git*" "*.gradle*" "app/build/*" "*.apk" "*.zip" "*__pycache__*" "*.db*"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" \
               app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
-              app/build/outputs/apk/debug/SmartCUS_Wieliszew_${TAG}.apk \
+              "app/build/outputs/apk/debug/SmartCUS_Wieliszew_${TAG}.apk" \
               SmartCUS_Wieliszew_Source.zip \
               --clobber
           else
             gh release create "$TAG" \
               app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
-              app/build/outputs/apk/debug/SmartCUS_Wieliszew_${TAG}.apk \
+              "app/build/outputs/apk/debug/SmartCUS_Wieliszew_${TAG}.apk" \
               SmartCUS_Wieliszew_Source.zip \
               --title "Smart CUS Wieliszew $TAG – Pełny Backend API & Naprawa Insets" \
               --notes-file RELEASE_NOTES.md \
