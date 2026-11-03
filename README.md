@@ -109,9 +109,9 @@ Aplikacja/
 ## 🚀 3. Szybkie Uruchomienie i Dystrybucja
 
 ### Metoda 1: Pobranie i instalacja pliku .APK z GitHub Releases (Rekomendowane)
-Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z oficjalnego wydania:
-👉 **[Pobierz SmartCUS_Wieliszew.apk (GitHub Releases)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.0.0/SmartCUS_Wieliszew.apk)**  
-Strona wydania: 👉 **[GitHub Releases v1.0.0](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.0.0)**
+Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z najnowszego oficjalnego wydania:
+👉 **[Pobierz SmartCUS_Wieliszew.apk (Najnowsze Wydanie)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)**  
+Strona najnowszego wydania: 👉 **[GitHub Releases v1.1.0 (Najnowsza Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.1.0)** (oraz [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
 
 Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 
@@ -128,7 +128,7 @@ Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 ### W chmurze (GitHub Actions):
 Repozytorium posiada w pełni skonfigurowany workflow [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml). Po każdym pchnięciu do gałęzi `main`:
 1. Serwery GitHub (Ubuntu + Temurin JDK 17 + Android SDK 35) kompilują czysty kod w Kotlinie.
-2. Gotowy plik `.apk` jest automatycznie publikowany w sekcji **Releases** pod tagiem `v1.0.0` oraz jako artefakt kompilacji.
+2. Gotowy plik `.apk` jest automatycznie publikowany w sekcji **Releases** pod najnowszym tagiem wydania (np. `v1.1.0`) oraz jako artefakt kompilacji.
 
 ### Lokalnie w wierszu poleceń (Gradle):
 W głównym katalogu projektu wykonaj polecenie:
