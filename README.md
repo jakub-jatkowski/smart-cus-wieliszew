@@ -1,8 +1,8 @@
 # 🏛️ Smart CUS & AI – Cyfrowy Hub Usług Społecznych Gminy Wieliszew
 ## Oficjalna Platforma Społeczna dla Mieszkańców i Centrum Usług Społecznych
-**Budżet projektu:** 1 500 000 PLN • **Horyzont:** 2026–2029 (Plan Rozwoju Usług Społecznych) • **Wersja:** 2.0 (Gotowy Produkt)
+**Budżet projektu:** 1 500 000 PLN • **Horyzont:** 2026–2029 (Plan Rozwoju Usług Społecznych) • **Wersja:** 2.0 (Gotowy Produkt M3)
 
-Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztucznej inteligencji, bezpieczeństwo seniora (moduł SOS) oraz integrację z **Wieliszewską Kartą Mieszkańca (WKM)** w oparciu o wytyczne dostępności cyfrowej **WCAG 2.1 AA** oraz standardy RODO.
+Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztucznej inteligencji oraz pełną integrację z **Wieliszewską Kartą Mieszkańca (WKM)** w oparciu o standardy **Material Design 3 (Material You)**, wytyczne dostępności cyfrowej **WCAG 2.1 AAA** oraz RODO.
 
 ---
 
@@ -14,50 +14,45 @@ Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztu
    - Płynna nawigacja kontekstowa z kartami rekomendacji.
 
 2. **💳 e-Wieliszewska Karta Mieszkańca (WKM) & Portfel Voucherów:**
-   - **Interaktywna Karta 3D (Flip):** Kliknięcie obraca kartę, ukazując rewers z kodem kreskowym, kontaktem ratunkowym ICE i podpisem.
+   - **Interaktywna Karta 3D (Flip):** Kliknięcie obraca kartę, ukazując rewers z kodem kreskowym, kontaktem ICE i podpisem.
    - **Dynamiczny Kod QR (TOTP):** Odświeżany co 45 sekund z animowaną matrycą bezpieczeństwa (ochrona przed zrzutami ekranu).
-   - **Powiększenie QR na pełnym ekranie:** Ułatwione skanowanie w autobusach L-komunikacji i kasach obiektów sportowych.
+   - **Powiększenie QR na pełnym ekranie:** Ułatwione skanowanie w kasach obiektów sportowych i kulturalnych.
    - **Emulacja NFC:** Dźwiękowa i haptyczna weryfikacja zbliżeniowa.
    - **Portfel Voucherów:** Zapis pobranych nagród z unikalnymi kodami promocyjnymi.
 
-3. **🚨 Moduł Bezpieczeństwa Seniora & SOS:**
-   - Przycisk alarmowy 1-klik w nagłówku aplikacji.
-   - Szybkie połączenie: Numer Alarmowy 112, Całodobowy Dyżur CUS Wieliszew (22 782 01 00).
-   - Gotowy szablon SMS ratunkowego do bliskiego (ICE) wraz ze współrzędnymi GPS i adresem.
-
-4. **📍 Interaktywna Mapa Potrzeb (Mikrowolontariat):**
+3. **📍 Interaktywna Mapa Potrzeb (Mikrowolontariat):**
    - Geoprzestrzenna mapa OpenStreetMap z realnymi zgłoszeniami w sołectwach Gminy Wieliszew.
    - **Ochrona RODO:** Dynamiczny bufor rozmycia współrzędnych (promień 200 m).
    - Pełny cykl życia zlecenia: *Zgłoszenie ➔ Podjęcie pomocy ➔ Potwierdzenie realizacji ➔ Przyznanie punktów*.
 
-5. **⏳ Lokalny Bank Czasu (Wymiana Umiejętności):**
+4. **⏳ Lokalny Bank Czasu (Wymiana Umiejętności):**
    - Wymiana usług sąsiedzkich w formule „1 godzina za 1 godzinę”.
    - Interaktywny rejestr transakcji czasowych z saldem w portfelu.
    - Filtrowanie ofert mieszkańców i zapotrzebowania na pomoc.
 
-6. **🏆 Grywalizacja i Katalog Nagród Mieszkańca:**
+5. **🏆 Grywalizacja i Katalog Nagród Mieszkańca:**
    - 4 poziomy zaangażowania społecznego (*Nowy Mieszkaniec ➔ Aktywny Mieszkaniec ➔ Zasłużony Sąsiad ➔ Lider Społeczności*).
    - Interaktywne odznaki („Serce Wieliszewa”, „Aktywny Sąsiad”, „Mistrz Ekologii”) z opisem warunków odblokowania.
    - Wymiana punktów na realne zniżki (kajaki nad Zalewem Zegrzyńskim, bilety do GCK Łajski, kawiarnia).
 
-7. **🩺 Teleopieka i Konsultacje Wideo (WebRTC):**
+6. **🩺 Teleopieka i Konsultacje Wideo (WebRTC):**
    - Bezpieczne wideorozmowy ze specjalistami CUS (psycholog, radca prawny, koordynator usług).
    - Podgląd z kamery lokalnej (PIP) z fallbackiem do awatara.
    - System rezerwacji wizyty na kolejne dni.
 
-8. **♻️ Magazyn Współdzielenia & Jadłodzielnia:**
+7. **♻️ Magazyn Współdzielenia & Jadłodzielnia:**
    - Bezpłatne wypożyczanie sprzętu rehabilitacyjnego (wózki aluminiowe, balkoniki, kule) z generowaniem kodu odbioru.
    - Gminna Jadłodzielnia Wieliszew (ul. Modlińska 65) czynna 24/7.
    - Formularz „Przekaż dar” umożliwiający mieszkańcom dzielenie się żywnością i sprzętem.
 
-9. **👁️ Dostępność Cyfrowa (WCAG 2.1 AA / AAA):**
+8. **👁️ Dostępność Cyfrowa (WCAG 2.1 AAA & Material You):**
    - Dedykowany tryb seniora: żółto-czarny wysoki kontrast, powiększone fonty, obramowania 3px, minimalne pola dotykowe 56 dp.
-   - Selektor rozmiaru czcionki (A- / A / A+).
+   - Dynamiczny wybór motywów Material Design 3: Wieliszew 🌿, Bursztyn ☀️, Zalew 🌊.
    - Pełna semantyka ARIA i obsługa czytników ekranu (TalkBack / NVDA).
 
-10. **💾 Trwałość Danych i Tryb Offline (PWA):**
-    - Pełny stan aplikacji zapisywany w `localStorage` (edycja profilu, vouchery, zgłoszenia, punkty).
-    - Service Worker buforujący zasoby do pracy bez dostępu do Internetu.
+9. **💾 Trwałość Danych i Tryb Offline (PWA):**
+   - Pełny stan aplikacji zapisywany w `localStorage` (edycja profilu, vouchery, zgłoszenia, punkty).
+   - Service Worker buforujący zasoby do pracy bez dostępu do Internetu.
 
 ---
 

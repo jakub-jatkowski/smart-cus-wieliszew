@@ -31,9 +31,6 @@
       <button class="control-pill" onclick="simulateNfcTap()" title="Symuluj odczyt NFC e-Karty">
         <span>📶</span> Test NFC
       </button>
-      <button class="control-pill control-pill-danger" onclick="openSosModal()" title="Procedura alarmowa SOS">
-        <span>🚨</span> Test SOS
-      </button>
       <button class="control-pill" id="btn-toggle-viewport" onclick="toggleViewportSize()" title="Zmień rozmiar okna (Telefon / Tablet / Pełny ekran)">
         <span>📱</span> Widok Ekranu
       </button>
@@ -69,11 +66,6 @@
         </div>
       </div>
       <div class="header-actions">
-        <!-- Emergency SOS Button -->
-        <button class="header-action-btn sos-btn" onclick="openSosModal()" title="Pomoc SOS / Ratunkowa" aria-label="Wezwij pomoc SOS">
-          🚨 SOS
-        </button>
-
         <!-- Notifications Bell -->
         <button class="header-action-btn" onclick="openNotificationsModal()" title="Alerty i komunikaty gminne" aria-label="Powiadomienia">
           <span>🔔</span>
@@ -135,23 +127,11 @@
           </div>
         </div>
 
-        <!-- Quick Action Tiles Grid -->
+        <!-- Quick Action Tiles Grid (8 Core Municipal Modules) -->
         <div class="quick-tiles-grid">
           <div class="quick-tile" onclick="openAssistantModal()">
             <span class="tile-icon">🤖</span>
             <span class="tile-label">Asystent AI</span>
-          </div>
-          <div class="quick-tile" onclick="openBenefitCalcModal()">
-            <span class="tile-icon">🧮</span>
-            <span class="tile-label">Kalkulator CUS</span>
-          </div>
-          <div class="quick-tile" onclick="openBusScheduleModal()">
-            <span class="tile-icon">🚌</span>
-            <span class="tile-label">L-Autobusy</span>
-          </div>
-          <div class="quick-tile" onclick="openWasteScheduleModal()">
-            <span class="tile-icon">♻️</span>
-            <span class="tile-label">Odpady Eko</span>
           </div>
           <div class="quick-tile" onclick="switchTab('pane-card')">
             <span class="tile-icon">💳</span>
@@ -161,13 +141,25 @@
             <span class="tile-icon">📍</span>
             <span class="tile-label">Mapa Pomocy</span>
           </div>
-          <div class="quick-tile" onclick="switchTab('pane-community')">
+          <div class="quick-tile" onclick="switchTab('pane-community', null, 'timebank')">
             <span class="tile-icon">⏳</span>
             <span class="tile-label">Bank Czasu</span>
           </div>
           <div class="quick-tile" onclick="switchTab('pane-community', null, 'sharing')">
             <span class="tile-icon">🍏</span>
             <span class="tile-label">Jadłodzielnia</span>
+          </div>
+          <div class="quick-tile" onclick="switchTab('pane-community', null, 'sharing')">
+            <span class="tile-icon">🦽</span>
+            <span class="tile-label">Sprzęt CUS</span>
+          </div>
+          <div class="quick-tile" onclick="switchTab('pane-services', null, 'telehealth')">
+            <span class="tile-icon">🩺</span>
+            <span class="tile-label">Teleopieka</span>
+          </div>
+          <div class="quick-tile" onclick="switchTab('pane-services', null, 'gamification')">
+            <span class="tile-icon">🏆</span>
+            <span class="tile-label">Grywalizacja</span>
           </div>
         </div>
 
@@ -716,137 +708,6 @@
           <button class="voice-btn" onclick="sendAiMessage()" title="Wyślij">
             ➤
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Kalkulator Świadczeń CUS 2026 -->
-    <div class="modal-overlay" id="modal-benefit-calc" role="dialog" aria-modal="true">
-      <div class="modal-dialog">
-        <div class="modal-title">
-          <span>🧮 Kalkulator Świadczeń CUS 2026</span>
-          <button class="modal-close-x" onclick="closeModals()">✕</button>
-        </div>
-        <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 10px;">
-          Sprawdź bezpłatnie, czy Twoje gospodarstwo domowe kwalifikuje się do pomocy społecznej (zasiłek stały, okresowy, celowy).
-        </p>
-
-        <div class="calc-box">
-          <div class="calc-row">
-            <label>Liczba osób w rodzinie:</label>
-            <input type="number" id="calc-people" class="calc-input" value="1" min="1" max="12" oninput="recalculateBenefits()">
-          </div>
-          <div class="calc-row">
-            <label>Łączny miesięczny dochód (zł):</label>
-            <input type="number" id="calc-income" class="calc-input" value="850" min="0" step="50" oninput="recalculateBenefits()">
-          </div>
-        </div>
-
-        <div id="calc-result-container" class="calc-result-badge">
-          <!-- Populated by JS -->
-        </div>
-
-        <div style="margin-top: 14px; display: flex; gap: 8px;">
-          <button class="btn btn-secondary" onclick="closeModals()">Zamknij</button>
-          <button class="btn btn-primary" onclick="consultBenefitWithCus()">Skonsultuj z koordynatorem</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Rozkład L-Autobusów Wieliszew -->
-    <div class="modal-overlay" id="modal-bus-schedule" role="dialog" aria-modal="true">
-      <div class="modal-dialog">
-        <div class="modal-title">
-          <span>🚌 Rozkład L-Komunikacji Wieliszew</span>
-          <button class="modal-close-x" onclick="closeModals()">✕</button>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div class="gov-card" style="margin: 0; padding: 12px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="badge badge-green">LINIA L9</span>
-              <span style="font-size: 11px; font-weight: bold; color: var(--primary);">Najbliższy: za 14 min</span>
-            </div>
-            <strong style="font-size: 13.5px; display: block; margin: 4px 0;">Wieliszew Pl. Kościelny ➔ PKP Legionowo</strong>
-            <span style="font-size: 11.5px; color: var(--text-secondary);">Odjazdy: 12:15, 13:00, 13:45, 14:30, 15:15</span>
-          </div>
-
-          <div class="gov-card" style="margin: 0; padding: 12px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="badge badge-blue">LINIA L10</span>
-              <span style="font-size: 11px; font-weight: bold; color: var(--primary);">Najbliższy: za 28 min</span>
-            </div>
-            <strong style="font-size: 13.5px; display: block; margin: 4px 0;">Wieliszew ➔ Michałów-Reginów ➔ Legionowo</strong>
-            <span style="font-size: 11.5px; color: var(--text-secondary);">Odjazdy: 12:40, 13:25, 14:10, 14:55</span>
-          </div>
-
-          <div class="gov-card" style="margin: 0; padding: 12px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="badge badge-purple">LINIA L11</span>
-              <span style="font-size: 11px; font-weight: bold; color: var(--primary);">Najbliższy: za 45 min</span>
-            </div>
-            <strong style="font-size: 13.5px; display: block; margin: 4px 0;">Nowy Dwór Maz. ➔ Skrzeszew ➔ Wieliszew</strong>
-            <span style="font-size: 11.5px; color: var(--text-secondary);">Odjazdy: 13:10, 14:40, 16:10</span>
-          </div>
-        </div>
-        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px; text-align: center;">
-          Darmowe przejazdy dla posiadaczy aktywnej Wieliszewskiej Karty Mieszkańca (WKM).
-        </p>
-        <button class="btn btn-secondary" style="margin-top: 8px;" onclick="closeModals()">Zamknij</button>
-      </div>
-    </div>
-
-    <!-- Modal: Harmonogram Odbioru Odpadów Eko -->
-    <div class="modal-overlay" id="modal-waste-schedule" role="dialog" aria-modal="true">
-      <div class="modal-dialog">
-        <div class="modal-title">
-          <span>♻️ Harmonogram Wywozu Odpadów</span>
-          <button class="modal-close-x" onclick="closeModals()">✕</button>
-        </div>
-        <label style="font-size: 12px; font-weight: bold; color: var(--text-secondary);">Wybierz sołectwo:</label>
-        <select id="waste-village-select" class="chat-input" style="width: 100%; margin: 4px 0 10px 0;" onchange="updateWasteDisplay(this.value)">
-          <option value="Wieliszew">Wieliszew</option>
-          <option value="Skrzeszew">Skrzeszew</option>
-          <option value="Michałów-Reginów">Michałów-Reginów</option>
-          <option value="Łajski">Łajski</option>
-          <option value="Komornica">Komornica</option>
-          <option value="Kałuszyn">Kałuszyn</option>
-          <option value="Góra">Góra</option>
-        </select>
-
-        <div id="waste-dates-container" style="display: flex; flex-direction: column; gap: 8px;">
-          <!-- Populated by JS -->
-        </div>
-
-        <button class="btn btn-secondary" style="margin-top: 12px;" onclick="closeModals()">Zamknij</button>
-      </div>
-    </div>
-
-    <!-- Modal: SOS Pomoc Ratunkowa -->
-    <div class="modal-overlay" id="modal-sos" role="dialog" aria-modal="true">
-      <div class="modal-dialog" style="border: 2px solid var(--danger);">
-        <div class="modal-title">
-          <span style="color: var(--danger);">🚨 POMOC RATUNKOWA SOS</span>
-          <button class="modal-close-x" onclick="closeModals()">✕</button>
-        </div>
-        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
-          Potrzebujesz pilnej pomocy? Wybierz jedną z opcji szybkiego kontaktu:
-        </p>
-
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <a href="tel:112" class="btn btn-danger" style="text-decoration: none; font-size: 15px;" onclick="logSosAction('112')">
-            📞 Zadzwoń pod 112 (Służby Ratunkowe)
-          </a>
-          <a href="tel:227820100" class="btn btn-primary" style="text-decoration: none;" onclick="logSosAction('CUS')">
-            🏛️ Dyżur CUS Wieliszew (22 782 01 00)
-          </a>
-          <button class="btn btn-secondary" onclick="sendIceEmergencySms()">
-            📩 Wyślij alert SMS do osoby ICE z pozycją GPS
-          </button>
-          <div style="background: var(--surface-muted); padding: 10px; border-radius: 10px; font-size: 11px;">
-            <strong>Twoja bieżąca lokalizacja GPS:</strong>
-            <div id="sos-gps-location">Gmina Wieliszew, rejon ul. Modlińskiej (52.457° N, 20.978° E)</div>
-          </div>
-          <button class="btn btn-outline" onclick="closeModals()">Zamknij</button>
         </div>
       </div>
     </div>

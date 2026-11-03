@@ -399,16 +399,6 @@ body {
   transform: translateY(-1px);
 }
 
-.control-pill-danger {
-  background: rgba(186, 26, 26, 0.25);
-  border-color: rgba(186, 26, 26, 0.6);
-  color: #FFB4AB;
-}
-
-.control-pill-danger:hover {
-  background: rgba(186, 26, 26, 0.45);
-}
-
 /* ==========================================================================
    PREMIUM SMARTPHONE HARDWARE CHASSIS (SIMULATOR)
    ========================================================================== */
@@ -562,33 +552,6 @@ body {
 
 .header-action-btn:active {
   background: rgba(0, 0, 0, var(--md-sys-state-pressed-opacity));
-}
-
-/* Emergency SOS Action Button (M3 Filled Emergency Tonal) */
-.header-action-btn.sos-btn {
-  width: auto;
-  height: 36px;
-  padding: 0 12px;
-  background: var(--md-sys-color-error);
-  color: var(--md-sys-color-on-error);
-  border-radius: var(--md-sys-shape-corner-full);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  display: inline-flex;
-  gap: 5px;
-  box-shadow: var(--md-sys-elevation-level1);
-  animation: pulseBeacon 2.2s infinite;
-}
-
-.header-action-btn.sos-btn:hover {
-  background: #A01515;
-}
-
-@keyframes pulseBeacon {
-  0% { box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.6); }
-  70% { box-shadow: 0 0 0 8px rgba(186, 26, 26, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(186, 26, 26, 0); }
 }
 
 /* M3 Badge Dot & Counter */
@@ -1285,33 +1248,6 @@ body {
   border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--md-sys-elevation-level1);
   z-index: 1;
-}
-
-/* ==========================================================================
-   CUS BENEFIT CALCULATOR 2026
-   ========================================================================== */
-.calc-box {
-  background: var(--md-sys-color-surface-container-low);
-  border-radius: var(--md-sys-shape-corner-large);
-  padding: 16px;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  margin-bottom: 14px;
-}
-
-.calc-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.calc-result-box {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  padding: 14px;
-  border-radius: var(--md-sys-shape-corner-large);
-  margin-top: 12px;
-  text-align: center;
 }
 
 /* ==========================================================================

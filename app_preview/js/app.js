@@ -268,7 +268,7 @@ const DEFAULT_STATE = {
       sender: "assistant",
       text: "Dzień dobry Pani Janino! Jestem wirtualnym asystentem Smart CUS Wieliszew. W czym mogę dziś pomóc? Mogę sprawdzić kryteria dochodowe do zasiłku, e-Kartę Mieszkańca, wolne terminy gimnastyki lub połączyć z psychologiem.",
       recommendations: [
-        { title: "Kalkulator Świadczeń CUS 2026", sub: "Oblicz przysługujący zasiłek", action: "calc" },
+        { title: "Telekonsultacja z CUS", sub: "Skonsultuj wsparcie ze specjalistą", action: "telehealth" },
         { title: "Zajęcia Zdrowy Kręgosłup 60+", sub: "Czwartki, Hala Wieliszew", action: "card" }
       ]
     }
@@ -339,8 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderBarcodeSvg();
   initPwaInstall();
   updateNotificationBadge();
-  recalculateBenefits();
-  updateWasteDisplay(state.user.village || "Wieliszew");
 });
 
 function applyUserPreferences() {
@@ -687,105 +685,6 @@ function switchServicesSubtab(view) {
 }
 
 // ==========================================================================
-// KALKULATOR ŚWIADCZEŃ CUS WIELISZEW 2026
-// ==========================================================================
-function openBenefitCalcModal() {
-  document.getElementById("modal-benefit-calc").classList.add("active");
-  recalculateBenefits();
-}
-
-function recalculateBenefits() {
-  const people = parseInt(document.getElementById("calc-people").value) || 1;
-  const income = parseFloat(document.getElementById("calc-income").value) || 0;
-  const resultBox = document.getElementById("calc-result-container");
-  if (!resultBox) return;
-
-  const thresholdPerPerson = people === 1 ? 1010 : 776;
-  const totalThreshold = thresholdPerPerson * people;
-  const perPersonIncome = income / people;
-
-  if (income <= totalThreshold) {
-    const diff = totalThreshold - income;
-    const estBenefit = Math.max(100, Math.round(diff * 0.85));
-    resultBox.style.background = "var(--primary-container)";
-    resultBox.style.color = "var(--on-primary-container)";
-    resultBox.innerHTML = `
-      <div style="font-size: 15px; font-weight: 800;">✅ Przysługuje Wsparcie Społeczne CUS</div>
-      <div style="font-size: 12px; margin-top: 4px; font-weight: normal;">
-        Dochód na osobę: <strong>${perPersonIncome.toFixed(2)} zł</strong> (Próg ustawowy: ${thresholdPerPerson} zł)<br>
-        Szacowana kwota zasiłku okresowego / stałego: <strong>ok. ${estBenefit} zł / mies.</strong>
-      </div>
-    `;
-  } else {
-    const excess = income - totalThreshold;
-    resultBox.style.background = "#fee2e2";
-    resultBox.style.color = "#991b1b";
-    resultBox.innerHTML = `
-      <div style="font-size: 15px; font-weight: 800;">ℹ️ Przekroczenie Kryterium Dochodowego</div>
-      <div style="font-size: 12px; margin-top: 4px; font-weight: normal;">
-        Dochód na osobę: <strong>${perPersonIncome.toFixed(2)} zł</strong> (Próg: ${thresholdPerPerson} zł)<br>
-        Możesz ubiegać się o niefinansowe formy wsparcia (np. usługi opiekuńcze, Jadłodzielnia, Bank Czasu, bezpłatny sprzęt rehabilitacyjny).
-      </div>
-    `;
-  }
-}
-
-function consultBenefitWithCus() {
-  closeModals();
-  switchTab('pane-services', null, 'telehealth');
-  showToast("Przekierowano do telekonsultacji z koordynatorem CUS Wieliszew.");
-}
-
-// ==========================================================================
-// MODUŁY MIEJSKIE: ROZKŁAD AUTOBUSÓW & HARMONOGRAM ODPADÓW
-// ==========================================================================
-function openBusScheduleModal() {
-  document.getElementById("modal-bus-schedule").classList.add("active");
-}
-
-function openWasteScheduleModal() {
-  document.getElementById("modal-waste-schedule").classList.add("active");
-  updateWasteDisplay(document.getElementById("waste-village-select").value);
-}
-
-function updateWasteDisplay(village) {
-  const cont = document.getElementById("waste-dates-container");
-  if (!cont) return;
-
-  const schedules = {
-    "Wieliszew": [
-      { type: "Odpady zmieszane", date: "Czwartki (najbliższy: 5 Listopada)", badge: "badge-blue" },
-      { type: "Plastik i Metale (żółty worek)", date: "Co drugi wtorek (10 Listopada)", badge: "badge-gold" },
-      { type: "Bioodpady (brązowy worek)", date: "Piątki (6 Listopada)", badge: "badge-green" },
-      { type: "Papier i Szkło", date: "Środa, 18 Listopada", badge: "badge-purple" },
-      { type: "Wielkogabaryty & Elektrośmieci", date: "Sobota, 28 Listopada (PSZOK Wieliszew)", badge: "badge-red" }
-    ],
-    "Skrzeszew": [
-      { type: "Odpady zmieszane", date: "Środy (najbliższy: 4 Listopada)", badge: "badge-blue" },
-      { type: "Plastik i Metale", date: "Poniedziałki (9 Listopada)", badge: "badge-gold" },
-      { type: "Bioodpady", date: "Czwartki (5 Listopada)", badge: "badge-green" },
-      { type: "Papier i Szkło", date: "Wtorek, 17 Listopada", badge: "badge-purple" }
-    ]
-  };
-
-  const list = schedules[village] || schedules["Wieliszew"];
-  cont.innerHTML = "";
-  list.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "gov-card";
-    card.style.margin = "0";
-    card.style.padding = "10px 12px";
-    card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="badge ${item.badge}">${item.type}</span>
-        <span style="font-size: 11.5px; font-weight: bold; color: var(--primary);">${item.date}</span>
-      </div>
-    `;
-    cont.appendChild(card);
-  });
-}
-
-// ==========================================================================
 // SENIOR MODE & WCAG CONTROLS
 // ==========================================================================
 function toggleSeniorMode() {
@@ -863,43 +762,6 @@ function simulateNfcTap() {
 }
 
 // ==========================================================================
-// SOS EMERGENCY MODULE
-// ==========================================================================
-function openSosModal() {
-  document.getElementById("modal-sos").classList.add("active");
-  playTone(880, 0.25);
-  setTimeout(() => playTone(587, 0.3), 260);
-  if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const gpsEl = document.getElementById("sos-gps-location");
-        if (gpsEl) {
-          gpsEl.textContent = `Współrzędne: ${pos.coords.latitude.toFixed(4)}° N, ${pos.coords.longitude.toFixed(4)}° E (Dokładność: ±${Math.round(pos.coords.accuracy)}m)`;
-        }
-      },
-      err => console.log("GPS denied or unavailable:", err.message),
-      { timeout: 5000 }
-    );
-  }
-}
-
-function logSosAction(type) {
-  showToast(`🚨 Rozpoczynanie procedury alarmowej (${type}). Zgłoszenie zarejestrowano w CUS.`);
-  closeModals();
-}
-
-function sendIceEmergencySms() {
-  const gps = document.getElementById("sos-gps-location").textContent;
-  const msg = encodeURIComponent(`[PILNY ALERT SOS SMART CUS] Potrzebuję pomocy! Mieszkaniec: ${state.user.name}. Moja lokalizacja: ${gps}`);
-  const phone = "601234567";
-  window.open(`sms:${phone}?body=${msg}`, "_blank");
-  showToast("Przygotowano wiadomość SMS do kontaktu ICE z pozycją GPS!");
-  closeModals();
-}
-
-// ==========================================================================
 // NOTIFICATIONS & PROFILE
 // ==========================================================================
 function openNotificationsModal() {
@@ -965,12 +827,12 @@ function renderChatMessages() {
         card.innerHTML = `<strong>✨ ${rec.title}</strong><div>${rec.sub}</div>`;
         card.onclick = () => {
           closeModals();
-          if (rec.action === "calc") openBenefitCalcModal();
-          else if (rec.action === "card") switchTab("pane-card");
+          if (rec.action === "card") switchTab("pane-card");
           else if (rec.action === "map") switchTab("pane-map");
           else if (rec.action === "timebank") switchTab("pane-community", null, "timebank");
           else if (rec.action === "sharing") switchTab("pane-community", null, "sharing");
           else if (rec.action === "telehealth") switchTab("pane-services", null, "telehealth");
+          else if (rec.action === "gamification") switchTab("pane-services", null, "gamification");
         };
         bubble.appendChild(card);
       });
@@ -1020,7 +882,6 @@ function computeAiResponse(query) {
     recs.push({ title: "Otwórz e-Kartę", sub: "Zobacz dynamiczny QR i kontakty ICE", action: "card" });
   } else if (lower.includes("kryter") || lower.includes("dochod") || lower.includes("zasił") || lower.includes("pomoc")) {
     reply = "W 2026 r. kryterium dochodowe w pomocy społecznej wynosi 1 010 zł dla osoby samotnie gospodarującej oraz 776 zł na osobę w rodzinie. CUS Wieliszew przyznaje zasiłki stałe, okresowe i celowe (np. na opał, leki, żywność).";
-    recs.push({ title: "Kalkulator Świadczeń CUS 2026", sub: "Oblicz przysługujący zasiłek", action: "calc" });
     recs.push({ title: "Dyżur Koordynatora CUS", sub: "Zamów rozmowę wideo lub telefoniczną", action: "telehealth" });
   } else if (lower.includes("wózek") || lower.includes("sprzęt") || lower.includes("chodzik") || lower.includes("kul") || lower.includes("rehabilitac")) {
     reply = "Wypożyczalnia sprzętu rehabilitacyjnego CUS Wieliszew przy ul. Modlińskiej 65 udostępnia bezpłatnie wózki inwalidzkie lekkie, balkoniki z koszykiem oraz kule łokciowe (do 6 miesięcy bez żadnych opłat). Sprzęt można zarezerwować od ręki w aplikacji.";
@@ -1036,8 +897,8 @@ function computeAiResponse(query) {
     reply = "Gminna Jadłodzielnia Wieliszew znajduje się przy budynku CUS przy ul. Modlińskiej 65 i działa całodobowo (24/7). Każdy mieszkaniec może bezpłatnie poczęstować się świeżą żywnością lub zostawić nadwyżki z własnego ogrodu.";
     recs.push({ title: "Zobacz zasoby Jadłodzielni", sub: "Świeże jabłka i przetwory w punkcie", action: "sharing" });
   } else {
-    reply = "Chętnie pomogę w sprawach Centrum Usług Społecznych Gminy Wieliszew. Mogę sprawdzić Pani e-Kartę, przeliczyć kryteria zasiłku, zapisać na gimnastykę \"Zdrowy Kręgosłup 60+\" lub wezwać pomoc.";
-    recs.push({ title: "Kalkulator Świadczeń CUS", sub: "Przelicz dochód rodziny", action: "calc" });
+    reply = "Chętnie pomogę w sprawach Centrum Usług Społecznych Gminy Wieliszew. Mogę sprawdzić Pani e-Kartę, zapisać na gimnastykę \"Zdrowy Kręgosłup 60+\" lub połączyć ze specjalistą.";
+    recs.push({ title: "e-Karta Mieszkańca", sub: "Zobacz aktywny kod WKM", action: "card" });
     recs.push({ title: "Lokalny Bank Czasu", sub: `Twoje saldo: ${state.user.timeHours} godz.`, action: "timebank" });
   }
 
