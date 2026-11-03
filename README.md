@@ -14,11 +14,12 @@ Projekt łączy e-opiekę, mikrowolontariat sąsiedzki, bank czasu, asystę sztu
    - Płynna nawigacja kontekstowa z kartami rekomendacji.
 
 2. **💳 e-Wieliszewska Karta Mieszkańca (WKM) & Portfel Voucherów:**
-   - **Interaktywna Karta 3D (Flip):** Kliknięcie obraca kartę, ukazując rewers z kodem kreskowym, kontaktem ICE i podpisem.
-   - **Dynamiczny Kod QR (TOTP):** Odświeżany co 45 sekund z animowaną matrycą bezpieczeństwa (ochrona przed zrzutami ekranu).
-   - **Powiększenie QR na pełnym ekranie:** Ułatwione skanowanie w kasach obiektów sportowych i kulturalnych.
-   - **Emulacja NFC:** Dźwiękowa i haptyczna weryfikacja zbliżeniowa.
-   - **Portfel Voucherów:** Zapis pobranych nagród z unikalnymi kodami promocyjnymi.
+   - **Nowoczesny Cyfrowy Paszport (Apple Wallet / Revolut Style):** Elegancka szmaragdowa karta cyfrowa z czytelnym identyfikatorem i profilem rezydenta.
+   - **Centralny Dynamiczny Kod QR (TOTP):** Generowany z biblioteki ZXing kod odświeżany co 45 sekund z pierścieniowym wskaźnikiem czasu (ochrona przed kopiowaniem zrzutami ekranu).
+   - **Powiększenie QR na pełnym ekranie:** Jedno dotknięcie natychmiast powiększa kod QR do skanowania w kasach i czytnikach OSiR / GCK.
+   - **Emulacja Zbliżeniowa NFC:** Dźwiękowa i wizualna weryfikacja zbliżeniowa z animowanym radarem impulsowym.
+   - **Bezpośrednie Połączenie ICE:** Natychmiastowe wybieranie numeru ratunkowego jednym przyciskiem.
+   - **Portfel Voucherów i Ulgi Mieszkańca:** Podgląd oficjalnych uprawnień (50% na basen, darmowa komunikacja L9/L10) oraz aktywnych kuponów rabatowych.
 
 3. **📍 Interaktywna Mapa Potrzeb (Mikrowolontariat):**
    - Geoprzestrzenna mapa OpenStreetMap z realnymi zgłoszeniami w sołectwach Gminy Wieliszew.
