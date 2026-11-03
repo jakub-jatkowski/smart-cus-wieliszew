@@ -240,7 +240,7 @@ fun AiAssistantScreen(
                     modifier = Modifier.size(if (isSenior) 54.dp else 46.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        imageVector = Icons.Default.Send,
                         contentDescription = "Wyślij pytanie"
                     )
                 }
