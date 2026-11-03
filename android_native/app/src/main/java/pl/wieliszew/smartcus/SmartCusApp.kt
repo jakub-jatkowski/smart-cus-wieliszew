@@ -56,8 +56,8 @@ fun SmartCusApp(repository: SmartCusRepository) {
             },
             bottomBar = {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 8.dp
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    tonalElevation = 3.dp
                 ) {
                     navItems.forEach { screen ->
                         NavigationBarItem(

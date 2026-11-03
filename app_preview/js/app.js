@@ -12,6 +12,7 @@ const DEFAULT_STATE = {
     iceContact: "Córka Anna: +48 601 234 567",
     timeHours: 5.5,
     points: 420,
+    theme: "wieliszew",
     seniorMode: false,
     fontScale: "font-scale-md"
   },
@@ -326,6 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initClock();
   initTotpTimer();
   applyUserPreferences();
+  initM3Ripples();
+  initM3ScrolledAppBar();
   renderChatMessages();
   renderVouchers();
   renderNeedPins();
@@ -343,6 +346,26 @@ document.addEventListener("DOMContentLoaded", () => {
 function applyUserPreferences() {
   document.body.classList.toggle("senior-mode", state.user.seniorMode);
   
+  // Dynamic Material You Theme Selection
+  document.body.classList.remove("theme-amber", "theme-azure");
+  if (!state.user.seniorMode) {
+    if (state.user.theme === "amber") {
+      document.body.classList.add("theme-amber");
+    } else if (state.user.theme === "azure") {
+      document.body.classList.add("theme-azure");
+    }
+  }
+
+  const themeLabel = document.getElementById("m3-theme-label");
+  if (themeLabel) {
+    const names = {
+      "wieliszew": "Wieliszew 🌿",
+      "amber": "Bursztyn ☀️",
+      "azure": "Zalew 🌊"
+    };
+    themeLabel.textContent = state.user.seniorMode ? "WCAG AAA 👁️" : (names[state.user.theme] || "Wieliszew 🌿");
+  }
+
   document.body.classList.remove("font-scale-sm", "font-scale-md", "font-scale-lg", "font-scale-xl");
   document.body.classList.add(state.user.fontScale || "font-scale-md");
 
@@ -384,6 +407,58 @@ function applyUserPreferences() {
   if (inpVillage) inpVillage.value = state.user.village;
   const inpIce = document.getElementById("inline-profile-ice");
   if (inpIce) inpIce.value = state.user.iceContact;
+}
+
+function cycleMaterialTheme() {
+  const themes = ["wieliszew", "amber", "azure"];
+  let currentIndex = themes.indexOf(state.user.theme || "wieliszew");
+  let nextIndex = (currentIndex + 1) % themes.length;
+  state.user.theme = themes[nextIndex];
+  state.user.seniorMode = false;
+  saveState();
+  applyUserPreferences();
+  const themeLabels = {
+    "wieliszew": "Gmina Wieliszew (Zielony / Szałwia)",
+    "amber": "Bursztyn Słoneczny (Złoty / Piaskowy)",
+    "azure": "Zalew Zegrzyński (Błękit / Lazur)"
+  };
+  showToast(`🎨 Motyw Material You: ${themeLabels[state.user.theme]}`);
+  playTone(520, 0.1);
+}
+
+// ==========================================================================
+// MATERIAL DESIGN 3 RIPPLE & ELEVATION CONTROLLERS
+// ==========================================================================
+function initM3Ripples() {
+  document.addEventListener("pointerdown", (e) => {
+    const target = e.target.closest(".btn, .chip, .quick-tile, .nav-item, .control-pill, .header-action-btn, .call-btn, .gov-card");
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "md-ripple";
+    
+    const size = Math.max(rect.width, rect.height) * 2;
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+    ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+
+    target.appendChild(ripple);
+
+    setTimeout(() => {
+      ripple.remove();
+    }, 600);
+  });
+}
+
+function initM3ScrolledAppBar() {
+  const scrollArea = document.getElementById("app-content");
+  const header = document.querySelector(".app-header");
+  if (!scrollArea || !header) return;
+
+  scrollArea.addEventListener("scroll", () => {
+    header.classList.toggle("scrolled", scrollArea.scrollTop > 8);
+  }, { passive: true });
 }
 
 // PWA Install

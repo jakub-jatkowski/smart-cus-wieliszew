@@ -22,6 +22,9 @@
     <h1>🏛️ Smart CUS & AI – Gmina Wieliszew</h1>
     <p>Oficjalna Platforma Społeczna dla Mieszkańców i Centrum Usług Społecznych</p>
     <div class="simulator-controls" role="toolbar" aria-label="Narzędzia symulatora">
+      <button class="control-pill" id="btn-toggle-theme" onclick="cycleMaterialTheme()" title="Zmień paletę kolorów Material You (M3)">
+        <span>🎨</span> Motyw M3: <strong id="m3-theme-label" style="margin-left: 4px;">Wieliszew 🌿</strong>
+      </button>
       <button class="control-pill" id="btn-toggle-senior" onclick="toggleSeniorMode()" title="Przełącz tryb seniora / wysoki kontrast WCAG 2.1 AAA">
         <span>👁️</span> Tryb Seniora (WCAG)
       </button>
@@ -628,27 +631,37 @@
       </div>
     </div>
 
-    <!-- Consolidated 5-Destination Bottom Navigation -->
+    <!-- Consolidated 5-Destination Material Design 3 Navigation Bar -->
     <nav class="android-nav-bar" role="navigation" aria-label="Główna nawigacja aplikacji">
       <button class="nav-item active" id="tab-btn-dashboard" onclick="switchTab('pane-dashboard', this)">
-        <span class="icon">🏠</span>
-        <span>Start</span>
+        <div class="nav-indicator">
+          <span class="icon">🏠</span>
+        </div>
+        <span class="nav-label">Start</span>
       </button>
       <button class="nav-item" id="tab-btn-card" onclick="switchTab('pane-card', this)">
-        <span class="icon">💳</span>
-        <span>e-Karta</span>
+        <div class="nav-indicator">
+          <span class="icon">💳</span>
+        </div>
+        <span class="nav-label">e-Karta</span>
       </button>
       <button class="nav-item" id="tab-btn-map" onclick="switchTab('pane-map', this)">
-        <span class="icon">📍</span>
-        <span>Mapa</span>
+        <div class="nav-indicator">
+          <span class="icon">📍</span>
+        </div>
+        <span class="nav-label">Mapa</span>
       </button>
       <button class="nav-item" id="tab-btn-community" onclick="switchTab('pane-community', this)">
-        <span class="icon">🤝</span>
-        <span>Wspólnota</span>
+        <div class="nav-indicator">
+          <span class="icon">🤝</span>
+        </div>
+        <span class="nav-label">Wspólnota</span>
       </button>
       <button class="nav-item" id="tab-btn-services" onclick="switchTab('pane-services', this)">
-        <span class="icon">👤</span>
-        <span>Usługi</span>
+        <div class="nav-indicator">
+          <span class="icon">👤</span>
+        </div>
+        <span class="nav-label">Usługi</span>
       </button>
     </nav>
 
