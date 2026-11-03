@@ -60,18 +60,18 @@ data class CusEvent(
 )
 
 enum class NeedCategory(val label: String, val icon: String) {
-    SHOPPING("Zakupy i apteka", "🛒"),
-    TRANSPORT("Transport i dojazd", "🚗"),
-    REPAIR("Drobna naprawa", "🔧"),
-    COMPANIONSHIP("Rozmowa i spacer", "☕"),
-    PET_CARE("Opieka nad psem/kotem", "🐕"),
-    GARDEN("Ogród i odśnieżanie", "🌱")
+    SHOPPING("Zakupy / Apteka", "🛒"),
+    TRANSPORT("Transport", "🚗"),
+    REPAIR("Naprawa", "🔧"),
+    COMPANIONSHIP("Spacer / Rozmowa", "☕"),
+    PET_CARE("Opieka nad pupilem", "🐕"),
+    GARDEN("Ogród / Prace", "🌱")
 }
 
 enum class Urgency(val label: String) {
-    TODAY("Pilne (dzisiaj)"),
-    THIS_WEEK("W tym tygodniu"),
-    FLEXIBLE("Elastyczny termin")
+    TODAY("Pilne (dziś)"),
+    THIS_WEEK("Ten tydzień"),
+    FLEXIBLE("Elastyczny")
 }
 
 enum class NeedStatus {
@@ -131,10 +131,10 @@ data class GamificationReward(
 )
 
 enum class SpecialistType(val label: String) {
-    PSYCHOLOGIST("Psycholog CUS"),
-    LAWYER("Radca Prawny / Pomoc Prawna"),
-    SOCIAL_WORKER("Koordynator Usług Społecznych"),
-    SENIOR_ADVISOR("Doradca ds. Seniorów i Wsparcia")
+    PSYCHOLOGIST("Psycholog"),
+    LAWYER("Radca Prawny"),
+    SOCIAL_WORKER("Koordynator CUS"),
+    SENIOR_ADVISOR("Doradca Seniora")
 }
 
 data class TelehealthSpecialist(
@@ -147,10 +147,10 @@ data class TelehealthSpecialist(
 )
 
 enum class ShareCategory(val label: String) {
-    REHAB_EQUIPMENT("Sprzęt Rehabilitacyjny"),
-    FOOD_SHARING("Jadłodzielnia Wieliszew"),
-    CLOTHING_GOODS("Ubrania i Artykuły"),
-    TOOLS_EQUIPMENT("Sprzęt domowy i ogrodowy")
+    REHAB_EQUIPMENT("Sprzęt Medyczny"),
+    FOOD_SHARING("Jadłodzielnia"),
+    CLOTHING_GOODS("Ubrania i Rzeczy"),
+    TOOLS_EQUIPMENT("Narzędzia i Dom")
 }
 
 data class SharedItem(

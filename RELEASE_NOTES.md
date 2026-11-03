@@ -1,31 +1,27 @@
-## 🏛️ Smart CUS Wieliszew v1.2.2 – Stały Klucz Wydania (Release Keystore) & Płynne Aktualizacje
+## 🏛️ Smart CUS Wieliszew v1.2.3 – Perfekcyjne Skalowanie UI & Eliminacja Łamania Tekstu
 
-Wydanie v1.2.2 wprowadza **stały, oficjalny klucz podpisywania aplikacji (Release Keystore v2/v3 Scheme)**, rozwiązując problem blokowania aktualizacji przez system Android oraz eliminując ostrzeżenia o losowych kluczach testowych.
+Wydanie v1.2.3 rozwiązuje wszelkie problemy ze skalowaniem elementów interfejsu użytkownika, niepożądanym łamaniem etykiet na dwie linie oraz ucinaniem tekstu w przyciskach, zakładkach i odznakach na ekranach smartfonów dowolnego rozmiaru.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK.
-* 📱 **[`SmartCUS_Wieliszew_v1.2.2.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.2/SmartCUS_Wieliszew_v1.2.2.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.2.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.2/SmartCUS_Wieliszew_Source.zip)** – Pełne archiwum kodów źródłowych.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany stałym kluczem).
+* 📱 **[`SmartCUS_Wieliszew_v1.2.3.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.3/SmartCUS_Wieliszew_v1.2.3.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.3.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.3/SmartCUS_Wieliszew_Source.zip)** – Pełne archiwum kodów źródłowych.
 
 ---
 
-### 🌟 Kluczowe Zmiany w Wydaniu 1.2.2:
+### 🌟 Kluczowe Zmiany w Wydaniu 1.2.3:
 
-#### 1. 🔑 Stały Klucz Podpisywania Aplikacji (Release Keystore):
-* Dotychczas każda kompilacja w GitHub Actions była podpisywana losowym, tymczasowym kluczem maszyny wirtualnej CI, co powodowało błąd Androida: *"Pakiet powoduje konflikt z istniejącym pakietem o tej samej nazwie"* i wymuszało odinstalowanie aplikacji.
-* Utworzono i zintegrowano stały magazyn kluczy `keystore/smartcus-release.jks` z oficjalnym certyfikatem dla Gminy Wieliszew / CUS (ważny 30 lat).
-* Zastosowano schematy podpisu **APK Signature Scheme v1, v2 oraz v3** (SHA-256).
+#### 1. 🔤 Eliminacja Łamania Tekstu na Dwie Linie:
+* **Zakładki nawigacyjne (TabRow):** Skrócono i zoptymalizowano nazwy zakładek (*„Bank Czasu”*, *„Jadłodzielnia & Eko”*, *„Teleopieka”*, *„Punkty & Nagrody”*) wraz z parametrami `maxLines = 1` i `softWrap = false`. Zakładki mieszczą się w jednej równej linii na każdym smartfonie.
+* **Dolny pasek nawigacji (NavigationBar):** Wszystkie etykiety modułów posiadają zabezpieczenie przed zawijaniem do drugiej linii.
+* **Przyciski akcji w kartach:** Zoptymalizowano treść przycisków (*„Zarezerwuj bezpłatnie”*, *„Wymień pomoc (1h)”*, *„Chcę pomóc”*, *„Zapisz się”*, *„Połącz na żywo”*), dzięki czemu nigdy nie łamią się pionowo wewnątrz przycisku.
 
-> [!IMPORTANT]
-> **Ważna informacja przy instalacji v1.2.2:**
-> Ponieważ Twoja poprzednia wersja była podpisana starym, losowym kluczem testowym z poprzedniego runnera CI, należy **jeden ostatni raz** odinstalować poprzednią wersję ze smartfona przed instalacją v1.2.2.
-> **Od wersji v1.2.2 każda kolejna aktualizacja będzie instalować się bez odinstalowywania – jednym kliknięciem z zachowaniem wszystkich danych!**
+#### 2. 📏 Elastyczne Skalowanie Przycisków i Odznak:
+* W komponencie `AccessibleButton` usunięto sztywną wysokość `.height(...)`, zastępując ją elastyczną minimalną wysokością `.defaultMinSize(minHeight = 48.dp..54.dp)` z zachowaniem bezpiecznego marginesu wewnętrznego.
+* W odznakach `StatusBadge` wprowadzono `maxLines = 1, overflow = TextOverflow.Ellipsis`, eliminując deformację tagów statusu (np. przy długich nazwach ról specjalistów czy kategorii pomocy).
+* W dymkach czatu Asystenta AI zastosowano elastyczną szerokość `fillMaxWidth(0.88f)` zamiast sztywnego ograniczenia 300 dp, dzięki czemu dymki optymalnie dopasowują się do szerokości każdego ekranu.
 
-#### 2. 🛡️ Ochrona Play Protect & Instalacja z Nieznanych Źródeł:
-* Aplikacja podpisana stałym certyfikatem produkcyjnym nie jest już traktowana jako „losowy debug build”.
-* Jak całkowicie wyciszyć monit Play Protect o skanowaniu:
-  1. Przy instalacji kliknij **„Więcej szczegółów”** ➔ **„Zainstaluj mimo to”**.
-  2. Jeśli Android pyta o wysłanie aplikacji do Google: w aplikacji **Sklep Google Play** ➔ kliknij ikonę profilu ➔ **Play Protect** ➔ zębatka w prawym górnym rogu ➔ wyłącz opcję: **„Ulepsz wykrywanie szkodliwych aplikacji (Wysyłaj nieznane aplikacje do Google)”**.
-  3. Docelowo pełne usunięcie jakichkolwiek pytań systemu nastąpi po wdrożeniu aplikacji w Google Play Console (gdzie certyfikat Wieliszewa zostanie trwale powiązany z kontem wydawcy).
+#### 3. 👓 Skalowanie Dostępności WCAG 2.1 AAA (Senior Mode):
+* Skorygowano rozmiary `labelLarge`, `labelMedium` i `labelSmall` w skali `SeniorTypography` (15sp / 13sp / 12sp), co zapewnia znakomitą czytelność dla seniorów bez rozpychania i rozbijania kontenerów interfejsu.

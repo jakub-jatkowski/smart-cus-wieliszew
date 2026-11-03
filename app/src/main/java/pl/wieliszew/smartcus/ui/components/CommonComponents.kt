@@ -76,16 +76,17 @@ fun AccessibleButton(
     icon: @Composable (() -> Unit)? = null
 ) {
     val isSenior = LocalSeniorMode.current
-    val height = if (isSenior) 56.dp else 48.dp
-    val shape = if (isSenior) RoundedCornerShape(12.dp) else RoundedCornerShape(9999.dp)
+    val minHeight = if (isSenior) 54.dp else 48.dp
+    val shape = if (isSenior) RoundedCornerShape(14.dp) else RoundedCornerShape(9999.dp)
 
     if (isPrimary) {
         Button(
             onClick = onClick,
             modifier = modifier
                 .fillMaxWidth()
-                .height(height),
+                .defaultMinSize(minHeight = minHeight),
             shape = shape,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -103,8 +104,11 @@ fun AccessibleButton(
                 }
                 Text(
                     text = text,
-                    style = if (isSenior) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
+                    style = if (isSenior) MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp) else MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -113,8 +117,9 @@ fun AccessibleButton(
             onClick = onClick,
             modifier = modifier
                 .fillMaxWidth()
-                .height(height),
+                .defaultMinSize(minHeight = minHeight),
             shape = shape,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             colors = ButtonDefaults.filledTonalButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -132,8 +137,11 @@ fun AccessibleButton(
                 }
                 Text(
                     text = text,
-                    style = if (isSenior) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
+                    style = if (isSenior) MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp) else MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -155,14 +163,17 @@ fun StatusBadge(
         modifier = modifier
             .clip(M3Shapes.small)
             .background(containerColor)
-            .padding(horizontal = if (isSenior) 12.dp else 10.dp, vertical = if (isSenior) 6.dp else 4.dp)
+            .padding(horizontal = if (isSenior) 10.dp else 8.dp, vertical = if (isSenior) 5.dp else 3.dp)
     ) {
         Text(
             text = text,
             color = contentColor,
-            fontSize = if (isSenior) 14.sp else 12.sp,
+            fontSize = if (isSenior) 13.sp else 11.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 0.4.sp
+            letterSpacing = 0.3.sp,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -208,10 +219,12 @@ fun HeaderBanner(
                 ) {
                     Text(
                         text = title,
-                        style = if (isSeniorMode) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleMedium.copy(fontSize = 17.sp),
+                        modifier = Modifier.weight(1f, fill = false),
+                        style = if (isSeniorMode) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
+                        softWrap = false,
                         overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.width(8.dp))
