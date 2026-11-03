@@ -78,7 +78,7 @@ jobs:
               app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
               "app/build/outputs/apk/debug/SmartCUS_Wieliszew_${TAG}.apk" \
               SmartCUS_Wieliszew_Source.zip \
-              --title "Smart CUS Wieliszew $TAG – Pełny Backend API & Naprawa Insets" \
+              --title "Smart CUS Wieliszew $TAG" \
               --notes-file RELEASE_NOTES.md \
               --latest
           fi

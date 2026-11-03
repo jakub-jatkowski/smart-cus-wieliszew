@@ -1,27 +1,31 @@
-## 🏛️ Smart CUS Wieliszew v1.2.3 – Perfekcyjne Skalowanie UI & Eliminacja Łamania Tekstu
+## 🏛️ Smart CUS Wieliszew v1.2.4 – Prawdziwa Interaktywna Mapa OpenStreetMap & Material Design 3
 
-Wydanie v1.2.3 rozwiązuje wszelkie problemy ze skalowaniem elementów interfejsu użytkownika, niepożądanym łamaniem etykiet na dwie linie oraz ucinaniem tekstu w przyciskach, zakładkach i odznakach na ekranach smartfonów dowolnego rozmiaru.
+Wydanie v1.2.4 wprowadza w pełni funkcjonalną, nowoczesną i interaktywną mapę kartograficzną **OpenStreetMap (OSM)** opartą na natywnym silniku `osmdroid` oraz wytycznych **Material Design 3 (M3)**. Zastąpiła ona wcześniejszy uproszczony schemat pełnowymiarową, responsywną mapą z gestami wielodotykowymi, dynamicznymi strefami RODO i dolnym panelem szczegółów zgłoszeń.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany stałym kluczem).
-* 📱 **[`SmartCUS_Wieliszew_v1.2.3.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.3/SmartCUS_Wieliszew_v1.2.3.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.3.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.3/SmartCUS_Wieliszew_Source.zip)** – Pełne archiwum kodów źródłowych.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany oficjalnym kluczem release keystore).
+* 📱 **[`SmartCUS_Wieliszew_v1.2.4.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.4/SmartCUS_Wieliszew_v1.2.4.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.4.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.4/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
 
 ---
 
-### 🌟 Kluczowe Zmiany w Wydaniu 1.2.3:
+### 🌟 Najważniejsze Nowości i Zmiany w Wydaniu 1.2.4:
 
-#### 1. 🔤 Eliminacja Łamania Tekstu na Dwie Linie:
-* **Zakładki nawigacyjne (TabRow):** Skrócono i zoptymalizowano nazwy zakładek (*„Bank Czasu”*, *„Jadłodzielnia & Eko”*, *„Teleopieka”*, *„Punkty & Nagrody”*) wraz z parametrami `maxLines = 1` i `softWrap = false`. Zakładki mieszczą się w jednej równej linii na każdym smartfonie.
-* **Dolny pasek nawigacji (NavigationBar):** Wszystkie etykiety modułów posiadają zabezpieczenie przed zawijaniem do drugiej linii.
-* **Przyciski akcji w kartach:** Zoptymalizowano treść przycisków (*„Zarezerwuj bezpłatnie”*, *„Wymień pomoc (1h)”*, *„Chcę pomóc”*, *„Zapisz się”*, *„Połącz na żywo”*), dzięki czemu nigdy nie łamią się pionowo wewnątrz przycisku.
+#### 1. 🗺️ Natywna Interaktywna Mapa OpenStreetMap (`osmdroid`):
+* **Prawdziwa kartografia wektorowo-rastrowa:** Zamiast statycznego prostokąta aplikacja wyświetla rzeczywistą, płynną mapę topograficzną Gminy Wieliszew oraz okolic Jeziora Zegrzyńskiego (kafelki Mapnik / OpenStreetMap).
+* **Pełna interakcja dotykowa:** Obsługa pinch-to-zoom (przybliżanie dwoma palcami), płynnego przesuwania mapy, obracania i nawigacji.
+* **Płynna animacja kamery:** Wybór sołectwa w filtrze automatycznie animuje kamerę i wyśrodkowuje widok na wybranej miejscowości (`Wieliszew`, `Łajski`, `Skrzeszew`, `Michałów-Reginów`, `Kałuszyn`, `Komornica`).
 
-#### 2. 📏 Elastyczne Skalowanie Przycisków i Odznak:
-* W komponencie `AccessibleButton` usunięto sztywną wysokość `.height(...)`, zastępując ją elastyczną minimalną wysokością `.defaultMinSize(minHeight = 48.dp..54.dp)` z zachowaniem bezpiecznego marginesu wewnętrznego.
-* W odznakach `StatusBadge` wprowadzono `maxLines = 1, overflow = TextOverflow.Ellipsis`, eliminując deformację tagów statusu (np. przy długich nazwach ról specjalistów czy kategorii pomocy).
-* W dymkach czatu Asystenta AI zastosowano elastyczną szerokość `fillMaxWidth(0.88f)` zamiast sztywnego ograniczenia 300 dp, dzięki czemu dymki optymalnie dopasowują się do szerokości każdego ekranu.
+#### 2. 🛡️ Strefy Prywatności RODO (200m Buffer Circles):
+* Zgodnie z zasadą Privacy by Design i polskimi przepisami o ochronie danych osobowych, dokładne adresy podopiecznych nie są ujawniane.
+* Każda potrzeba wolontariatu generuje na mapie 200-metrowy geometryczny okrąg RODO (`Polygon.pointsAsCircle(point, 200.0)`) z łagodnym, półprzezroczystym wypełnieniem w kolorze danej kategorii pomocy.
 
-#### 3. 👓 Skalowanie Dostępności WCAG 2.1 AAA (Senior Mode):
-* Skorygowano rozmiary `labelLarge`, `labelMedium` i `labelSmall` w skali `SeniorTypography` (15sp / 13sp / 12sp), co zapewnia znakomitą czytelność dla seniorów bez rozpychania i rozbijania kontenerów interfejsu.
+#### 3. 🎨 Nowoczesne Kontrolki Material Design 3 (M3):
+* **Pływający pasek filtrów (Floating Filter Bar):** Elegancka półprzezroczysta pigułka M3 z podwyższeniem tonalnym u góry ekranu, umożliwiająca błyskawiczny wybór sołectwa i kategorii zgłoszenia.
+* **Pływające kontrolki mapy:** Pływające przyciski szybkiego centrowania na CUS Wieliszew (`MyLocation`), przybliżania/oddalania (`+` / `-`) oraz natychmiastowego przełączania na widok listy kart.
+* **Material 3 ModalBottomSheet:** Kliknięcie dowolnej pinezki na mapie wysuwa elegancki dolny arkusz ze szczegółami prośby sąsiedzkiej, informacją o punktach wolontariatu oraz przyciskiem *„Chcę pomóc”* lub *„Zakończ pomoc”*.
+
+#### 4. 🔄 Aktualizacje „W Miejscu” (In-Place Update):
+* Aplikacja podpisana jest stałym, 30-letnim oficjalnym certyfikatem release keystore (`smartcus-release.jks`), co pozwala na bezproblemową aktualizację nowej wersji z pliku APK bez konieczności odinstalowywania poprzedniej wersji.
