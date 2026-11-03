@@ -216,7 +216,7 @@ fun StatusBadge(
 
 /**
  * Material Design 3 Top App Bar / Header Banner
- * Enhanced with statusBarsPadding() to prevent system bar collision
+ * Clean, modern consumer app header with statusBarsPadding()
  */
 @Composable
 fun HeaderBanner(
@@ -231,8 +231,9 @@ fun HeaderBanner(
     onToggleSeniorMode: () -> Unit
 ) {
     Surface(
-        color = if (isSeniorMode) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 1.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
         modifier = Modifier.fillMaxWidth()
     ) {
         Box(
@@ -243,83 +244,82 @@ fun HeaderBanner(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-                    .padding(horizontal = 14.dp),
+                    .height(56.dp)
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Title and compact clickable backend status pill
+                // Brand Mark & App Name
                 Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { onOpenBackendSettings?.invoke() }
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AccountBalance,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = title,
-                        modifier = Modifier.weight(1f, fill = false),
-                        style = if (isSeniorMode) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleMedium.copy(fontSize = 16.sp),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    // Compact Backend sync pill
                     Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = if (isBackendOnline) Color(0xFFDCFCE7) else Color(0xFFFEF3C7),
-                        contentColor = if (isBackendOnline) Color(0xFF166534) else Color(0xFF92400E),
-                        modifier = Modifier.clickable { onOpenBackendSettings?.invoke() }
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(36.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(6.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isBackendOnline) Color(0xFF22C55E) else Color(0xFFF59E0B))
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = if (isBackendOnline) "API" else "Lokalny",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.Spa,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Wieliszew",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 17.sp,
+                                letterSpacing = (-0.2).sp
+                            )
+                            if (!isBackendOnline) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(7.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFF59E0B))
+                                )
+                            }
+                        }
+                        Text(
+                            text = "Centrum Usług Społecznych",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
-                // Compact Action Buttons
+                // Sleek Action Icons
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    // Senior Accessibility Mode Toggle (Compact 'Aa' Circle)
+                    // Senior Accessibility Toggle
                     IconButton(
                         onClick = onToggleSeniorMode,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Surface(
                             shape = CircleShape,
-                            color = if (isSeniorMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            color = if (isSeniorMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                             contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            border = if (isSeniorMode) BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary) else null,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(30.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Text(
                                     text = "Aa",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
+                                    fontSize = 11.sp
                                 )
                             }
                         }
@@ -328,10 +328,10 @@ fun HeaderBanner(
                     // Theme Selector Button
                     IconButton(
                         onClick = onOpenThemeSelector,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Palette,
+                            imageVector = Icons.Outlined.Palette,
                             contentDescription = "Zmień motyw",
                             modifier = Modifier.size(20.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -341,7 +341,7 @@ fun HeaderBanner(
                     // Notification Bell with Badge
                     IconButton(
                         onClick = onOpenNotifications,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(36.dp)
                     ) {
                         BadgedBox(
                             badge = {
@@ -356,9 +356,9 @@ fun HeaderBanner(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Powiadomienia gminne",
-                                modifier = Modifier.size(20.dp),
+                                imageVector = Icons.Outlined.Notifications,
+                                contentDescription = "Powiadomienia",
+                                modifier = Modifier.size(21.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }

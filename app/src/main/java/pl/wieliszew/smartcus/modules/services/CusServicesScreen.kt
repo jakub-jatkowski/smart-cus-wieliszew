@@ -31,12 +31,13 @@ fun CusServicesScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Surface(
-            tonalElevation = 2.dp,
-            color = MaterialTheme.colorScheme.surfaceContainer
+            tonalElevation = 1.dp,
+            color = MaterialTheme.colorScheme.surface
         ) {
             TabRow(
                 selectedTabIndex = selectedTab,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Tab(
