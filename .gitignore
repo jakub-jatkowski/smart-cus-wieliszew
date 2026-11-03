@@ -15,5 +15,12 @@ apk_output/
 *.apk
 *.zip
 
+# Python / Backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+backend/*.db
+
 # Logs
 *.log

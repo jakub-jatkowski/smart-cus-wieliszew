@@ -161,10 +161,10 @@ def seed_data(c):
     # Need Pins
     c.execute("""
     INSERT INTO need_pins (id, title, description, village, category, urgency, lat, lng, points, status, accepted_by, created_at) VALUES
-    ('p1', 'Pomoc w zakupach leków dla p. Heleny', 'Potrzebna pomoc w wykupieniu recepty w aptece przy ul. Modlińskiej.', 'Wieliszew', 'SHOPPING', 'HIGH', 52.4485, 20.9785, 50, 'OPEN', NULL, '2026-11-03 08:30'),
-    ('p2', 'Wyprowadzenie psa rano i wieczorem', 'Starszy pan po operacji kolana potrzebuje pomocy w wyprowadzeniu labradora.', 'Łajski', 'PETS', 'MEDIUM', 52.4278, 20.9632, 25, 'OPEN', NULL, '2026-11-03 09:00'),
-    ('p3', 'Prace porządkowe w ogrodzie seniora', 'Grabienie liści i przygotowanie rabat do zimy dla seniorki.', 'Skrzeszew', 'GARDENING', 'LOW', 52.4412, 20.9389, 30, 'OPEN', NULL, '2026-11-02 14:15'),
-    ('p4', 'Konfiguracja nowego tabletu dla seniora', 'Pomoc w instalacji aplikacji CUS Wieliszew i WhatsApp do kontaktu z rodziną.', 'Michałów-Reginów', 'TECH', 'LOW', 52.4190, 20.9950, 40, 'OPEN', NULL, '2026-11-03 07:45');
+    ('p1', 'Pomoc w zakupach leków dla p. Heleny', 'Potrzebna pomoc w wykupieniu recepty w aptece przy ul. Modlińskiej.', 'Wieliszew', 'SHOPPING', 'TODAY', 52.4485, 20.9785, 50, 'OPEN', NULL, '2026-11-03 08:30'),
+    ('p2', 'Wyprowadzenie psa rano i wieczorem', 'Starszy pan po operacji kolana potrzebuje pomocy w wyprowadzeniu labradora.', 'Łajski', 'PET_CARE', 'THIS_WEEK', 52.4278, 20.9632, 25, 'OPEN', NULL, '2026-11-03 09:00'),
+    ('p3', 'Prace porządkowe w ogrodzie seniora', 'Grabienie liści i przygotowanie rabat do zimy dla seniorki.', 'Skrzeszew', 'GARDEN', 'FLEXIBLE', 52.4412, 20.9389, 30, 'OPEN', NULL, '2026-11-02 14:15'),
+    ('p4', 'Drobna pomoc przy konfiguracji telefonu', 'Pomoc w obsłudze aplikacji CUS Wieliszew i kontaktu z rodziną.', 'Michałów-Reginów', 'REPAIR', 'FLEXIBLE', 52.4190, 20.9950, 40, 'OPEN', NULL, '2026-11-03 07:45');
     """)
 
     # Time Bank

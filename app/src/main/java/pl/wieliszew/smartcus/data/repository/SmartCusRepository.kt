@@ -107,15 +107,17 @@ class SmartCusRepository {
                                 title = m["title"] as? String ?: "",
                                 category = when (m["category"] as? String) {
                                     "SHOPPING" -> NeedCategory.SHOPPING
-                                    "PETS" -> NeedCategory.PETS
-                                    "GARDENING" -> NeedCategory.GARDENING
-                                    "TECH" -> NeedCategory.TECH
-                                    else -> NeedCategory.OTHER
+                                    "TRANSPORT" -> NeedCategory.TRANSPORT
+                                    "REPAIR" -> NeedCategory.REPAIR
+                                    "COMPANIONSHIP" -> NeedCategory.COMPANIONSHIP
+                                    "PET_CARE", "PETS" -> NeedCategory.PET_CARE
+                                    "GARDEN", "GARDENING" -> NeedCategory.GARDEN
+                                    else -> NeedCategory.SHOPPING
                                 },
                                 urgency = when (m["urgency"] as? String) {
-                                    "HIGH" -> Urgency.HIGH
-                                    "MEDIUM" -> Urgency.MEDIUM
-                                    else -> Urgency.LOW
+                                    "TODAY", "HIGH" -> Urgency.TODAY
+                                    "THIS_WEEK", "MEDIUM" -> Urgency.THIS_WEEK
+                                    else -> Urgency.FLEXIBLE
                                 },
                                 village = m["village"] as? String ?: "Wieliszew",
                                 approximateAddress = "Rejon sołectwa ${m["village"] as? String ?: "Wieliszew"} (bufor RODO 200m)",
