@@ -2,6 +2,7 @@ package pl.wieliszew.smartcus.modules.gamification
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CardGiftcard
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.wieliszew.smartcus.data.model.Badge
@@ -28,24 +31,26 @@ import pl.wieliszew.smartcus.ui.components.SeniorAccessibleCard
 import pl.wieliszew.smartcus.ui.components.StatusBadge
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 import pl.wieliszew.smartcus.ui.theme.WieliszewGold
-import pl.wieliszew.smartcus.ui.theme.WieliszewGreenPrimary
 
 @Composable
 fun GamificationScreen(
-    repository: SmartCusRepository
+    repository: SmartCusRepository,
+    onNavigateToCard: (() -> Unit)? = null
 ) {
     val userProfile by repository.userProfile.collectAsState()
     val badges by repository.badges.collectAsState()
     val rewards by repository.rewards.collectAsState()
     val isSenior = LocalSeniorMode.current
 
-    var redeemMessage by remember { mutableStateOf<String?>(null) }
+    var selectedBadgeForDetail by remember { mutableStateOf<Badge?>(null) }
+    var claimedRewardDialog by remember { mutableStateOf<GamificationReward?>(null) }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Points & Level Banner
@@ -53,52 +58,90 @@ fun GamificationScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(18.dp))
+                    .clip(RoundedCornerShape(20.dp))
                     .background(if (isSenior) Color(0xFF1E1E1E) else MaterialTheme.colorScheme.primary)
                     .then(
-                        if (isSenior) Modifier.border(3.dp, WieliszewGold, RoundedCornerShape(18.dp)) else Modifier
+                        if (isSenior) Modifier.border(3.dp, WieliszewGold, RoundedCornerShape(20.dp)) else Modifier
                     )
                     .padding(20.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "POZIOM SPOŁECZNY",
-                            color = WieliszewGold,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                        Text(
-                            text = userProfile.levelTitle,
-                            color = Color.White,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = if (isSenior) 22.sp else 19.sp
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Star, contentDescription = null, tint = WieliszewGold, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
                             Text(
-                                text = "${userProfile.gamificationPoints} pkt zaangażowania",
-                                color = Color.White,
+                                text = "POZIOM ZAANGAŻOWANIA SPOŁECZNEGO",
+                                color = WieliszewGold,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                fontSize = 11.sp,
+                                letterSpacing = 1.sp
                             )
+                            Text(
+                                text = userProfile.levelTitle,
+                                color = Color.White,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = if (isSenior) 22.sp else 19.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Star, contentDescription = null, tint = WieliszewGold, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${userProfile.gamificationPoints} pkt aktywności",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(WieliszewGold),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = Color.Black, modifier = Modifier.size(32.dp))
                         }
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(WieliszewGold),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = Color.Black, modifier = Modifier.size(36.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Level Progress Bar
+                    val nextLevelTarget = 500
+                    val progress = (userProfile.gamificationPoints.toFloat() / nextLevelTarget).coerceIn(0f, 1f)
+
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Postęp do poziomu: Lider Społeczności",
+                                color = Color.White.copy(alpha = 0.85f),
+                                fontSize = 11.sp
+                            )
+                            Text(
+                                text = "${userProfile.gamificationPoints} / $nextLevelTarget pkt",
+                                color = WieliszewGold,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 11.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            color = WieliszewGold,
+                            trackColor = Color.White.copy(alpha = 0.25f)
+                        )
                     }
                 }
             }
@@ -110,14 +153,24 @@ fun GamificationScreen(
                 Text(
                     text = "Twoje Odznaki Społeczne",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Dotknij odznaki, aby sprawdzić warunki jej zdobycia",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(badges) { badge ->
-                        BadgeItem(badge = badge, isSenior = isSenior)
+                        BadgeItem(
+                            badge = badge,
+                            isSenior = isSenior,
+                            onClick = { selectedBadgeForDetail = badge }
+                        )
                     }
                 }
             }
@@ -127,31 +180,10 @@ fun GamificationScreen(
         item {
             Text(
                 text = "Katalog Nagród i Zniżek Partnerów",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-        }
-
-        if (redeemMessage != null) {
-            item {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("🎉 ", fontSize = 20.sp)
-                        Text(
-                            text = redeemMessage!!,
-                            color = Color(0xFF2E7D32),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
         }
 
         items(rewards) { reward ->
@@ -162,26 +194,109 @@ fun GamificationScreen(
                 onRedeem = {
                     val success = repository.redeemReward(reward.id)
                     if (success) {
-                        redeemMessage = "Pomyślnie odebrano: ${reward.title}! Kod kreskowy zapisano w e-Karcie."
+                        claimedRewardDialog = reward
                     }
                 }
             )
         }
     }
+
+    // Modal: Szczegóły odznaki
+    if (selectedBadgeForDetail != null) {
+        val badge = selectedBadgeForDetail!!
+        AlertDialog(
+            onDismissRequest = { selectedBadgeForDetail = null },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(badge.iconEmoji, fontSize = 28.sp)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(badge.title, fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StatusBadge(
+                        text = if (badge.isUnlocked) "ODBLOKOWANA (${badge.unlockedDate})" else "DO ZDOBYCIA",
+                        containerColor = if (badge.isUnlocked) Color(0xFFE8F5E9) else Color(0xFFF5F5F5),
+                        contentColor = if (badge.isUnlocked) Color(0xFF2E7D32) else Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = badge.description, style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { selectedBadgeForDetail = null }) {
+                    Text("Rozumiem", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
+    }
+
+    // Modal: Nagroda pomyślnie odebrana
+    if (claimedRewardDialog != null) {
+        val rew = claimedRewardDialog!!
+        AlertDialog(
+            onDismissRequest = { claimedRewardDialog = null },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Nagroda odebrana! 🎉", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = rew.title,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text("Partner: ${rew.partnerName}", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Voucher został automatycznie zapisany w Twojej e-Karcie Mieszkańca z unikalnym kodem zniżkowym.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        claimedRewardDialog = null
+                        onNavigateToCard?.invoke()
+                    }
+                ) {
+                    Text("Pokaż w e-Karcie", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { claimedRewardDialog = null }) {
+                    Text("Zostań tutaj")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-fun BadgeItem(badge: Badge, isSenior: Boolean) {
+fun BadgeItem(
+    badge: Badge,
+    isSenior: Boolean,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
-            .width(130.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(if (badge.isUnlocked) MaterialTheme.colorScheme.surface else Color(0xFFF0F0F0))
+            .width(135.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (badge.isUnlocked) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainer)
             .border(
                 width = if (badge.isUnlocked) 2.dp else 1.dp,
-                color = if (badge.isUnlocked) WieliszewGold else Color.LightGray,
-                shape = RoundedCornerShape(14.dp)
+                color = if (badge.isUnlocked) WieliszewGold else MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(16.dp)
             )
+            .clickable { onClick() }
             .padding(12.dp)
     ) {
         Column(
@@ -194,7 +309,8 @@ fun BadgeItem(badge: Badge, isSenior: Boolean) {
                 text = badge.title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
-                maxLines = 1
+                maxLines = 1,
+                textAlign = TextAlign.Center
             )
             Text(
                 text = if (badge.isUnlocked) "Odblokowana" else "Do zdobycia",
@@ -230,7 +346,7 @@ fun RewardCard(
                 Text(
                     text = "${reward.pointsCost} pkt",
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     color = if (canAfford) Color(0xFFF57F17) else Color.Gray
                 )
             }
@@ -239,12 +355,12 @@ fun RewardCard(
 
             Text(
                 text = reward.title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Partner: ${reward.partnerName}",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold
             )
@@ -276,4 +392,3 @@ fun RewardCard(
         }
     }
 }
-

@@ -18,13 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import pl.wieliszew.smartcus.data.model.TelehealthSpecialist
 import pl.wieliszew.smartcus.data.repository.SmartCusRepository
-import pl.wieliszew.smartcus.ui.components.AccessibleButton
 import pl.wieliszew.smartcus.ui.components.SeniorAccessibleCard
 import pl.wieliszew.smartcus.ui.components.StatusBadge
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
-import pl.wieliszew.smartcus.ui.theme.WieliszewGreenPrimary
 
 @Composable
 fun TelehealthScreen(
@@ -36,13 +35,32 @@ fun TelehealthScreen(
     var activeCallSpecialist by remember { mutableStateOf<TelehealthSpecialist?>(null) }
     var isMicMuted by remember { mutableStateOf(false) }
     var isCameraOff by remember { mutableStateOf(false) }
+    var callSeconds by remember { mutableIntStateOf(0) }
+    var showBookingDialogFor by remember { mutableStateOf<TelehealthSpecialist?>(null) }
+    var callSummaryMessage by remember { mutableStateOf<String?>(null) }
+
+    // Call timer simulation
+    LaunchedEffect(activeCallSpecialist) {
+        if (activeCallSpecialist != null) {
+            callSeconds = 0
+            while (true) {
+                delay(1000)
+                callSeconds += 1
+            }
+        }
+    }
 
     if (activeCallSpecialist != null) {
         // Active WebRTC Video Consultation Screen
+        val spec = activeCallSpecialist!!
+        val minutes = callSeconds / 60
+        val seconds = callSeconds % 60
+        val timeFormatted = String.format("%02d:%02d", minutes, seconds)
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF101413))
+                .background(Color(0xFF0F172A))
                 .padding(16.dp)
         ) {
             Column(
@@ -52,24 +70,25 @@ fun TelehealthScreen(
             ) {
                 // Top Bar with Security & Specialist Info
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2824)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+                    shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(12.dp),
+                        modifier = Modifier.padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF81C784), modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF4ADE80), modifier = Modifier.size(14.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Szyfrowanie End-to-End CUS", color = Color(0xFF81C784), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text("Szyfrowanie End-to-End CUS", color = Color(0xFF4ADE80), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
-                            Text(activeCallSpecialist!!.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                            Text(activeCallSpecialist!!.type.label, color = Color.LightGray, fontSize = 13.sp)
+                            Text(spec.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                            Text(spec.type.label, color = Color.LightGray, fontSize = 12.sp)
                         }
-                        StatusBadge(text = "LIVE 04:12", containerColor = Color.Red, contentColor = Color.White)
+                        StatusBadge(text = "LIVE $timeFormatted", containerColor = Color(0xFFDC2626), contentColor = Color.White)
                     }
                 }
 
@@ -78,35 +97,35 @@ fun TelehealthScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF263238)),
+                        .padding(vertical = 14.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(Color(0xFF1E2824)),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Box(
                             modifier = Modifier
-                                .size(90.dp)
+                                .size(96.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF455A64)),
+                                .background(Color(0xFF334155)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text("👩‍⚕️", fontSize = 48.sp)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(activeCallSpecialist!!.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                        Text("Obraz i dźwięk są stabilne", color = Color(0xFF80CBC4), fontSize = 13.sp)
+                        Text(spec.name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Obraz i dźwięk HD stabilne (CUS Wieliszew)", color = Color(0xFF86EFAC), fontSize = 12.sp)
                     }
 
                     // Self Preview PiP
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(16.dp)
-                            .size(100.dp, 140.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(if (isCameraOff) Color.Black else Color(0xFF37474F))
-                            .border(2.dp, Color.White, RoundedCornerShape(12.dp)),
+                            .padding(14.dp)
+                            .size(90.dp, 125.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(if (isCameraOff) Color.Black else Color(0xFF475569))
+                            .border(2.dp, Color.White, RoundedCornerShape(14.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         if (isCameraOff) {
@@ -114,7 +133,7 @@ fun TelehealthScreen(
                         } else {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("🧓", fontSize = 28.sp)
-                                Text("Twój obraz", color = Color.White, fontSize = 10.sp)
+                                Text("Ty", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -124,15 +143,15 @@ fun TelehealthScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 14.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
                         onClick = { isMicMuted = !isMicMuted },
                         modifier = Modifier
-                            .size(56.dp)
-                            .background(if (isMicMuted) Color.Red else Color(0xFF37474F), CircleShape)
+                            .size(54.dp)
+                            .background(if (isMicMuted) Color(0xFFDC2626) else Color(0xFF334155), CircleShape)
                     ) {
                         Icon(
                             imageVector = if (isMicMuted) Icons.Default.MicOff else Icons.Default.Mic,
@@ -144,8 +163,8 @@ fun TelehealthScreen(
                     IconButton(
                         onClick = { isCameraOff = !isCameraOff },
                         modifier = Modifier
-                            .size(56.dp)
-                            .background(if (isCameraOff) Color.Red else Color(0xFF37474F), CircleShape)
+                            .size(54.dp)
+                            .background(if (isCameraOff) Color(0xFFDC2626) else Color(0xFF334155), CircleShape)
                     ) {
                         Icon(
                             imageVector = if (isCameraOff) Icons.Default.VideocamOff else Icons.Default.Videocam,
@@ -155,16 +174,19 @@ fun TelehealthScreen(
                     }
 
                     IconButton(
-                        onClick = { activeCallSpecialist = null },
+                        onClick = {
+                            callSummaryMessage = "Konsultacja z ${spec.name} zakończona po czasie: $timeFormatted. Dziękujemy za kontakt z CUS!"
+                            activeCallSpecialist = null
+                        },
                         modifier = Modifier
-                            .size(64.dp)
-                            .background(Color(0xFFD32F2F), CircleShape)
+                            .size(62.dp)
+                            .background(Color(0xFFDC2626), CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.CallEnd,
                             contentDescription = "Zakończ konsultację",
                             tint = Color.White,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(30.dp)
                         )
                     }
                 }
@@ -176,7 +198,8 @@ fun TelehealthScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
@@ -194,14 +217,14 @@ fun TelehealthScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Telekonsultacje i e-Wsparcie",
+                                text = "Teleopieka i e-Wsparcie",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = "Bezpłatne, poufne wideorozmowy ze specjalistami CUS Wieliszew",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -212,10 +235,82 @@ fun TelehealthScreen(
                 SpecialistCard(
                     specialist = specialist,
                     isSenior = isSenior,
-                    onStartCall = { activeCallSpecialist = specialist }
+                    onStartCall = { activeCallSpecialist = specialist },
+                    onBookAppointment = { showBookingDialogFor = specialist }
                 )
             }
         }
+    }
+
+    // Modal: Rezerwacja terminu
+    if (showBookingDialogFor != null) {
+        val spec = showBookingDialogFor!!
+        var selectedSlot by remember { mutableStateOf(spec.nextFreeSlot) }
+        var userPhone by remember { mutableStateOf("+48 601 234 567") }
+        var isBooked by remember { mutableStateOf(false) }
+
+        AlertDialog(
+            onDismissRequest = { showBookingDialogFor = null },
+            title = {
+                Text("Rezerwacja e-Konsultacji", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Specjalista: ${spec.name}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text("Rola: ${spec.type.label}", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = selectedSlot,
+                        onValueChange = { selectedSlot = it },
+                        label = { Text("Wybrana data i godzina") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = userPhone,
+                        onValueChange = { userPhone = it },
+                        label = { Text("Telefon do powiadomień SMS") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text("Konsultacja odbędzie się przez tę aplikację – otrzymasz przypomnienie 15 minut przed terminem.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        isBooked = true
+                        callSummaryMessage = "Pomyślnie zarezerwowano e-konsultację z: ${spec.name} na termin: $selectedSlot!"
+                        showBookingDialogFor = null
+                    }
+                ) {
+                    Text("Zatwierdź rezerwację", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBookingDialogFor = null }) {
+                    Text("Anuluj")
+                }
+            }
+        )
+    }
+
+    // Modal: Podsumowanie połączenia / rezerwacji
+    if (callSummaryMessage != null) {
+        AlertDialog(
+            onDismissRequest = { callSummaryMessage = null },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Potwierdzenie CUS", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = { Text(callSummaryMessage!!) },
+            confirmButton = {
+                TextButton(onClick = { callSummaryMessage = null }) {
+                    Text("OK", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
     }
 }
 
@@ -223,7 +318,8 @@ fun TelehealthScreen(
 fun SpecialistCard(
     specialist: TelehealthSpecialist,
     isSenior: Boolean,
-    onStartCall: () -> Unit
+    onStartCall: () -> Unit,
+    onBookAppointment: () -> Unit
 ) {
     SeniorAccessibleCard {
         Column {
@@ -238,7 +334,7 @@ fun SpecialistCard(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 StatusBadge(
-                    text = if (specialist.availableToday) "DYŻUR DZISIAJ" else "ZAPISY NA JUTRO",
+                    text = if (specialist.availableToday) "DYŻUR TERAZ" else "ZAPISY NA JUTRO",
                     containerColor = if (specialist.availableToday) Color(0xFFE8F5E9) else Color(0xFFEDE7F6),
                     contentColor = if (specialist.availableToday) Color(0xFF2E7D32) else Color(0xFF5E35B1)
                 )
@@ -248,12 +344,12 @@ fun SpecialistCard(
 
             Text(
                 text = specialist.name,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "🕒 Najbliższy termin: ${specialist.nextFreeSlot}",
-                style = MaterialTheme.typography.bodyMedium,
+                text = "🕒 Wolny termin: ${specialist.nextFreeSlot}",
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold
             )
@@ -267,21 +363,31 @@ fun SpecialistCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = onStartCall,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (specialist.availableToday) MaterialTheme.colorScheme.primary else Color(0xFF455A64)
-                )
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(Icons.Default.VideoCall, contentDescription = null, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = if (specialist.availableToday) "Połącz na żywo (Wideo / Audio)" else "Umów termin e-konsultacji",
-                    fontWeight = FontWeight.Bold
-                )
+                Button(
+                    onClick = onStartCall,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (specialist.availableToday) MaterialTheme.colorScheme.primary else Color(0xFF475569)
+                    )
+                ) {
+                    Icon(Icons.Default.VideoCall, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (specialist.availableToday) "Połącz na żywo" else "Połącz z dyżurem",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = onBookAppointment
+                ) {
+                    Text("Umów termin", fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
 }
-

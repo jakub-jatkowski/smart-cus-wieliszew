@@ -56,13 +56,15 @@ jobs:
             app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
           retention-days: 60
 
-      - name: Publish APK to GitHub Release
+      - name: Publish APK & Source Archive to GitHub Release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          zip -r SmartCUS_Wieliszew_Source.zip . -x "*.git*" "*.gradle*" "app/build/*" "*.apk" "*.zip"
           gh release upload v1.0.0 \
             app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
             app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk \
+            SmartCUS_Wieliszew_Source.zip \
             --clobber
 

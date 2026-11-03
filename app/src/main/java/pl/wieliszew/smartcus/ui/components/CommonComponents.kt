@@ -5,8 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,8 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.wieliszew.smartcus.data.model.MunicipalNotification
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 import pl.wieliszew.smartcus.ui.theme.M3Shapes
+import pl.wieliszew.smartcus.ui.theme.MunicipalTheme
 
 /**
  * Material Design 3 Accessible Card
@@ -169,6 +173,9 @@ fun HeaderBanner(
     title: String,
     subtitle: String,
     isSeniorMode: Boolean,
+    unreadNotificationsCount: Int = 0,
+    onOpenNotifications: () -> Unit,
+    onOpenThemeSelector: () -> Unit,
     onToggleSeniorMode: () -> Unit
 ) {
     Surface(
@@ -179,7 +186,7 @@ fun HeaderBanner(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -197,22 +204,223 @@ fun HeaderBanner(
                 )
             }
 
-            // M3 Filled Tonal Button for Senior Toggle
-            FilledTonalButton(
-                onClick = onToggleSeniorMode,
-                shape = RoundedCornerShape(9999.dp),
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = if (isSeniorMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-                ),
-                border = if (isSeniorMode) BorderStroke(2.dp, MaterialTheme.colorScheme.outline) else null
-            ) {
-                Text(
-                    text = if (isSeniorMode) "Aa Normalny" else "Aa Tryb Seniora",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Theme Selector Button
+                IconButton(onClick = onOpenThemeSelector) {
+                    Icon(
+                        imageVector = Icons.Default.Palette,
+                        contentDescription = "Zmień motyw",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                // Notification Bell with Badge
+                IconButton(onClick = onOpenNotifications) {
+                    BadgedBox(
+                        badge = {
+                            if (unreadNotificationsCount > 0) {
+                                Badge(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                ) {
+                                    Text(text = unreadNotificationsCount.toString(), fontSize = 10.sp)
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = "Powiadomienia gminne",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                // M3 Filled Tonal Button for Senior Toggle
+                FilledTonalButton(
+                    onClick = onToggleSeniorMode,
+                    shape = RoundedCornerShape(9999.dp),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = if (isSeniorMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
+                    ),
+                    border = if (isSeniorMode) BorderStroke(2.dp, MaterialTheme.colorScheme.outline) else null,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = if (isSeniorMode) "Aa Normalny" else "Aa Senior AAA",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
     }
+}
+
+/**
+ * Dialog Powiadomień Gminnych CUS Wieliszew
+ */
+@Composable
+fun NotificationsDialog(
+    notifications: List<MunicipalNotification>,
+    onDismiss: () -> Unit
+) {
+    val isSenior = LocalSeniorMode.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Komunikaty Gminne CUS",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                if (notifications.isEmpty()) {
+                    Text("Brak nowych powiadomień.", style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    notifications.forEach { notif ->
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (notif.isAlert) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                                else MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (notif.isAlert) {
+                                        Text(
+                                            text = "ALERT BEZPIECZEŃSTWA",
+                                            color = MaterialTheme.colorScheme.error,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 10.sp
+                                        )
+                                    } else {
+                                        Text(
+                                            text = "KOMUNIKAT",
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 10.sp
+                                        )
+                                    }
+                                    Text(
+                                        text = notif.timeAgo,
+                                        fontSize = 10.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = notif.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = if (isSenior) 16.sp else 14.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = notif.description,
+                                    fontSize = if (isSenior) 14.sp else 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Zamknij", fontWeight = FontWeight.Bold)
+            }
+        }
+    )
+}
+
+/**
+ * Dialog Wyboru Motywu Material You
+ */
+@Composable
+fun ThemeSelectorDialog(
+    currentTheme: MunicipalTheme,
+    onSelectTheme: (MunicipalTheme) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Palette, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Wybierz Motyw Aplikacji", fontWeight = FontWeight.Bold)
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                MunicipalTheme.entries.forEach { theme ->
+                    val isSelected = theme == currentTheme
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onSelectTheme(theme)
+                                onDismiss()
+                            },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+                        ),
+                        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(theme.emoji, fontSize = 20.sp)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = theme.displayName,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    fontSize = 15.sp
+                                )
+                            }
+                            if (isSelected) {
+                                Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Anuluj")
+            }
+        }
+    )
 }

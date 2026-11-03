@@ -111,3 +111,22 @@ val NeutralMedium = M3OnSurfaceVariantLight
 val NeutralLight = M3BackgroundLight
 val SurfaceCard = M3SurfaceContainerLowestLight
 val OutlineBorder = M3OutlineVariantLight
+
+// Solar Amber Palette
+val SolarPrimary = Color(0xFFB26A00)
+val SolarOnPrimary = Color(0xFFFFFFFF)
+val SolarPrimaryContainer = Color(0xFFFFDDB8)
+val SolarOnPrimaryContainer = Color(0xFF2B1700)
+val SolarSecondary = Color(0xFF745B31)
+val SolarSecondaryContainer = Color(0xFFF6EDE4)
+val SolarSurface = Color(0xFFFFF8F4)
+
+// Lake Azure Palette
+val LakePrimary = Color(0xFF00668B)
+val LakeOnPrimary = Color(0xFFFFFFFF)
+val LakePrimaryContainer = Color(0xFFC3E8FF)
+val LakeOnPrimaryContainer = Color(0xFF001E2D)
+val LakeSecondary = Color(0xFF4E616D)
+val LakeSecondaryContainer = Color(0xFFE7EFF6)
+val LakeSurface = Color(0xFFF6FAFE)
+

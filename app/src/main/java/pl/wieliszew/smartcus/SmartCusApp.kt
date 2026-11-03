@@ -18,7 +18,9 @@ import pl.wieliszew.smartcus.modules.sharing.SharingHubScreen
 import pl.wieliszew.smartcus.modules.telehealth.TelehealthScreen
 import pl.wieliszew.smartcus.modules.timebank.TimeBankScreen
 import pl.wieliszew.smartcus.ui.components.HeaderBanner
-import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
+import pl.wieliszew.smartcus.ui.components.NotificationsDialog
+import pl.wieliszew.smartcus.ui.components.ThemeSelectorDialog
+import pl.wieliszew.smartcus.ui.theme.MunicipalTheme
 import pl.wieliszew.smartcus.ui.theme.SmartCusTheme
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
@@ -32,7 +34,13 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
 @Composable
 fun SmartCusApp(repository: SmartCusRepository) {
     val isSeniorMode by repository.isSeniorMode.collectAsState()
+    val notifications by repository.notifications.collectAsState()
+
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Assistant) }
+    var currentTheme by remember { mutableStateOf(MunicipalTheme.FOREST) }
+    var showThemeSelector by remember { mutableStateOf(false) }
+    var showNotificationsDialog by remember { mutableStateOf(false) }
+
     var communitySubTab by remember { mutableStateOf("timebank") }
     var servicesSubTab by remember { mutableStateOf("telehealth") }
 
@@ -44,20 +52,26 @@ fun SmartCusApp(repository: SmartCusRepository) {
         Screen.Services
     )
 
-    SmartCusTheme(isSeniorMode = isSeniorMode) {
+    SmartCusTheme(
+        isSeniorMode = isSeniorMode,
+        selectedTheme = currentTheme
+    ) {
         Scaffold(
             topBar = {
                 HeaderBanner(
                     title = "Smart CUS Wieliszew",
-                    subtitle = "Cyfrowy Hub Społeczny Gminy",
+                    subtitle = "Cyfrowy Hub Usług Społecznych",
                     isSeniorMode = isSeniorMode,
+                    unreadNotificationsCount = notifications.count { !it.isRead },
+                    onOpenNotifications = { showNotificationsDialog = true },
+                    onOpenThemeSelector = { showThemeSelector = true },
                     onToggleSeniorMode = { repository.toggleSeniorMode() }
                 )
             },
             bottomBar = {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    tonalElevation = 3.dp
+                    tonalElevation = 4.dp
                 ) {
                     navItems.forEach { screen ->
                         NavigationBarItem(
@@ -112,16 +126,19 @@ fun SmartCusApp(repository: SmartCusRepository) {
                     Screen.Map -> NeedMapScreen(repository = repository)
                     Screen.Community -> {
                         Column(modifier = Modifier.fillMaxSize()) {
-                            TabRow(selectedTabIndex = if (communitySubTab == "timebank") 0 else 1) {
+                            TabRow(
+                                selectedTabIndex = if (communitySubTab == "timebank") 0 else 1,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ) {
                                 Tab(
                                     selected = communitySubTab == "timebank",
                                     onClick = { communitySubTab = "timebank" },
-                                    text = { Text("Bank Czasu (1h=1h)") }
+                                    text = { Text("Bank Czasu (1h=1h)", fontWeight = FontWeight.Bold) }
                                 )
                                 Tab(
                                     selected = communitySubTab == "sharing",
                                     onClick = { communitySubTab = "sharing" },
-                                    text = { Text("Współdzielenie & Eko") }
+                                    text = { Text("Współdzielenie & Eko", fontWeight = FontWeight.Bold) }
                                 )
                             }
                             if (communitySubTab == "timebank") {
@@ -133,25 +150,48 @@ fun SmartCusApp(repository: SmartCusRepository) {
                     }
                     Screen.Services -> {
                         Column(modifier = Modifier.fillMaxSize()) {
-                            TabRow(selectedTabIndex = if (servicesSubTab == "telehealth") 0 else 1) {
+                            TabRow(
+                                selectedTabIndex = if (servicesSubTab == "telehealth") 0 else 1,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ) {
                                 Tab(
                                     selected = servicesSubTab == "telehealth",
                                     onClick = { servicesSubTab = "telehealth" },
-                                    text = { Text("Teleopieka CUS") }
+                                    text = { Text("Teleopieka CUS", fontWeight = FontWeight.Bold) }
                                 )
                                 Tab(
                                     selected = servicesSubTab == "gamification",
                                     onClick = { servicesSubTab = "gamification" },
-                                    text = { Text("Nagrody & Punkty") }
+                                    text = { Text("Nagrody & Punkty", fontWeight = FontWeight.Bold) }
                                 )
                             }
                             if (servicesSubTab == "telehealth") {
                                 TelehealthScreen(repository = repository)
                             } else {
-                                GamificationScreen(repository = repository)
+                                GamificationScreen(
+                                    repository = repository,
+                                    onNavigateToCard = { currentScreen = Screen.Card }
+                                )
                             }
                         }
                     }
+                }
+
+                // Modal: Powiadomienia Gminne CUS
+                if (showNotificationsDialog) {
+                    NotificationsDialog(
+                        notifications = notifications,
+                        onDismiss = { showNotificationsDialog = false }
+                    )
+                }
+
+                // Modal: Wybór Motywu Material You
+                if (showThemeSelector) {
+                    ThemeSelectorDialog(
+                        currentTheme = currentTheme,
+                        onSelectTheme = { currentTheme = it },
+                        onDismiss = { showThemeSelector = false }
+                    )
                 }
             }
         }

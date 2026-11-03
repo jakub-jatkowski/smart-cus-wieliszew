@@ -108,15 +108,50 @@ val HighContrastColorScheme = darkColorScheme(
     outlineVariant = HighContrastBorder
 )
 
+enum class MunicipalTheme(val displayName: String, val emoji: String) {
+    FOREST("Wieliszew", "🌿"),
+    SOLAR("Bursztyn", "☀️"),
+    LAKE("Zalew", "🌊")
+}
+
+val SolarLightColorScheme = lightColorScheme(
+    primary = SolarPrimary,
+    onPrimary = SolarOnPrimary,
+    primaryContainer = SolarPrimaryContainer,
+    onPrimaryContainer = SolarOnPrimaryContainer,
+    secondary = SolarSecondary,
+    secondaryContainer = SolarSecondaryContainer,
+    surface = SolarSurface,
+    background = SolarSurface,
+    outline = SolarSecondary,
+    outlineVariant = SolarSecondaryContainer
+)
+
+val LakeLightColorScheme = lightColorScheme(
+    primary = LakePrimary,
+    onPrimary = LakeOnPrimary,
+    primaryContainer = LakePrimaryContainer,
+    onPrimaryContainer = LakeOnPrimaryContainer,
+    secondary = LakeSecondary,
+    secondaryContainer = LakeSecondaryContainer,
+    surface = LakeSurface,
+    background = LakeSurface,
+    outline = LakeSecondary,
+    outlineVariant = LakeSecondaryContainer
+)
+
 @Composable
 fun SmartCusTheme(
     isSeniorMode: Boolean = false,
+    selectedTheme: MunicipalTheme = MunicipalTheme.FOREST,
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         isSeniorMode -> HighContrastColorScheme
+        selectedTheme == MunicipalTheme.SOLAR -> SolarLightColorScheme
+        selectedTheme == MunicipalTheme.LAKE -> LakeLightColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)

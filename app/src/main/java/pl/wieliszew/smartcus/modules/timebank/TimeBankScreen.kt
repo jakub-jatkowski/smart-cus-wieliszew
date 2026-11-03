@@ -27,7 +27,6 @@ import pl.wieliszew.smartcus.ui.components.SeniorAccessibleCard
 import pl.wieliszew.smartcus.ui.components.StatusBadge
 import pl.wieliszew.smartcus.ui.theme.LocalSeniorMode
 import pl.wieliszew.smartcus.ui.theme.WieliszewGold
-import pl.wieliszew.smartcus.ui.theme.WieliszewGreenPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +38,9 @@ fun TimeBankScreen(
     val isSenior = LocalSeniorMode.current
 
     var selectedTab by remember { mutableIntStateOf(0) } // 0: Wszystkie, 1: Oferty, 2: Poszukiwane
-    var showDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var selectedEntryForExchange by remember { mutableStateOf<TimeBankEntry?>(null) }
+    var exchangeSuccessMsg by remember { mutableStateOf<String?>(null) }
 
     val filteredList = entries.filter {
         when (selectedTab) {
@@ -52,11 +53,12 @@ fun TimeBankScreen(
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = { showAddDialog = true },
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text("Dodaj umiejętność", fontWeight = FontWeight.Bold) },
+                text = { Text("Dodaj ofertę / potrzebę", fontWeight = FontWeight.Bold) },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(bottom = 12.dp)
             )
         }
     ) { paddingValues ->
@@ -65,7 +67,8 @@ fun TimeBankScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             // Time Wallet Header Card
@@ -89,26 +92,27 @@ fun TimeBankScreen(
                             Text(
                                 text = "TWÓJ PORTFEL CZASU",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp,
-                                color = if (isSenior) WieliszewGold else MaterialTheme.colorScheme.primary
+                                fontSize = 11.sp,
+                                color = if (isSenior) WieliszewGold else MaterialTheme.colorScheme.primary,
+                                letterSpacing = 1.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "${userProfile.timeBankBalanceHours} godz.",
                                 fontWeight = FontWeight.ExtraBold,
-                                fontSize = if (isSenior) 32.sp else 28.sp,
+                                fontSize = if (isSenior) 30.sp else 26.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "1 godzina pomocy oddanej = 1 godzina odebranej",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                                text = "Zasada: 1 godzina pomocy oddanej = 1 godzina odebranej",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(52.dp)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
@@ -117,7 +121,7 @@ fun TimeBankScreen(
                                 imageVector = Icons.Default.Schedule,
                                 contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(28.dp)
                             )
                         }
                     }
@@ -133,17 +137,17 @@ fun TimeBankScreen(
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
-                        text = { Text("Wszystko (${entries.size})", fontWeight = FontWeight.Bold) }
+                        text = { Text("Wszystko (${entries.size})", fontWeight = FontWeight.Bold, fontSize = 12.sp) }
                     )
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
-                        text = { Text("Mieszkańcy Oferują", fontWeight = FontWeight.Bold) }
+                        text = { Text("Oferują Pomoc", fontWeight = FontWeight.Bold, fontSize = 12.sp) }
                     )
                     Tab(
                         selected = selectedTab == 2,
                         onClick = { selectedTab = 2 },
-                        text = { Text("Poszukiwana Pomoc", fontWeight = FontWeight.Bold) }
+                        text = { Text("Poszukują Pomocy", fontWeight = FontWeight.Bold, fontSize = 12.sp) }
                     )
                 }
             }
@@ -153,22 +157,25 @@ fun TimeBankScreen(
                 TimeBankEntryCard(
                     entry = entry,
                     isSenior = isSenior,
-                    onExchange = { repository.transferTimeBankHours(entry.id, 1.0) }
+                    onExchange = { selectedEntryForExchange = entry }
                 )
             }
         }
     }
 
     // Modal to add skill / offer
-    if (showDialog) {
+    if (showAddDialog) {
         var title by remember { mutableStateOf("") }
         var category by remember { mutableStateOf("Złota rączka") }
         var isOffer by remember { mutableStateOf(true) }
         var desc by remember { mutableStateOf("") }
+        var hours by remember { mutableDoubleStateOf(1.0) }
+
+        val categories = listOf("Złota rączka", "Edukacja cyfrowa", "Ogród", "Języki obce", "Gotowanie", "Transport")
 
         AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Dodaj ogłoszenie w Banku Czasu", fontWeight = FontWeight.Bold) },
+            onDismissRequest = { showAddDialog = false },
+            title = { Text("Nowy wpis w Banku Czasu", fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -183,20 +190,51 @@ fun TimeBankScreen(
                             label = { Text("Potrzebuję pomocy") }
                         )
                     }
+
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
                         label = { Text("Tytuł umiejętności") },
-                        placeholder = { Text("np. Naprawa cieknącego kranu, lekcja włoskiego") },
+                        placeholder = { Text("np. Naprawa kranu, nauka smartfona") },
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     OutlinedTextField(
                         value = desc,
                         onValueChange = { desc = it },
-                        label = { Text("Szczegóły i dostępność") },
+                        label = { Text("Szczegóły i dogodne godziny") },
                         modifier = Modifier.fillMaxWidth(),
-                        minLines = 3
+                        minLines = 2
                     )
+
+                    Text("Kategoria:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        items(categories) { cat ->
+                            FilterChip(
+                                selected = category == cat,
+                                onClick = { category = cat },
+                                label = { Text(cat, fontSize = 11.sp) }
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Szacowany czas:", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Row {
+                            listOf(0.5, 1.0, 1.5, 2.0).forEach { h ->
+                                FilterChip(
+                                    selected = hours == h,
+                                    onClick = { hours = h },
+                                    label = { Text("${h}h", fontSize = 11.sp) },
+                                    modifier = Modifier.padding(horizontal = 2.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             },
             confirmButton = {
@@ -207,20 +245,87 @@ fun TimeBankScreen(
                                 title = (if (isOffer) "Oferuję: " else "Poszukuję: ") + title,
                                 village = userProfile.village,
                                 type = if (isOffer) TimeBankType.OFFERING else TimeBankType.REQUESTING,
-                                hours = 1.0,
+                                hours = hours,
                                 category = category,
                                 desc = desc
                             )
-                            showDialog = false
+                            showAddDialog = false
                         }
                     }
                 ) {
-                    Text("Opublikuj w Banku Czasu")
+                    Text("Opublikuj", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { showAddDialog = false }) {
                     Text("Anuluj")
+                }
+            }
+        )
+    }
+
+    // Modal Confirmation for Exchange
+    if (selectedEntryForExchange != null) {
+        val entry = selectedEntryForExchange!!
+        val isOffering = entry.type == TimeBankType.OFFERING
+
+        AlertDialog(
+            onDismissRequest = { selectedEntryForExchange = null },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Handshake, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Potwierdzenie wymiany czasowej", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = entry.title,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text("Mieszkaniec: ${entry.authorName} (${entry.village})", fontSize = 13.sp)
+                    Text(
+                        text = if (isOffering) {
+                            "Pobierzesz ${entry.hours}h ze swojego salda. Mieszkaniec otrzyma powiadomienie o nawiązaniu kontaktu sąsiedzkiego."
+                        } else {
+                            "Zarobisz ${entry.hours}h na swoje konto po udzieleniu wsparcia sąsiadowi."
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val delta = if (isOffering) -entry.hours else entry.hours
+                        repository.transferTimeBankHours(entry.id, delta)
+                        exchangeSuccessMsg = "Pomyślnie zrealizowano wymianę z: ${entry.authorName}!"
+                        selectedEntryForExchange = null
+                    }
+                ) {
+                    Text("Potwierdzam wymianę", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { selectedEntryForExchange = null }) {
+                    Text("Wróć")
+                }
+            }
+        )
+    }
+
+    // Success Notification Dialog
+    if (exchangeSuccessMsg != null) {
+        AlertDialog(
+            onDismissRequest = { exchangeSuccessMsg = null },
+            title = { Text("Transakcja zrealizowana! 🎉", fontWeight = FontWeight.Bold) },
+            text = { Text(exchangeSuccessMsg!!) },
+            confirmButton = {
+                TextButton(onClick = { exchangeSuccessMsg = null }) {
+                    Text("Super, dziękuję!", fontWeight = FontWeight.Bold)
                 }
             }
         )
@@ -259,16 +364,16 @@ fun TimeBankEntryCard(
 
             Text(
                 text = entry.title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Mieszkaniec: ${entry.authorName} (${entry.village}) • Ocena: ⭐ ${entry.rating}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                text = "Mieszkaniec: ${entry.authorName} (${entry.village}) • Kategoria: ${entry.category} • ⭐ ${entry.rating}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = entry.description,
@@ -287,11 +392,10 @@ fun TimeBankEntryCard(
                 Icon(Icons.Default.Handshake, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = if (isOffering) "Wymień 1h ze swojego portfela" else "Zaoferuj pomoc (Zarób 1h)",
+                    text = if (isOffering) "Wymień ${entry.hours}h ze swojego portfela" else "Zaoferuj pomoc (Zarób ${entry.hours}h)",
                     fontWeight = FontWeight.Bold
                 )
             }
         }
     }
 }
-
