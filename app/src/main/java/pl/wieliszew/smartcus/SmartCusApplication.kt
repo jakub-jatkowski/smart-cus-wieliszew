@@ -8,6 +8,6 @@ class SmartCusApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        repository = pl.wieliszew.smartcus.data.repository.SmartCusRepository()
+        repository = pl.wieliszew.smartcus.data.repository.SmartCusRepository(this)
     }
 }

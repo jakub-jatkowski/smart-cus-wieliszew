@@ -1,37 +1,28 @@
-## 🏛️ Smart CUS Wieliszew v1.4.0 – Cyfrowy Standard Państwowy (mObywatel 2.0 & GovTech Benchmark)
+## 🏛️ Smart CUS Wieliszew v1.4.1 – Offline-First Persistence & Pełna Kartografia Sołectw
 
-Wydanie v1.4.0 to zwieńczenie wieloetapowego programu doskonałości aplikacji obywatelskiej, podnoszące **Smart CUS Wieliszew** do poziomu referencyjnego dla polskiego sektora publicznego. Projekt łączy wzorce **mObywatel 2.0**, wytyczne **Material Design 3 (Google)** oraz normy dostępności cyfrowej **WCAG 2.1 AAA**.
+Wydanie v1.4.1 stanowi bezpośrednie rozszerzenie wersji v1.4.0 (mObywatel 2.0 Benchmark) o pełną architekturę **Offline-First** opartą na pamięci urządzenia (`SharedPreferences`), gwarantującą niezawodne działanie bez konieczności stałego połączenia z siecią, oraz kompletną obsługę wszystkich sołectw Gminy Wieliszew.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany stałym kluczem release keystore, gotowy do instalacji lub aktualizacji).
-* 📱 **[`SmartCUS_Wieliszew_v1.4.0.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.4.0/SmartCUS_Wieliszew_v1.4.0.apk)** – Wersjonowany pakiet instalacyjny wydania v1.4.0.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.4.0/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany stałym kluczem release keystore, płynna aktualizacja).
+* 📱 **[`SmartCUS_Wieliszew_v1.4.1.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.4.1/SmartCUS_Wieliszew_v1.4.1.apk)** – Wersjonowany pakiet instalacyjny wydania v1.4.1.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.4.1/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
 
 ---
 
-### 🌟 Najważniejsze Wdrożenia w Wydaniu 1.4.0:
+### 🌟 Kluczowe Udoskonalenia w Wydaniu 1.4.1:
 
-#### 1. 💳 e-Karta Mieszkańca w Standardzie Cyfrowego Portfela (Digital Wallet):
-* **Dynamiczny Hologram Zabezpieczający (Security Shimmer Wave):** Ruchoma tęczowa fala światła przechodząca przez awers karty (technologia znana z mDowodu), uniemożliwiająca fałszowanie karty statycznymi zrzutami ekranu.
-* **Pierścieniowy Wskaźnik TOTP (Circular Progress Ring):** Płynny, kolisty zegar odliczający ważność dynamicznego tokenu bezpieczeństwa (45s).
-* **Obsługa Kart Rodzinnych (Multi-Card Profile):** Błyskawiczny przełącznik kart w ramach rodziny: Karta Główna (mieszkaniec), Karta Ucznia (dziecko) oraz Karta Seniora (rodzic/dziadek).
-* **Bezpośrednie Połączenie ICE:** Przycisk szybkiego wybierania numeru ratunkowego (`ACTION_DIAL`) bezpośrednio z rewersu karty.
-* **Radarowa Animacja NFC:** Wizualizacja pola elektromagnetycznego z pulsującymi falami podczas zbliżania do terminali gminnych.
+#### 1. 💾 Niezawodna Persystencja Lokalna (Offline-First):
+* **Zachowanie Ustawień Senior Mode:** Włączony tryb dostępności WCAG 2.1 AAA jest natychmiast zapamiętywany w pamięci trwałej urządzenia i przywracany przy ponownym uruchomieniu aplikacji.
+* **Autozapis Danych Mieszkańca:** Zmiana danych osobowych, sołectwa, kontaktu ratunkowego ICE, salda godzin w Banku Czasu oraz punktów wolontariatu jest w czasie rzeczywistym synchronizowana z lokalną bazą `SharedPreferences`.
+* **Trwała Konfiguracja API:** Zdefiniowany adres serwera CUS API jest zapamiętywany na stałe, co ułatwia pracę zarówno w sieci lokalnej (LAN/WiFi), jak i poza nią.
 
-#### 2. 🌲 Gminny Eko-Puls & Komunikacja Lokalna (Wieliszew Live):
-* **Monitor Czystości Powietrza:** Bieżące dane ze stacji pomiarowej CUS Wieliszew (PM2.5: 8 µg/m³, PM10: 14 µg/m³, wilgotność, czystość wód Jeziora Zegrzyńskiego).
-* **Tablica Odjazdów L-komunikacji:** Podgląd na żywo najbliższych odjazdów autobusów gminnych (Linia L9 → Legionowo PKP, Linia L10 → Nowy Dwór Mazowiecki, Linia L11 → Zegrze Południowe) z przystanku Urząd Gminy Wieliszew.
+#### 2. 🗺️ Kompletna Siatka Kartograficzna Wszystkich 12 Sołectw Gminy Wieliszew:
+* Dodano pełny wykaz sołectw wraz z precyzyjnymi współrzędnymi GPS:
+  - **Wieliszew, Łajski, Skrzeszew, Michałów-Reginów, Kałuszyn, Komornica, Krubin, Janówek Pierwszy, Poddębie, Sikory, Topolina, Olszewnica Stara, Olszewnica Nowa**.
+* Płynna animacja kamery OpenStreetMap (`animateTo`) na każde wybrane sołectwo.
 
-#### 3. 🗺️ Profesjonalna Kartografia OpenStreetMap (OSM):
-* **Wektorowe Piktogramy Pinezek M3:** Nowe, ostre znaczniki potrzeb z dynamicznym kodowaniem kolorystycznym (zakupy, transport, naprawy, opieka domowa), czytelnym inicjałem oraz czerwoną aureolą pilności dla pilnych zgłoszeń.
-* **Material 3 ModalBottomSheet:** Czyste, natywne arkusze dolne dla szczegółów potrzeb i filtrów kategorii (*Progressive Disclosure*).
-
-#### 4. 🔒 Prawa Obywatela i Ochrona Danych (RODO Art. 20):
-* **Eksport Danych Osobowych:** Wdrożenie prawa do przenoszenia danych (RODO Art. 20) – możliwość wygenerowania i skopiowania pełnego pakietu danych obywatela w ustrukturyzowanym formacie JSON.
-* **Edycja Danych Tożsamości i ICE:** Wbudowany dialog aktualizacji danych meldunkowych i kontaktu ratunkowego z natychmiastowym zapisem.
-
-#### 5. 🏛️ Niezawodny Backend REST API & Refaktoryzacja:
-* Gotowe pliki startowe `Uruchom_Serwer_Backend.bat` oraz zoptymalizowany `backend/run.bat` z automatyczną konfiguracją zmiennej `PYTHONPATH`.
-* Usunięcie ponad 1,150 zbędnych pustych linii, uporządkowanie formatowania i pełna stabilność kompilacji Gradle.
+#### 3. 💳 Cyfrowy Portfel & Zabezpieczenia:
+* Pełna integracja dynamicznego hologramu falowego (Security Shimmer Wave), pierścieniowego odliczania tokenu TOTP (Circular Progress Ring) oraz kart rodzinnych.
+* Bezpośrednie połączenie ICE jednym dotknięciem na rewersie karty.

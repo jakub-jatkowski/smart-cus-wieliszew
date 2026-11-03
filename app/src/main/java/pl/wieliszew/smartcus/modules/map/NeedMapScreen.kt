@@ -74,7 +74,7 @@ fun NeedMapScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var showCategoryFilterSheet by remember { mutableStateOf(false) }
 
-    val villages = listOf("Wszystkie", "Wieliszew", "Łajski", "Skrzeszew", "Michałów-Reginów", "Kałuszyn", "Komornica")
+    val villages = listOf("Wszystkie", "Wieliszew", "Łajski", "Skrzeszew", "Michałów-Reginów", "Kałuszyn", "Komornica", "Krubin", "Janówek Pierwszy", "Poddębie", "Sikory", "Topolina", "Olszewnica Stara", "Olszewnica Nowa")
 
     val filteredPins = remember(pins, selectedVillage, selectedCategoryFilter) {
         pins.filter { pin ->

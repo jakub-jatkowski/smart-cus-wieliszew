@@ -1,5 +1,6 @@
 package pl.wieliszew.smartcus.data.repository
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,7 +15,10 @@ import pl.wieliszew.smartcus.data.remote.CusApiService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class SmartCusRepository {
+class SmartCusRepository(
+    private val context: Context? = null
+) {
+    private val prefs = context?.getSharedPreferences("smart_cus_offline_prefs", Context.MODE_PRIVATE)
 
     val apiService = CusApiService()
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -22,13 +26,27 @@ class SmartCusRepository {
     private val _isBackendOnline = MutableStateFlow(false)
     val isBackendOnline: StateFlow<Boolean> = _isBackendOnline.asStateFlow()
 
-    private val _serverUrl = MutableStateFlow(BackendConfig.baseUrl)
+    private val _serverUrl = MutableStateFlow(
+        prefs?.getString("server_url", BackendConfig.baseUrl) ?: BackendConfig.baseUrl
+    )
     val serverUrl: StateFlow<String> = _serverUrl.asStateFlow()
 
-    private val _userProfile = MutableStateFlow(UserProfile())
+    private val _userProfile = MutableStateFlow(
+        UserProfile(
+            fullName = prefs?.getString("user_name", "Janina Kowalska") ?: "Janina Kowalska",
+            village = prefs?.getString("user_village", "Wieliszew") ?: "Wieliszew",
+            iceContact = prefs?.getString("ice_contact", "Córka Anna: +48 501 234 567") ?: "Córka Anna: +48 501 234 567",
+            gamificationPoints = prefs?.getInt("gamification_points", 420) ?: 420,
+            timeBankBalanceHours = (prefs?.getFloat("timebank_hours", 5.5f) ?: 5.5f).toDouble()
+        )
+    )
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
 
-    private val _residentCard = MutableStateFlow(ResidentCard())
+    private val _residentCard = MutableStateFlow(
+        ResidentCard(
+            holderName = prefs?.getString("user_name", "Janina Kowalska") ?: "Janina Kowalska"
+        )
+    )
     val residentCard: StateFlow<ResidentCard> = _residentCard.asStateFlow()
 
     private val _vouchers = MutableStateFlow<List<Voucher>>(emptyList())
@@ -61,10 +79,21 @@ class SmartCusRepository {
     private val _chatMessages = MutableStateFlow(initialChat())
     val chatMessages: StateFlow<List<AiMessage>> = _chatMessages.asStateFlow()
 
-    private val _isSeniorMode = MutableStateFlow(false)
+    private val _isSeniorMode = MutableStateFlow(prefs?.getBoolean("senior_mode", false) ?: false)
     val isSeniorMode: StateFlow<Boolean> = _isSeniorMode.asStateFlow()
 
     init {
+        scope.launch {
+            _userProfile.collect { p ->
+                prefs?.edit()
+                    ?.putString("user_name", p.fullName)
+                    ?.putString("user_village", p.village)
+                    ?.putString("ice_contact", p.iceContact)
+                    ?.putInt("gamification_points", p.gamificationPoints)
+                    ?.putFloat("timebank_hours", p.timeBankBalanceHours.toFloat())
+                    ?.apply()
+            }
+        }
         syncWithBackend()
     }
 
@@ -140,12 +169,21 @@ class SmartCusRepository {
     }
 
     fun toggleSeniorMode() {
-        _isSeniorMode.update { !it }
+        _isSeniorMode.update {
+            val newVal = !it
+            prefs?.edit()?.putBoolean("senior_mode", newVal)?.apply()
+            newVal
+        }
     }
 
     fun updateUserProfile(fullName: String, village: String, iceContact: String) {
         _userProfile.update { it.copy(fullName = fullName, village = village, iceContact = iceContact) }
         _residentCard.update { it.copy(holderName = fullName) }
+        prefs?.edit()
+            ?.putString("user_name", fullName)
+            ?.putString("user_village", village)
+            ?.putString("ice_contact", iceContact)
+            ?.apply()
     }
 
     fun clearChat() {
@@ -392,6 +430,11 @@ class SmartCusRepository {
                 "kałuszyn", "kaluszyn" -> 52.4632 to 20.9150
                 "krubin" -> 52.4820 to 20.9150
                 "janówek pierwszy", "janowek pierwszy" -> 52.4415 to 20.8750
+                "poddębie", "poddebie" -> 52.4880 to 20.9850
+                "sikory" -> 52.4750 to 20.9920
+                "topolina" -> 52.4650 to 20.9990
+                "olszewnica stara" -> 52.4420 to 20.9050
+                "olszewnica nowa" -> 52.4330 to 20.9020
                 else -> 52.4485 to 20.9785
             }
         }
