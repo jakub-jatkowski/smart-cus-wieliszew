@@ -1,11 +1,17 @@
 package pl.wieliszew.smartcus.modules.volunteer
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -28,64 +34,95 @@ fun VolunteerHubScreen(
     val isSenior = LocalSeniorMode.current
 
     Column(modifier = Modifier.fillMaxSize()) {
+        // Modern Pill Switcher
         Surface(
-            tonalElevation = 1.dp,
-            color = MaterialTheme.colorScheme.surface
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 0.dp
         ) {
-            TabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Tab(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    text = {
-                        Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                            Icon(
-                                imageVector = Icons.Outlined.Map,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Mapa Pomocy",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = if (isSenior) 13.sp else 12.sp,
-                                maxLines = 1,
-                                softWrap = false,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                // Tab 0: Mapa
+                val isMapSelected = selectedTab == 0
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = if (isMapSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(
+                        1.dp,
+                        if (isMapSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .clickable { selectedTab = 0 }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Map,
+                            contentDescription = null,
+                            tint = if (isMapSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Mapa Pomocy",
+                            fontWeight = if (isMapSelected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                            fontSize = if (isSenior) 13.sp else 12.sp,
+                            color = if (isMapSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                )
-                Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    text = {
-                        Row(modifier = Modifier.padding(vertical = 4.dp)) {
-                            Icon(
-                                imageVector = Icons.Outlined.Handshake,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Bank Czasu",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = if (isSenior) 13.sp else 12.sp,
-                                maxLines = 1,
-                                softWrap = false,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                }
+
+                // Tab 1: Bank Czasu
+                val isBankSelected = selectedTab == 1
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = if (isBankSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(
+                        1.dp,
+                        if (isBankSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(38.dp)
+                        .clickable { selectedTab = 1 }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Handshake,
+                            contentDescription = null,
+                            tint = if (isBankSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Bank Czasu",
+                            fontWeight = if (isBankSelected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                            fontSize = if (isSenior) 13.sp else 12.sp,
+                            color = if (isBankSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                )
+                }
             }
         }
 
-        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
             if (selectedTab == 0) {
                 NeedMapScreen(repository = repository)
             } else {
@@ -94,4 +131,3 @@ fun VolunteerHubScreen(
         }
     }
 }
-

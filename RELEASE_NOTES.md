@@ -1,38 +1,43 @@
-## 🏛️ Smart CUS Wieliszew v1.5.1 – Koncentracja na Realnych Usługach Społecznych (Zero Gimmicków)
+## 🏛️ Smart CUS Wieliszew v1.6.0 – Nowoczesny Portal Mieszkańca Zaprojektowany od Zera
 
-Wydanie **v1.5.1** całkowicie oczyszcza aplikację z niepotrzebnych, sztucznych dodatków (usunięto fikcyjne odczyty powietrza, rozkłady autobusów, obracanie kart 3D i fałszywe liczniki). Interfejs został w 100% zorientowany na rzeczywistą misję **Centrum Usług Społecznych w Wieliszewie**: obsługę spraw i wniosków mieszkańców, pomoc sąsiedzką, wypożyczalnię sprzętu medycznego oraz dyżury specjalistów.
+Wydanie **v1.6.0** stanowi gruntowny, bezkompromisowy redesign aplikacji od zera. Zastąpiono dawny, przeładowany szablon z 5 zakładkami i szarymi obramowaniami nowoczesną, lekką architekturą Material 3 Expressive (M3E 2026), zaprojektowaną według najwyższych standardów współczesnych platform obywatelskich.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany kluczem release v1/v2/v3, płynna aktualizacja bez odinstalowywania).
-* 📱 **[`SmartCUS_Wieliszew_v1.5.1.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.5.1/SmartCUS_Wieliszew_v1.5.1.apk)** – Wersjonowany pakiet instalacyjny wydania v1.5.1.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.5.1/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany certyfikatem wydania, bezkonfliktowa aktualizacja).
+* 📱 **[`SmartCUS_Wieliszew_v1.6.0.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.6.0/SmartCUS_Wieliszew_v1.6.0.apk)** – Wersjonowany pakiet instalacyjny wydania v1.6.0.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.6.0/SmartCUS_Wieliszew_Source.zip)** – Pełne archiwum kodów źródłowych.
 
 ---
 
-### 🚀 Kluczowe Elementy Wydania 1.5.1:
+### 🚀 Nowa Architektura i Zmiany w Wersji 1.6.0:
 
-#### 1. 📋 Moje Sprawy i Wnioski CUS na Pulpicie Głównym:
-* Bezpośredni podgląd aktywnych spraw mieszkańca ze statusem realizacji:
-  - ♿ **Wypożyczenie wózka inwalidzkiego** – Status: *Gotowy do odbioru w CUS (ul. Modlińska 65)*.
-  - 🩺 **Konsultacja z psychologiem CUS** – Status: *Zaplanowana wizyta (czwartek, godz. 14:00)*.
-  - 🛒 **Pomoc w zakupach leków (Sołectwo Wieliszew)** – Status: *W trakcie realizacji przez wolontariusza*.
-* Przycisk szybkiego składania nowego wniosku o wsparcie.
+#### 1. 🧭 Przejrzysta Nawigacja – Pływający Dok z 3 Kluczowymi Filarami:
+* **Usługi CUS (Pulpit):** Błyskawiczny intake potrzeb, śledzenie wniosków live, rezerwacje dyżurów i wypożyczalnia sprzętu.
+* **Karta WKM:** Pełnoekranowy, luksusowy paszport mieszkańca w stylu Apple/Google Wallet z dynamicznym kodem QR i przełącznikiem rodziny.
+* **Wsparcie:** Interaktywna mapa sołectw Gminy Wieliszew z buforami RODO 200m oraz Bank Czasu.
 
-#### 2. 🏛️ Katalog Usług Społecznych (4 Główne Filary CUS):
-* **Dyżury Specjalistów:** Bezpłatne konsultacje z psychologiem, radcą prawnym i koordynatorem indywidualnych planów usług społecznych (KIPUS).
-* **Wypożyczalnia Sprzętu Rehabilitacyjnego:** Wózki, kule, łóżka rehabilitacyjne, balkoniki – bezpłatnie dla mieszkańców.
-* **Mapa Zgłoszeń Sąsiedzkich:** Realne zgłoszenia wzajemnej pomocy w sołectwach gminy Wieliszew z buforem RODO 200m.
-* **Lokalny Bank Czasu:** Wzajemna wymiana wiedzy i pomocy w formule 1 godzina za 1 godzinę.
+#### 2. 🏛️ Ekran Główny (Usługi CUS):
+* **Nagłówek Rezydenta:** Dynamiczny hero card w barwach szmaragdowej zieleni z herbem Wieliszewa, statusem weryfikacji i bezpośrednią infolinią stacjonarną `22 782 01 00`.
+* **4 Płytki Bento (Szybkie Sprawy):**
+  - 📋 **Złóż wniosek CUS:** Opieka, posiłki, pomoc socjalna i program opieki wytchnieniowej.
+  - ♿ **Wypożyczalnia sprzętu:** Łóżka medyczne, wózki, balkoniki, kule (bezpłatnie w CUS).
+  - 🩺 **Umów specjalistę:** Bezpłatny psycholog, prawnik, fizjoterapeuta w siedzibie CUS.
+  - 🤝 **Pomoc sąsiedzka:** Zgłoszenie zapotrzebowania na zakupy lub transport.
+* **Aktywne Sprawy Mieszkańca (Live Progress Stepper):** Wizualny pasek postępu (Wniosek ➔ Weryfikacja ➔ Odbiór w CUS) z jednodotykowym kodem odbioru sprzętu.
 
-#### 3. 💳 Oficjalna Wieliszewska Karta Mieszkańca (WKM):
-* Czysty, godny dokument tożsamości rezydenta.
-* Duży, czytelny kod QR gotowy do skanowania w obiektach OSiR (basen, hala sportowa) i GCK.
-* Bezpośrednie połączenie z kontaktem ratunkowym ICE jednym kliknięciem.
-* Przełącznik kart domowników (Główna, Uczeń, Senior).
+#### 3. 💳 Cyfrowa Karta Mieszkańca (WKM Wallet):
+* Szmaragdowo-złota karta rezydenta z dużym kodem QR o wysokim kontraście do bezproblemowego skanowania.
+* Przełącznik profili domowników: Janina (Główna), Stanisław (Uczeń), Tadeusz (Senior 75+).
+* Pakiet uprawnień: 100% darmowa komunikacja gminna (L-9, L-10, L-11), 50% zniżki OSiR Wieliszew (basen, hala), bezpłatna wypożyczalnia CUS.
+* Bezpieczny przycisk alarmowy ICE.
 
-#### 4. 📞 Oficjalna Siedziba i Kontakt z CUS Wieliszew:
-* Siedziba: ul. Modlińska 65, 05-135 Wieliszew.
-* Telefon: 22 782 01 00 • E-mail: cus@wieliszew.pl.
-* Godziny urzędowania: Pn: 8:00–18:00, Wt–Czw: 8:00–16:00, Pt: 8:00–14:00.
+#### 4. 🗺️ Mapa Sąsiedzka i Ochrona Danych (RODO):
+* Interaktywna mapa sołectw Gminy Wieliszew (Wieliszew, Michałów-Reginów, Skrzeszew, Komornica, Kałuszyn, Łajski, etc.).
+* Wizualne strefy anonimizacji RODO (promień 200 m) zabezpieczające prywatność seniorów.
+* Zintegrowany Bank Czasu z punktacją za niesioną pomoc sąsiedzką.
+
+#### 5. ♿ Dostępność WCAG AAA i Tryb Seniora:
+* Natychmiastowy przełącznik trybu Seniora ("Aa") na górnej belce (wysoki kontrast, powiększone fonty).
+* Wysuwany arkusz profilu (Modal BottomSheet) z eksportem danych RODO (Art. 15) oraz diagnostyką serwera CUS API.

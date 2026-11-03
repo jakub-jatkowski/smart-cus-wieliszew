@@ -54,7 +54,7 @@ fun TimeBankScreen(
                 text = { Text("Dodaj ofertę / potrzebę", fontWeight = FontWeight.Bold) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 80.dp)
             )
         }
     ) { paddingValues ->

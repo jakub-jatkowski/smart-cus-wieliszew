@@ -175,7 +175,7 @@ fun NeedMapScreen(
                 text = { Text("Zgłoś potrzebę", fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 80.dp)
             )
         }
     ) { paddingValues ->
