@@ -12,8 +12,8 @@ android {
         applicationId = "pl.wieliszew.smartcus"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,6 +66,10 @@ dependencies {
 
     // QR & Barcode generation support
     implementation("com.google.zxing:core:3.5.3")
+
+    // HTTP Networking & JSON Parsing for Backend Communication
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

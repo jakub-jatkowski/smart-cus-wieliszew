@@ -18,6 +18,7 @@ import pl.wieliszew.smartcus.modules.map.NeedMapScreen
 import pl.wieliszew.smartcus.modules.sharing.SharingHubScreen
 import pl.wieliszew.smartcus.modules.telehealth.TelehealthScreen
 import pl.wieliszew.smartcus.modules.timebank.TimeBankScreen
+import pl.wieliszew.smartcus.ui.components.BackendSettingsDialog
 import pl.wieliszew.smartcus.ui.components.HeaderBanner
 import pl.wieliszew.smartcus.ui.components.NotificationsDialog
 import pl.wieliszew.smartcus.ui.components.ThemeSelectorDialog
@@ -36,11 +37,14 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
 fun SmartCusApp(repository: SmartCusRepository) {
     val isSeniorMode by repository.isSeniorMode.collectAsState()
     val notifications by repository.notifications.collectAsState()
+    val isBackendOnline by repository.isBackendOnline.collectAsState()
+    val serverUrl by repository.serverUrl.collectAsState()
 
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Assistant) }
     var currentTheme by remember { mutableStateOf(MunicipalTheme.FOREST) }
     var showThemeSelector by remember { mutableStateOf(false) }
     var showNotificationsDialog by remember { mutableStateOf(false) }
+    var showBackendSettings by remember { mutableStateOf(false) }
 
     var communitySubTab by remember { mutableStateOf("timebank") }
     var servicesSubTab by remember { mutableStateOf("telehealth") }
@@ -64,6 +68,8 @@ fun SmartCusApp(repository: SmartCusRepository) {
                     subtitle = "Cyfrowy Hub Usług Społecznych",
                     isSeniorMode = isSeniorMode,
                     unreadNotificationsCount = notifications.count { !it.isRead },
+                    isBackendOnline = isBackendOnline,
+                    onOpenBackendSettings = { showBackendSettings = true },
                     onOpenNotifications = { showNotificationsDialog = true },
                     onOpenThemeSelector = { showThemeSelector = true },
                     onToggleSeniorMode = { repository.toggleSeniorMode() }
@@ -192,6 +198,17 @@ fun SmartCusApp(repository: SmartCusRepository) {
                         currentTheme = currentTheme,
                         onSelectTheme = { currentTheme = it },
                         onDismiss = { showThemeSelector = false }
+                    )
+                }
+
+                // Modal: Konfiguracja Serwera Backend CUS API
+                if (showBackendSettings) {
+                    BackendSettingsDialog(
+                        currentUrl = serverUrl,
+                        isOnline = isBackendOnline,
+                        onSaveUrl = { repository.updateServerUrl(it) },
+                        onTestConnection = { repository.syncWithBackend() },
+                        onDismiss = { showBackendSettings = false }
                     )
                 }
             }

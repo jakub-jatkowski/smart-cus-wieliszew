@@ -167,6 +167,7 @@ fun StatusBadge(
 
 /**
  * Material Design 3 Top App Bar / Header Banner
+ * Enhanced with statusBarsPadding() to prevent system bar collision
  */
 @Composable
 fun HeaderBanner(
@@ -174,6 +175,8 @@ fun HeaderBanner(
     subtitle: String,
     isSeniorMode: Boolean,
     unreadNotificationsCount: Int = 0,
+    isBackendOnline: Boolean = true,
+    onOpenBackendSettings: (() -> Unit)? = null,
     onOpenNotifications: () -> Unit,
     onOpenThemeSelector: () -> Unit,
     onToggleSeniorMode: () -> Unit
@@ -183,77 +186,108 @@ fun HeaderBanner(
         tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .statusBarsPadding()
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Theme Selector Button
-                IconButton(onClick = onOpenThemeSelector) {
-                    Icon(
-                        imageVector = Icons.Default.Palette,
-                        contentDescription = "Zmień motyw",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(if (onOpenBackendSettings != null) Modifier.clickable { onOpenBackendSettings() } else Modifier)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        // Visual backend sync status dot
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(if (isBackendOnline) Color(0xFF22C55E) else Color(0xFFF59E0B))
+                        )
+                    }
+                    Text(
+                        text = if (isBackendOnline) subtitle else "$subtitle • Tryb offline/lokalny",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                // Notification Bell with Badge
-                IconButton(onClick = onOpenNotifications) {
-                    BadgedBox(
-                        badge = {
-                            if (unreadNotificationsCount > 0) {
-                                Badge(
-                                    containerColor = MaterialTheme.colorScheme.error,
-                                    contentColor = MaterialTheme.colorScheme.onError
-                                ) {
-                                    Text(text = unreadNotificationsCount.toString(), fontSize = 10.sp)
-                                }
-                            }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Backend Configuration Button
+                    if (onOpenBackendSettings != null) {
+                        IconButton(onClick = onOpenBackendSettings) {
+                            Icon(
+                                imageVector = if (isBackendOnline) Icons.Default.Dns else Icons.Default.CloudOff,
+                                contentDescription = "Status i serwer API CUS",
+                                tint = if (isBackendOnline) MaterialTheme.colorScheme.primary else Color(0xFFF59E0B)
+                            )
                         }
-                    ) {
+                    }
+
+                    // Theme Selector Button
+                    IconButton(onClick = onOpenThemeSelector) {
                         Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Powiadomienia gminne",
+                            imageVector = Icons.Default.Palette,
+                            contentDescription = "Zmień motyw",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                }
 
-                Spacer(modifier = Modifier.width(4.dp))
+                    // Notification Bell with Badge
+                    IconButton(onClick = onOpenNotifications) {
+                        BadgedBox(
+                            badge = {
+                                if (unreadNotificationsCount > 0) {
+                                    Badge(
+                                        containerColor = MaterialTheme.colorScheme.error,
+                                        contentColor = MaterialTheme.colorScheme.onError
+                                    ) {
+                                        Text(text = unreadNotificationsCount.toString(), fontSize = 10.sp)
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Powiadomienia gminne",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
 
-                // M3 Filled Tonal Button for Senior Toggle
-                FilledTonalButton(
-                    onClick = onToggleSeniorMode,
-                    shape = RoundedCornerShape(9999.dp),
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = if (isSeniorMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-                    ),
-                    border = if (isSeniorMode) BorderStroke(2.dp, MaterialTheme.colorScheme.outline) else null,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = if (isSeniorMode) "Aa Normalny" else "Aa Senior AAA",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 11.sp
-                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    // M3 Filled Tonal Button for Senior Toggle
+                    FilledTonalButton(
+                        onClick = onToggleSeniorMode,
+                        shape = RoundedCornerShape(9999.dp),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = if (isSeniorMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        border = if (isSeniorMode) BorderStroke(2.dp, MaterialTheme.colorScheme.outline) else null,
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = if (isSeniorMode) "Aa Normalny" else "Aa Senior AAA",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp
+                        )
+                    }
                 }
             }
         }
@@ -418,6 +452,115 @@ fun ThemeSelectorDialog(
             }
         },
         confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Anuluj")
+            }
+        }
+    )
+}
+
+/**
+ * Dialog Konfiguracji Serwera i Połączenia Backendowego CUS
+ */
+@Composable
+fun BackendSettingsDialog(
+    currentUrl: String,
+    isOnline: Boolean,
+    onSaveUrl: (String) -> Unit,
+    onTestConnection: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    var inputUrl by remember { mutableStateOf(currentUrl) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Dns,
+                    contentDescription = null,
+                    tint = if (isOnline) Color(0xFF22C55E) else Color(0xFFF59E0B)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Serwer Backend CUS API", fontWeight = FontWeight.Bold)
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isOnline) Color(0xFFE8F5E9) else Color(0xFFFFF3E0)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(if (isOnline) Color(0xFF2E7D32) else Color(0xFFE65100))
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isOnline) "Połączono z serwerem CUS (Baza Live)" else "Tryb lokalny (Brak łączności z serwerem)",
+                            color = if (isOnline) Color(0xFF1B5E20) else Color(0xFFBF360C),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Aplikacja synchronizuje dane z serwerem FastAPI / SQLite w Gminie Wieliszew. Możesz zmienić adres IP serwera:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                OutlinedTextField(
+                    value = inputUrl,
+                    onValueChange = { inputUrl = it },
+                    label = { Text("Adres URL serwera API") },
+                    placeholder = { Text("http://10.0.2.2:8000") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilledTonalButton(
+                        onClick = { inputUrl = "http://10.0.2.2:8000" },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Emulator", fontSize = 11.sp)
+                    }
+                    FilledTonalButton(
+                        onClick = { inputUrl = "http://localhost:8000" },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Localhost", fontSize = 11.sp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onSaveUrl(inputUrl.trim())
+                    onTestConnection()
+                    onDismiss()
+                }
+            ) {
+                Text("Zapisz i Połącz")
+            }
+        },
+        dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text("Anuluj")
             }

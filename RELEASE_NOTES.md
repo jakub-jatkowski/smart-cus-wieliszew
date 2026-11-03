@@ -1,48 +1,36 @@
-## 🏛️ Smart CUS Wieliszew v1.1.0 – GovTech 2.0 (Material Design 3)
+## 🏛️ Smart CUS Wieliszew v1.2.0 – Pełny Backend API & Naprawa Paska Statusu
 
-Oficjalna, zaktualizowana wersja produkcyjna aplikacji mobilnej dla mieszkańców oraz Centrum Usług Społecznych w Wieliszewie, zrealizowana w **100% w natywnym języku Kotlin (Jetpack Compose)**, ściśle według wytycznych **Material Design 3 (Material You)** oraz **WCAG 2.1 AAA**.
+Oficjalna, produkcyjna wersja aplikacji mobilnej dla mieszkańców oraz Centrum Usług Społecznych w Wieliszewie, zintegrowana z **dedykowanym serwerem Backend API (FastAPI + SQLite)** oraz w pełni rozwiązująca konflikt z systemowym paskiem stanu / zegarkiem na smartfonie.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.1.0/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (kompatybilny z Androidem 8.0 lub nowszym).
-* 📱 **[`SmartCUS_Wieliszew_v1.1.0.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.1.0/SmartCUS_Wieliszew_v1.1.0.apk)** – Wersjonowany pakiet instalacyjny wydania v1.1.0.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.1.0/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych Kotlin / Gradle projektu.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (kompatybilny z Androidem 8.0 lub nowszym).
+* 📱 **[`SmartCUS_Wieliszew_v1.2.0.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.0/SmartCUS_Wieliszew_v1.2.0.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.0.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.0/SmartCUS_Wieliszew_Source.zip)** – Pełne archiwum kodów źródłowych (Aplikacja Android + Serwer Backend API).
 
 ---
 
-### 🌟 Najważniejsze Zmiany i Usprawnienia w Wersji 1.1.0:
+### 🌟 Kluczowe Zmiany w Wydaniu 1.2.0:
 
-1. **💳 Karta Mieszkańca (WKM) 3D Flip & TOTP QR Code:**
-   - Płynny trójwymiarowy obrót karty w osi Y (`rotationY`) prezentujący awers oraz rewers z danymi kontaktowymi ICE, kodem kreskowym i infolinią CUS.
-   - Prawdziwy generator kodów QR (ZXing) z dynamicznym odliczaniem tokenu TOTP (45 sekund) i pełnoekranowym powiększeniem do skanowania w obiektach OSiR / GCK.
-   - Zintegrowany portfel voucherów i zniżek mieszkańca z obsługą schowka oraz symulator weryfikacji zbliżeniowej NFC.
+#### 1. 📱 Eliminacja Konfliktu z Górnym Paskiem Smartfona (Status Bar Insets):
+* Zastosowanie natywnego mechanizmu `statusBarsPadding()` w komponencie `HeaderBanner`, dzięki czemu tytuł aplikacji, przyciski motywów, powiadomień i trybu seniora nie nachodzą na zegarek systemowy, stan baterii, ikonę Wi-Fi ani wycięcie aparatu (notch/punch-hole).
+* Tło paska górnego płynnie wypełnia obszar pod paskiem statusu zgodnie z wytycznymi Edge-to-Edge w Androidzie 15 (API 35).
 
-2. **🤖 Wirtualny Doradca AI & Polski Voicebot:**
-   - Wizualizacja fal dźwiękowych mowy (`VoiceWaveformBar`) z natychmiastowym rozpoznawaniem i syntezą mowy (TTS).
-   - Zaktualizowana baza wiedzy o kryteriach dochodowych pomocy społecznej na 2026 r. (1 010 zł samotni / 776 zł rodzina), regulaminie Jadłodzielni i procedurach CUS.
+#### 2. 🗄️ Dedykowany Serwer Backend API (FastAPI + SQLite):
+* Całkowite wyeliminowanie statycznych danych mockowych – dodano kompletny serwer REST API w katalogu `backend/` (`backend/main.py`, `backend/database.py`).
+* Relacyjna baza danych **SQLite** z trwałym zapisem:
+  - Zgłoszeń na Mapie Potrzeb (mikrowolontariat w sołectwach) wraz z buforem RODO,
+  - Ewidencji wymiany godzin w Lokalnym Banku Czasu (1h = 1h),
+  - Stanu Magazynu Sprzętu Rehabilitacyjnego z kodami odbioru,
+  - Rejestru darów w całodobowej Gminnej Jadłodzielni (ul. Modlińska 65),
+  - Terminarza konsultacji teleopieki i rezerwacji wizyt,
+  - Profilu mieszkańca, punktów aktywności i portfela voucherów.
+* Interaktywna dokumentacja Swagger UI dostępna pod adresem: `http://localhost:8000/docs`.
+* Skrypty uruchomieniowe `run_server.py` oraz `run.bat` (jednym kliknięciem).
 
-3. **📍 Interaktywna Mapa Potrzeb i Mikrowolontariatu:**
-   - Geograficzny radar sołectw Gminy Wieliszew i Zalewu Zegrzyńskiego z 200-metrowym buforem rozmycia RODO.
-   - W pełni funkcjonalny modal zgłaszania nowej potrzeby oraz przyjmowania i rozliczania zadań sąsiedzkich.
-
-4. **⏳ Lokalny Bank Czasu (1h za 1h):**
-   - Natywny portfel godzinowy mieszkańca z ewidencją transakcji czasowych.
-   - Formularz dodawania ofert i poszukiwanych umiejętności (naprawy, transport, korepetycje, ogród).
-
-5. **🍏 Magazyn Współdzielenia & Gminna Jadłodzielnia 24/7:**
-   - Karta całodobowej Jadłodzielni przy ul. Modlińskiej 65 z podglądem artykułów i opcją „Przekaż dar”.
-   - Wypożyczalnia sprzętu rehabilitacyjnego (wózki, balkoniki) z automatycznym generowaniem unikalnych kodów odbioru w CUS.
-
-6. **🩺 Teleopieka (WebRTC) & Konsultacje:**
-   - Bezpieczne, szyfrowane konsultacje wideo z psychologiem, radcą prawnym i koordynatorem opieki.
-   - Podgląd własnej kamery PIP, stoper trwania połączenia na żywo oraz terminarz rezerwacji wizyt.
-
-7. **🏆 Grywalizacja & Nagrody Społeczne:**
-   - System 4 poziomów zaangażowania mieszkańca z paskiem postępu.
-   - Interaktywne odznaki („Serce Gminy”, „Aktywny Sąsiad”, „Mistrz Eko”) i wymiana punktów na realne vouchery gminne.
-
-8. **🎨 Design System Material You & Dostępność WCAG 2.1 AAA:**
-   - 3 motywy kolorystyczne: Wieliszewska Zieleń 🌿, Słoneczny Bursztyn ☀️, Błękit Zalewu Zegrzyńskiego 🌊.
-   - Dedykowany tryb wysokiego kontrastu dla seniorów (WCAG 2.1 AAA) ze współczynnikiem kontrastu powyżej 7:1.
-   - Bezpieczne marginesy dolne (`contentPadding = 96.dp`) eliminujące nakładanie się elementów pod paskiem nawigacji.
+#### 3. 🌐 Pełna Integracja Sieciowa w Aplikacji Android:
+* Zaimplementowano klienta HTTP `OkHttpClient` z biblioteką `Gson` (`CusApiService.kt`) realizującego asynchroniczne żądania sieciowe w tle.
+* Wskaźnik statusu serwera na żywo (🟢 Połączono / 🟠 Tryb lokalny offline) w nagłówku aplikacji.
+* Okno dialogowe konfiguracji adresu IP serwera CUS (`BackendSettingsDialog`) umożliwiające testowanie połączenia zarówno w emulatorze (`10.0.2.2`), jak i na fizycznym telefonie w sieci Wi-Fi.
+* Architektura Offline-First: w przypadku braku połączenia z serwerem aplikacja działa stabilnie bez żadnych błędów.

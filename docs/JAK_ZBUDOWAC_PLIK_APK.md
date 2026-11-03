@@ -11,7 +11,7 @@ Poniżej znajdują się sposoby na pobranie gotowej aplikacji na smartfon lub je
 
 Gotowy, skompilowany plik pakietu instalacyjnego dla systemu Android (wersja 8.0+) publikowany jest bezpośrednio w najnowszym oficjalnym wydaniu:
 👉 **[Pobierz SmartCUS_Wieliszew.apk z GitHub Releases (Najnowsza Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)**  
-Strona najnowszego wydania: **[GitHub Releases v1.1.0](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.1.0)** (lub [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
+Strona najnowszego wydania: **[GitHub Releases v1.2.0](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.2.0)** (lub [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
 
 Plik znajduje się również lokalnie w głównym katalogu projektu pod nazwą `SmartCUS_Wieliszew.apk`.
 

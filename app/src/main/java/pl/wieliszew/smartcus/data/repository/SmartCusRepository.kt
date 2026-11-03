@@ -1,14 +1,29 @@
 package pl.wieliszew.smartcus.data.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import pl.wieliszew.smartcus.data.model.*
+import pl.wieliszew.smartcus.data.remote.BackendConfig
+import pl.wieliszew.smartcus.data.remote.CusApiService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class SmartCusRepository {
+
+    val apiService = CusApiService()
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    private val _isBackendOnline = MutableStateFlow(false)
+    val isBackendOnline: StateFlow<Boolean> = _isBackendOnline.asStateFlow()
+
+    private val _serverUrl = MutableStateFlow(BackendConfig.baseUrl)
+    val serverUrl: StateFlow<String> = _serverUrl.asStateFlow()
 
     private val _userProfile = MutableStateFlow(UserProfile())
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
@@ -48,6 +63,77 @@ class SmartCusRepository {
 
     private val _isSeniorMode = MutableStateFlow(false)
     val isSeniorMode: StateFlow<Boolean> = _isSeniorMode.asStateFlow()
+
+    init {
+        syncWithBackend()
+    }
+
+    fun updateServerUrl(newUrl: String) {
+        BackendConfig.baseUrl = newUrl
+        _serverUrl.value = newUrl
+        syncWithBackend()
+    }
+
+    fun syncWithBackend() {
+        scope.launch {
+            val online = apiService.checkHealth()
+            _isBackendOnline.value = online
+            if (online) {
+                // Fetch and apply resident data from backend
+                apiService.getResident()?.let { r ->
+                    val name = r["full_name"] as? String ?: return@let
+                    val vill = r["village"] as? String ?: "Wieliszew"
+                    val ice = r["ice_contact"] as? String ?: ""
+                    val points = (r["points"] as? Number)?.toInt() ?: 420
+                    val timeBal = (r["time_balance"] as? Number)?.toDouble() ?: 5.5
+                    _userProfile.update {
+                        it.copy(
+                            fullName = name,
+                            village = vill,
+                            iceContact = ice,
+                            gamificationPoints = points,
+                            timeBankBalanceHours = timeBal
+                        )
+                    }
+                    _residentCard.update { it.copy(holderName = name) }
+                }
+
+                // Fetch and apply need pins from backend
+                apiService.getNeedPins()?.let { remoteList ->
+                    if (remoteList.isNotEmpty()) {
+                        val mapped = remoteList.map { m ->
+                            NeedPin(
+                                id = m["id"] as? String ?: "need_${System.currentTimeMillis()}",
+                                title = m["title"] as? String ?: "",
+                                category = when (m["category"] as? String) {
+                                    "SHOPPING" -> NeedCategory.SHOPPING
+                                    "PETS" -> NeedCategory.PETS
+                                    "GARDENING" -> NeedCategory.GARDENING
+                                    "TECH" -> NeedCategory.TECH
+                                    else -> NeedCategory.OTHER
+                                },
+                                urgency = when (m["urgency"] as? String) {
+                                    "HIGH" -> Urgency.HIGH
+                                    "MEDIUM" -> Urgency.MEDIUM
+                                    else -> Urgency.LOW
+                                },
+                                village = m["village"] as? String ?: "Wieliszew",
+                                approximateAddress = "Rejon sołectwa ${m["village"] as? String ?: "Wieliszew"} (bufor RODO 200m)",
+                                description = m["description"] as? String ?: "",
+                                status = when (m["status"] as? String) {
+                                    "IN_PROGRESS" -> NeedStatus.IN_PROGRESS
+                                    "COMPLETED" -> NeedStatus.COMPLETED
+                                    else -> NeedStatus.OPEN
+                                },
+                                pointsReward = (m["points"] as? Number)?.toInt() ?: 40
+                            )
+                        }
+                        _needPins.value = mapped
+                    }
+                }
+            }
+        }
+    }
 
     fun toggleSeniorMode() {
         _isSeniorMode.update { !it }
@@ -89,6 +175,9 @@ class SmartCusRepository {
             }
         }
         _userProfile.update { it.copy(gamificationPoints = it.gamificationPoints + 50) }
+        scope.launch {
+            apiService.acceptNeedPin(pinId)
+        }
     }
 
     fun completeNeedPin(pinId: String) {
@@ -98,6 +187,9 @@ class SmartCusRepository {
                     pin.copy(status = NeedStatus.COMPLETED)
                 } else pin
             }
+        }
+        scope.launch {
+            apiService.completeNeedPin(pinId)
         }
     }
 
@@ -114,6 +206,9 @@ class SmartCusRepository {
             pointsReward = 40
         )
         _needPins.update { listOf(newPin) + it }
+        scope.launch {
+            apiService.createNeedPin(title, description, village, category.name, urgency.name)
+        }
     }
 
     fun addTimeBankEntry(title: String, village: String, type: TimeBankType, hours: Double, category: String, desc: String) {
@@ -128,11 +223,17 @@ class SmartCusRepository {
             description = desc
         )
         _timeBankEntries.update { listOf(entry) + it }
+        scope.launch {
+            apiService.createTimeBankEntry(_userProfile.value.fullName, village, type.name, category, title, desc, hours)
+        }
     }
 
     fun transferTimeBankHours(entryId: String, hours: Double) {
         _userProfile.update { current ->
             current.copy(timeBankBalanceHours = (current.timeBankBalanceHours + hours).coerceAtLeast(0.0))
+        }
+        scope.launch {
+            apiService.exchangeTimeBank(entryId)
         }
     }
 
@@ -164,6 +265,9 @@ class SmartCusRepository {
                 } else item
             }
         }
+        scope.launch {
+            apiService.reserveEquipment(itemId)
+        }
     }
 
     fun sendUserMessage(question: String) {
@@ -176,8 +280,25 @@ class SmartCusRepository {
         )
         _chatMessages.update { it + userMsg }
 
-        val lower = question.lowercase()
-        val botResponse = when {
+        scope.launch {
+            if (_isBackendOnline.value) {
+                val remoteAnswer = apiService.askAssistant(question)
+                if (remoteAnswer != null) {
+                    _chatMessages.update {
+                        it + AiMessage(
+                            id = "bot_${System.currentTimeMillis()}",
+                            sender = MessageSender.ASSISTANT,
+                            text = remoteAnswer,
+                            timestamp = timeNow,
+                            recommendations = emptyList()
+                        )
+                    }
+                    return@launch
+                }
+            }
+
+            val lower = question.lowercase()
+            val botResponse = when {
             "karta" in lower || "wkm" in lower || "kod qr" in lower || "wyrobić" in lower -> {
                 AiMessage(
                     id = "bot_${System.currentTimeMillis()}",
@@ -246,8 +367,8 @@ class SmartCusRepository {
                     )
                 )
             }
+            _chatMessages.update { it + botResponse }
         }
-        _chatMessages.update { it + botResponse }
     }
 
     private companion object {

@@ -69,6 +69,13 @@ Aplikacja/
 ├── SmartCUS_Wieliszew.apk       # Gotowy produkcyjny plik instalacyjny APK dla Androida
 ├── SmartCUS_Wieliszew_Source.zip# Kompletne archiwum kodów źródłowych
 │
+├── backend/                     # Dedykowany serwer REST API (FastAPI + SQLite)
+│   ├── main.py                  # Endpoints REST API (WKM, Pins, Bank Czasu, Jadłodzielnia, Telehealth)
+│   ├── database.py              # Schemat bazy SQLite (smart_cus.db) i operacje CRUD
+│   ├── run_server.py & run.bat  # Skrypty uruchomieniowe serwera (port 8000)
+│   ├── requirements.txt         # Zależności: fastapi, uvicorn, pydantic
+│   └── README.md                # Dokumentacja API i Swagger UI
+│
 ├── app/                         # Główny moduł aplikacji natywnej Android
 │   ├── build.gradle.kts         # Zależności: Compose BOM, Material 3, Navigation, ZXing
 │   ├── src/main/
@@ -111,7 +118,7 @@ Aplikacja/
 ### Metoda 1: Pobranie i instalacja pliku .APK z GitHub Releases (Rekomendowane)
 Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z najnowszego oficjalnego wydania:
 👉 **[Pobierz SmartCUS_Wieliszew.apk (Najnowsze Wydanie)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)**  
-Strona najnowszego wydania: 👉 **[GitHub Releases v1.1.0 (Najnowsza Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.1.0)** (oraz [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
+Strona najnowszego wydania: 👉 **[GitHub Releases v1.2.0 (Najnowsza Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.2.0)** (oraz [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
 
 Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 
