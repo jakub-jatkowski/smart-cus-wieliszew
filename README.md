@@ -68,6 +68,7 @@ Aplikacja/
 ├── gradle/wrapper/              # Dystrybucja i weryfikacja Gradle
 ├── SmartCUS_Wieliszew.apk       # Gotowy produkcyjny plik instalacyjny APK dla Androida
 ├── SmartCUS_Wieliszew_Source.zip# Kompletne archiwum kodów źródłowych
+├── Uruchom_Serwer_Backend.bat   # Skrót jedno-kliknięciowy do startu API na Windows
 │
 ├── backend/                     # Dedykowany serwer REST API (FastAPI + SQLite)
 │   ├── main.py                  # Endpoints REST API (WKM, Pins, Bank Czasu, Jadłodzielnia, Telehealth)
@@ -82,24 +83,28 @@ Aplikacja/
 │   │   ├── AndroidManifest.xml  # Manifest aplikacji z uprawnieniami (NFC, Camera, Biometrics)
 │   │   ├── java/pl/wieliszew/smartcus/
 │   │   │   ├── MainActivity.kt                  # Punkt wejścia z Edge-to-Edge
-│   │   │   ├── SmartCusApp.kt                   # Główny szkielet UI (Scaffold, NavigationBar M3)
+│   │   │   ├── SmartCusApp.kt                   # 5-elementowa architektura nawigacji M3
 │   │   │   ├── SmartCusApplication.kt           # Kontener DI i inicjalizacja repozytoriów
 │   │   │   ├── data/
 │   │   │   │   ├── model/Models.kt              # Modele danych Kotlin (WKM, HelpRequest, Service)
-│   │   │   │   └── repository/SmartCusRepository.kt # Zarządzanie stanem i baza danych w pamięci
+│   │   │   │   └── repository/SmartCusRepository.kt # Offline-first SharedPreferences & StateFlow
 │   │   │   ├── modules/
-│   │   │   │   ├── assistant/AiAssistantScreen.kt   # Moduł Wirtualnego Doradcy AI i Voicebota
-│   │   │   │   ├── card/WieliszewCardScreen.kt      # Moduł e-WKM 3D Flip & TOTP QR Code
-│   │   │   │   ├── gamification/GamificationScreen.kt # Grywalizacja i katalog nagród
-│   │   │   │   ├── map/NeedMapScreen.kt             # Geoprzestrzenna mapa potrzeb (RODO buffer)
-│   │   │   │   ├── sharing/SharingHubScreen.kt      # Jadłodzielnia i Magazyn Sprzętu
+│   │   │   │   ├── home/HomeScreen.kt               # Pulpit Obywatelski, Eko-Puls & L-komunikacja
+│   │   │   │   ├── card/WieliszewCardScreen.kt      # e-Karta 3D Flip, hologram, TOTP i NFC
+│   │   │   │   ├── volunteer/VolunteerHubScreen.kt  # Zintegrowany hub: Mapa Pomocy i Bank Czasu
+│   │   │   │   ├── services/CusServicesScreen.kt    # Usługi CUS: Dyżury, Eko-Magazyn i Doradca
+│   │   │   │   ├── profile/ProfileScreen.kt         # Centrum tożsamości, ICE i eksport RODO
+│   │   │   │   ├── map/NeedMapScreen.kt             # OSM z wektorowymi pinezkami M3 (12 sołectw)
+│   │   │   │   ├── timebank/TimeBankScreen.kt       # Sąsiedzki Bank Czasu (1h za 1h)
 │   │   │   │   ├── telehealth/TelehealthScreen.kt   # E-Teleopieka i wideokonsultacje
-│   │   │   │   └── timebank/TimeBankScreen.kt       # Sąsiedzki Bank Czasu (1h za 1h)
+│   │   │   │   ├── sharing/SharingHubScreen.kt      # Jadłodzielnia i Magazyn Sprzętu
+│   │   │   │   └── assistant/AiAssistantScreen.kt   # Punkt Informacyjny CUS i Doradca
 │   │   │   └── ui/
 │   │   │       ├── components/CommonComponents.kt   # Komponenty M3, SeniorAccessibleCard
 │   │   │       └── theme/ (Color.kt, Shape.kt, Theme.kt, Type.kt) # Design System Material You
 │   │   └── res/
 │   │       └── values/ (colors.xml, strings.xml, themes.xml)
+│   └── build.gradle.kts
 │
 ├── .github/workflows/
 │   └── build-apk.yml            # CI/CD: Automatyczna kompilacja APK i publikacja do Releases
@@ -118,7 +123,7 @@ Aplikacja/
 ### Metoda 1: Pobranie i instalacja pliku .APK z GitHub Releases (Rekomendowane)
 Gotowy plik instalacyjny dla systemu Android (wersja 8.0+) można pobrać bezpośrednio z najnowszego oficjalnego wydania:
 👉 **[Pobierz SmartCUS_Wieliszew.apk (Najnowsze Wydanie)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)**  
-Strona najnowszego wydania: 👉 **[GitHub Releases v1.2.0 (Najnowsza Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.2.0)** (oraz [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
+Strona najnowszego wydania: 👉 **[GitHub Releases v1.4.1 (Oficjalna Wersja)](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/tag/v1.4.1)** (oraz [Wszystkie Wydania](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases))
 
 Po pobraniu na smartfon kliknij plik `.apk` i zainstaluj go jednym dotknięciem.
 
