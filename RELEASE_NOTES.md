@@ -1,33 +1,42 @@
-## 🏛️ Smart CUS Wieliszew v1.2.5 – Profesjonalny Pulpit Mieszkańca & Eliminacja Infantylnego UI (Anti-AI Slop)
+## 🏛️ Smart CUS Wieliszew v1.3.0 – Nowa Architektura Informacji i Użyteczność Obywatelska
 
-Wydanie v1.2.5 to fundamentalna transformacja wzornictwa, architektury informacji oraz języka wizualnego aplikacji na wzór czołowych polskich i europejskich aplikacji sektora publicznego (mObywatel 2.0, Warszawa 19115). Całkowicie wyeliminowano infantylne motywy, wszechobecny spam emotikonami (emoji) oraz sztuczne banery chatbotów, wprowadzając dojrzały, czytelny i godny zaufania interfejs obywatelski.
+Wydanie v1.3.0 stanowi realizację całościowego planu reorganizacji i uporządkowania aplikacji opartego na badaniach użyteczności **Nielsen Norman Group (NN/g)**, wytycznych **Material Design 3 (Google)** oraz wzorcach polskich aplikacji sektora publicznego (**mObywatel 2.0**, **Gov.pl Design System**).
+
+Aplikacja zyskała czystą, zorientowaną na cele użytkownika architekturę, eliminując problem przeładowania ekranu i zagnieżdżonych zakładek.
 
 ---
 
 ### 📦 Pliki do Pobrania (Assets):
-* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany oficjalnym kluczem release keystore).
-* 📱 **[`SmartCUS_Wieliszew_v1.2.5.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.5/SmartCUS_Wieliszew_v1.2.5.apk)** – Wersjonowany pakiet instalacyjny wydania v1.2.5.
-* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.2.5/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
+* 📱 **[`SmartCUS_Wieliszew.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/latest/download/SmartCUS_Wieliszew.apk)** – Główny pakiet instalacyjny Android APK (podpisany stałym kluczem release keystore).
+* 📱 **[`SmartCUS_Wieliszew_v1.3.0.apk`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.3.0/SmartCUS_Wieliszew_v1.3.0.apk)** – Wersjonowany pakiet instalacyjny wydania v1.3.0.
+* 📦 **[`SmartCUS_Wieliszew_Source.zip`](https://github.com/jakub-jatkowski/smart-cus-wieliszew/releases/download/v1.3.0/SmartCUS_Wieliszew_Source.zip)** – Kompletne archiwum kodów źródłowych.
 
 ---
 
-### 🌟 Kluczowe Zmiany w Wydaniu 1.2.5:
+### 🌟 Kluczowe Zmiany w Wydaniu 1.3.0:
 
-#### 1. 🏛️ Nowy Oficjalny Pulpit Mieszkańca (HomeScreen jako ekran startowy):
-* **Koniec z chatbotem na wejściu:** Usunięto narzucający się ekran rozmowy ze sztuczną inteligencją jako stronę główną. Ekran startowy to teraz elegancki, uporządkowany **Pulpit Mieszkańca** zaprojektowany zgodnie ze standardami mObywatel 2.0.
-* **Tożsamość i zaangażowanie mieszkańca:** Personalizowane powitanie mieszkańca, sołectwo zamieszkania, saldo godzin w Banku Czasu oraz punkty wolontariatu.
-* **Cyfrowy portfel w pigułce:** Miniatura Wieliszewskiej Karty Mieszkańca z dynamicznym kodem QR oraz bezpośrednim przejściem do pełnego widoku z kodem kreskowym i NFC.
-* **Centrum skrótów do usług:** Błyskawiczny dostęp do Mapy Pomocy Sąsiedzkiej, Banku Czasu, Jadłodzielni & Eko-magazynu oraz Dyżurów Specjalistów.
-* **Oficjalne komunikaty gminy:** Czysta lista aktualnych komunikatów i alertów Urzędu Gminy Wieliszew oraz zapowiedzi lokalnych wydarzeń społecznych.
+#### 1. 🗂️ Nowy Model Nawigacji (5 głównych zadań obywatela):
+* **Pulpit (`HomeScreen`)** – Oficjalny ekran startowy z najważniejszymi skrótami, powitaniem, e-kartą i komunikatami gminy.
+* **e-Karta (`WieliszewCardScreen`)** – Tożsamość mieszkańca, interaktywna Karta Wieliszewska z obrotem 3D, kodem kreskowym, dynamicznym kodem QR (TOTP), NFC oraz listą oficjalnych uprawnień i ulg.
+* **Pomoc (`VolunteerHubScreen`)** – Nowy, zintegrowany moduł pomocy sąsiedzkiej łączący w jednym miejscu **Mapę Pomocy** oraz **Bank Czasu**.
+* **Usługi CUS (`CusServicesScreen`)** – Uporządkowane usługi instytucjonalne: **Dyżury specjalistów i teleopieka**, **Wypożyczalnia sprzętu & Jadłodzielnia** oraz **Doradca Obywatelski CUS**.
+* **Profil (`ProfileScreen`)** – Dedykowane centrum tożsamości mieszkańca: dane meldunkowe, kontakt ratunkowy ICE, stan punktów i odznak, ustawienia trybu seniora (WCAG 2.1 AAA), motywy gminne oraz diagnostyka serwera backend.
 
-#### 2. 🎨 Całkowita eliminacja emotikonów (Emoji) z kontrolek UI:
-* Wszystkie infantylne emotikony (takie jak 🤖, 👤, 🏛️, 🌿, 🎟️, ⏳, 🩺, 👩‍⚕️, 🕒, ♻️, 🥗, 🛡️, 🎉) zostały usunięte z nagłówków, przycisków, chipów, powiadomień i kart.
-* Zastąpiono je ostrymi, oficjalnymi wektorowymi ikonami **Material Design 3** (`Icons.Outlined.*`), które idealnie skalują się na każdym ekranie i zachowują powagę instytucji publicznej.
+#### 2. 🗺️ Przejrzysta i Niezasłonięta Mapa OpenStreetMap (OSM):
+* Wyeliminowano uciążliwy dwurzędowy blok filtrów zasłaniający obszar kartograficzny.
+* Wprowadzono smukły pasek z selektorem sołectw (automatyczna animacja kamery na wybrane sołectwo: Wieliszew, Łajski, Skrzeszew, Michałów-Reginów, Kałuszyn, Komornica) oraz przyciskiem filtrów kategorii.
+* Filtrowanie kategorii potrzeb zostało przeniesione do eleganckiego arkusza dolnego (**Material 3 ModalBottomSheet**), zgodnie z zasadą *Progressive Disclosure*.
+* Zachowano pełną ochronę prywatności mieszkańców (bufor strefy RODO 200m).
 
-#### 3. 💬 Punkt Informacyjny CUS (kulturalny doradca zamiast spamu):
-* Asystent AI został przeniesiony na swoje właściwe miejsce – do modułu **„Usługi CUS”** (obok Teleopieki i Klubu Mieszkańca).
-* Interfejs doradcy zyskał estetyczny wygląd nowoczesnego komunikatora (czyste dymki, dyskretne ikony, profesjonalne podpowiedzi pytań dotyczące kryteriów dochodowych, zasiłków i procedur).
+#### 3. 💳 Oficjalne Uprawnienia i Ulgi w e-Karcie Mieszkańca:
+* Zamiast powielać wydarzenia z pulpitu głównego, ekran Wieliszewskiej Karty Mieszkańca prezentuje teraz realne przywileje posiadacza karty:
+  - 50% zniżki na basen i halę sportową w Wieliszewie,
+  - Bezpłatne wejścia na warsztaty CUS,
+  - 20% zniżki na sprzęt rekreacyjny i rowery wodne,
+  - Bezpłatne przejazdy komunikacją gminną (L-komunikacja).
 
-#### 4. 🔤 Spokojna typografia i dojrzały język:
-* Wyeliminowano krzyczące hasła pisane wielkimi literami (np. „W TOKU (TY)”, „DYŻUR TERAZ”) na rzecz naturalnych, profesjonalnych określeń („Dostępny dzisiaj”, „W trakcie realizacji”).
-* Ujednolicono odstępy, usunięto zbędne puste linie w kodzie i zachowano pełną zgodność z normami dostępności **WCAG 2.1 AAA (Senior Mode)**.
+#### 4. 👤 Dedykowane Centrum Mój Profil i Dostępność:
+* Całkowite oddzielenie profilu obywatela od katalogu usług społecznych.
+* Szybki podgląd numeru karty, sołectwa oraz kontaktu ICE z możliwością edycji.
+* Podsumowanie aktywności społecznej: saldo godzin w Banku Czasu, zgromadzone punkty gminne oraz siatka odznak obywatelskich.
+* Centralny przełącznik trybu Senior Mode (zgodność z normą WCAG 2.1 AAA z polami dotykowymi min. 54dp).

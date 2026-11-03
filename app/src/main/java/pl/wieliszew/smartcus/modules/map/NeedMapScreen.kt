@@ -65,6 +65,7 @@ fun NeedMapScreen(
     var isListView by remember { mutableStateOf(false) }
     var selectedPinForDetail by remember { mutableStateOf<NeedPin?>(null) }
     var showAddDialog by remember { mutableStateOf(false) }
+    var showCategoryFilterSheet by remember { mutableStateOf(false) }
 
     val villages = listOf("Wszystkie", "Wieliszew", "Łajski", "Skrzeszew", "Michałów-Reginów", "Kałuszyn", "Komornica")
 
@@ -181,22 +182,47 @@ fun NeedMapScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Top Floating Search & Filter Surface
+                // Sleek Single-Row Top Floating Filter Bar
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp, vertical = 8.dp)
                         .align(Alignment.TopCenter),
-                    shape = RoundedCornerShape(20.dp),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
                     tonalElevation = 6.dp,
                     shadowElevation = 4.dp
                 ) {
-                    Column(modifier = Modifier.padding(vertical = 8.dp, horizontal = 10.dp)) {
-                        // Village Filter Chips
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 6.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FilledTonalIconButton(
+                            onClick = { showCategoryFilterSheet = true },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            BadgedBox(
+                                badge = {
+                                    if (selectedCategoryFilter != null) {
+                                        Badge(containerColor = MaterialTheme.colorScheme.primary)
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.FilterList,
+                                    contentDescription = "Filtruj kategorie",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.weight(1f)
                         ) {
                             items(villages) { vill ->
                                 FilterChip(
@@ -211,29 +237,6 @@ fun NeedMapScreen(
                                         }
                                     },
                                     label = { Text(vill, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1, softWrap = false) }
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        // Category Filter Chips
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            item {
-                                FilterChip(
-                                    selected = selectedCategoryFilter == null,
-                                    onClick = { selectedCategoryFilter = null },
-                                    label = { Text("Wszystkie potrzeby", fontSize = 11.sp, maxLines = 1, softWrap = false) }
-                                )
-                            }
-                            items(NeedCategory.entries.toTypedArray()) { cat ->
-                                FilterChip(
-                                    selected = selectedCategoryFilter == cat,
-                                    onClick = { selectedCategoryFilter = if (selectedCategoryFilter == cat) null else cat },
-                                    label = { Text(cat.label, fontSize = 11.sp, maxLines = 1, softWrap = false) }
                                 )
                             }
                         }
@@ -501,6 +504,85 @@ fun NeedMapScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                             ) {
                                 Text("Chcę pomóc", fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Category Filter ModalBottomSheet (Progressive Disclosure)
+    if (showCategoryFilterSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showCategoryFilterSheet = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 32.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Filtruj wg kategorii pomocy",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (selectedCategoryFilter != null) {
+                        TextButton(onClick = { selectedCategoryFilter = null }) {
+                            Text("Wyczyść filtr", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedCategoryFilter = null
+                                showCategoryFilterSheet = false
+                            },
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (selectedCategoryFilter == null) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text("Wszystkie kategorie potrzeb", fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+
+                    NeedCategory.entries.forEach { cat ->
+                        val isSelected = selectedCategoryFilter == cat
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedCategoryFilter = cat
+                                    showCategoryFilterSheet = false
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                NeedCategoryIcon(category = cat, tint = MaterialTheme.colorScheme.primary)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(cat.label, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
                             }
                         }
                     }

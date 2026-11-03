@@ -47,7 +47,6 @@ fun WieliszewCardScreen(
 ) {
     val card by repository.residentCard.collectAsState()
     val userProfile by repository.userProfile.collectAsState()
-    val events by repository.events.collectAsState()
     val vouchers by repository.vouchers.collectAsState()
     val isSenior = LocalSeniorMode.current
 
@@ -480,101 +479,51 @@ fun WieliszewCardScreen(
             }
         }
 
-        // Section: Wydarzenia i Zapisy CUS
+        // Sekcja: Oficjalne Uprawnienia i Ulgi Mieszkańca (WKM)
         item {
             Text(
-                text = "Zapisy na Wydarzenia CUS Wieliszew",
+                text = "Twoje Ulgi i Uprawnienia Mieszkańca",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
-        items(events) { event ->
-            SeniorAccessibleCard {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+        items(card.benefits) { benefit ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(38.dp)
                     ) {
-                        StatusBadge(
-                            text = event.category,
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        if (event.isRegistered) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = null,
-                                    tint = Color(0xFF2E7D32),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "ZAPISANY",
-                                    color = Color(0xFF2E7D32),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = event.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = event.dateText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = event.location,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = event.description,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Miejsca: ${event.spotsTaken} / ${event.spotsTotal}",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Button(
-                            onClick = { repository.toggleEventRegistration(event.id) },
-                            colors = if (event.isRegistered) {
-                                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                            } else {
-                                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                            }
-                        ) {
-                            Text(
-                                text = if (event.isRegistered) "Wypisz się" else "Zapisz się",
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.width(14.dp))
+                    Text(
+                        text = benefit,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }

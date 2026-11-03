@@ -12,14 +12,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.wieliszew.smartcus.data.repository.SmartCusRepository
-import pl.wieliszew.smartcus.modules.assistant.AiAssistantScreen
 import pl.wieliszew.smartcus.modules.card.WieliszewCardScreen
-import pl.wieliszew.smartcus.modules.gamification.GamificationScreen
 import pl.wieliszew.smartcus.modules.home.HomeScreen
-import pl.wieliszew.smartcus.modules.map.NeedMapScreen
-import pl.wieliszew.smartcus.modules.sharing.SharingHubScreen
-import pl.wieliszew.smartcus.modules.telehealth.TelehealthScreen
-import pl.wieliszew.smartcus.modules.timebank.TimeBankScreen
+import pl.wieliszew.smartcus.modules.profile.ProfileScreen
+import pl.wieliszew.smartcus.modules.services.CusServicesScreen
+import pl.wieliszew.smartcus.modules.volunteer.VolunteerHubScreen
 import pl.wieliszew.smartcus.ui.components.BackendSettingsDialog
 import pl.wieliszew.smartcus.ui.components.HeaderBanner
 import pl.wieliszew.smartcus.ui.components.NotificationsDialog
@@ -30,9 +27,9 @@ import pl.wieliszew.smartcus.ui.theme.SmartCusTheme
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     data object Home : Screen("home", "Pulpit", Icons.Outlined.Home)
     data object Card : Screen("card", "e-Karta", Icons.Outlined.Badge)
-    data object Map : Screen("map", "Mapa", Icons.Outlined.Map)
-    data object Community : Screen("community", "Społeczność", Icons.Outlined.Diversity3)
+    data object Volunteer : Screen("volunteer", "Pomoc", Icons.Outlined.VolunteerActivism)
     data object Services : Screen("services", "Usługi CUS", Icons.Outlined.SupportAgent)
+    data object Profile : Screen("profile", "Profil", Icons.Outlined.Person)
 }
 
 @Composable
@@ -48,15 +45,15 @@ fun SmartCusApp(repository: SmartCusRepository) {
     var showNotificationsDialog by remember { mutableStateOf(false) }
     var showBackendSettings by remember { mutableStateOf(false) }
 
-    var communitySubTab by remember { mutableStateOf("timebank") }
-    var servicesSubTab by remember { mutableStateOf("telehealth") }
+    var volunteerInitialTab by remember { mutableIntStateOf(0) }
+    var servicesInitialTab by remember { mutableIntStateOf(0) }
 
     val navItems = listOf(
         Screen.Home,
         Screen.Card,
-        Screen.Map,
-        Screen.Community,
-        Screen.Services
+        Screen.Volunteer,
+        Screen.Services,
+        Screen.Profile
     )
 
     SmartCusTheme(
@@ -111,154 +108,68 @@ fun SmartCusApp(repository: SmartCusRepository) {
                     Screen.Home -> HomeScreen(
                         repository = repository,
                         onNavigateToCard = { currentScreen = Screen.Card },
-                        onNavigateToMap = { currentScreen = Screen.Map },
+                        onNavigateToMap = {
+                            volunteerInitialTab = 0
+                            currentScreen = Screen.Volunteer
+                        },
                         onNavigateToTimeBank = {
-                            communitySubTab = "timebank"
-                            currentScreen = Screen.Community
+                            volunteerInitialTab = 1
+                            currentScreen = Screen.Volunteer
                         },
                         onNavigateToSharing = {
-                            communitySubTab = "sharing"
-                            currentScreen = Screen.Community
+                            servicesInitialTab = 1
+                            currentScreen = Screen.Services
                         },
                         onNavigateToTelehealth = {
-                            servicesSubTab = "telehealth"
+                            servicesInitialTab = 0
                             currentScreen = Screen.Services
                         },
                         onNavigateToAssistant = {
-                            servicesSubTab = "assistant"
+                            servicesInitialTab = 2
                             currentScreen = Screen.Services
                         },
                         onNavigateToRewards = {
-                            servicesSubTab = "gamification"
-                            currentScreen = Screen.Services
+                            currentScreen = Screen.Profile
                         }
                     )
                     Screen.Card -> WieliszewCardScreen(repository = repository)
-                    Screen.Map -> NeedMapScreen(repository = repository)
-                    Screen.Community -> {
-                        Column(modifier = Modifier.fillMaxSize()) {
-                            TabRow(
-                                selectedTabIndex = if (communitySubTab == "timebank") 0 else 1,
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ) {
-                                Tab(
-                                    selected = communitySubTab == "timebank",
-                                    onClick = { communitySubTab = "timebank" },
-                                    text = {
-                                        Text(
-                                            text = "Bank Czasu",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = if (isSeniorMode) 13.sp else 12.sp,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                                Tab(
-                                    selected = communitySubTab == "sharing",
-                                    onClick = { communitySubTab = "sharing" },
-                                    text = {
-                                        Text(
-                                            text = "Jadłodzielnia & Eko",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = if (isSeniorMode) 13.sp else 12.sp,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                            }
-                            if (communitySubTab == "timebank") {
-                                TimeBankScreen(repository = repository)
-                            } else {
-                                SharingHubScreen(repository = repository)
+                    Screen.Volunteer -> VolunteerHubScreen(
+                        repository = repository,
+                        initialTab = volunteerInitialTab
+                    )
+                    Screen.Services -> CusServicesScreen(
+                        repository = repository,
+                        initialTab = servicesInitialTab,
+                        onNavigateToModule = { target ->
+                            when (target) {
+                                "card" -> currentScreen = Screen.Card
+                                "map" -> {
+                                    volunteerInitialTab = 0
+                                    currentScreen = Screen.Volunteer
+                                }
+                                "timebank" -> {
+                                    volunteerInitialTab = 1
+                                    currentScreen = Screen.Volunteer
+                                }
+                                "sharing" -> {
+                                    servicesInitialTab = 1
+                                    currentScreen = Screen.Services
+                                }
+                                "telehealth" -> {
+                                    servicesInitialTab = 0
+                                    currentScreen = Screen.Services
+                                }
+                                "gamification", "profile" -> currentScreen = Screen.Profile
+                                else -> currentScreen = Screen.Home
                             }
                         }
-                    }
-                    Screen.Services -> {
-                        Column(modifier = Modifier.fillMaxSize()) {
-                            TabRow(
-                                selectedTabIndex = when (servicesSubTab) {
-                                    "telehealth" -> 0
-                                    "assistant" -> 1
-                                    else -> 2
-                                },
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ) {
-                                Tab(
-                                    selected = servicesSubTab == "telehealth",
-                                    onClick = { servicesSubTab = "telehealth" },
-                                    text = {
-                                        Text(
-                                            text = "Dyżury",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = if (isSeniorMode) 13.sp else 12.sp,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                                Tab(
-                                    selected = servicesSubTab == "assistant",
-                                    onClick = { servicesSubTab = "assistant" },
-                                    text = {
-                                        Text(
-                                            text = "Doradca CUS",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = if (isSeniorMode) 13.sp else 12.sp,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                                Tab(
-                                    selected = servicesSubTab == "gamification",
-                                    onClick = { servicesSubTab = "gamification" },
-                                    text = {
-                                        Text(
-                                            text = "Klub Mieszkańca",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = if (isSeniorMode) 13.sp else 12.sp,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                            }
-                            when (servicesSubTab) {
-                                "telehealth" -> TelehealthScreen(repository = repository)
-                                "assistant" -> AiAssistantScreen(
-                                    repository = repository,
-                                    onNavigateToModule = { target ->
-                                        when (target) {
-                                            "card" -> currentScreen = Screen.Card
-                                            "map" -> currentScreen = Screen.Map
-                                            "timebank" -> {
-                                                communitySubTab = "timebank"
-                                                currentScreen = Screen.Community
-                                            }
-                                            "sharing" -> {
-                                                communitySubTab = "sharing"
-                                                currentScreen = Screen.Community
-                                            }
-                                            "telehealth" -> servicesSubTab = "telehealth"
-                                            "gamification" -> servicesSubTab = "gamification"
-                                            "events" -> currentScreen = Screen.Card
-                                        }
-                                    }
-                                )
-                                else -> GamificationScreen(
-                                    repository = repository,
-                                    onNavigateToCard = { currentScreen = Screen.Card }
-                                )
-                            }
-                        }
-                    }
+                    )
+                    Screen.Profile -> ProfileScreen(
+                        repository = repository,
+                        onOpenCard = { currentScreen = Screen.Card },
+                        onOpenThemeSelector = { showThemeSelector = true },
+                        onOpenBackendSettings = { showBackendSettings = true }
+                    )
                 }
 
                 // Modal: Powiadomienia Gminne CUS
