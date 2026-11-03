@@ -1,5 +1,10 @@
 package pl.wieliszew.smartcus.modules.card
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.lazy.itemsIndexed
 import android.graphics.Bitmap
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -47,13 +52,47 @@ fun WieliszewCardScreen(
 ) {
     val card by repository.residentCard.collectAsState()
     val userProfile by repository.userProfile.collectAsState()
+val context = LocalContext.current
     val vouchers by repository.vouchers.collectAsState()
     val isSenior = LocalSeniorMode.current
+
+    val cardProfiles = remember(userProfile, card) {
+        listOf(
+            Triple(userProfile.fullName, "Karta Główna", card.cardNumber),
+            Triple("Stanisław Kowalski", "Karta Ucznia", "WKM-2026-88493"),
+            Triple("Tadeusz Kowalski", "Karta Seniora", "WKM-2026-88494")
+        )
+    }
+    var selectedProfileIndex by remember { mutableIntStateOf(0) }
+    val activeProfile = cardProfiles[selectedProfileIndex]
 
     var isCardFlipped by remember { mutableStateOf(false) }
     var secondsLeft by remember { mutableIntStateOf(42) }
     var showQrDialog by remember { mutableStateOf(false) }
     var showNfcDialog by remember { mutableStateOf(false) }
+
+    // Dynamic Hologram Shimmer Animation
+    val infiniteTransition = rememberInfiniteTransition(label = "cardEffects")
+    val holoOffset by infiniteTransition.animateFloat(
+        initialValue = -350f,
+        targetValue = 950f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "holoOffset"
+    )
+
+    // NFC Radar Pulse Animation
+    val nfcPulse by infiniteTransition.animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1100, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "nfcPulse"
+    )
 
     // Dynamic QR Token refresh timer (TOTP 45s)
     LaunchedEffect(Unit) {
@@ -91,17 +130,61 @@ fun WieliszewCardScreen(
         // Section: 3D Interactive Card (Flip between Front and Back)
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Wieliszewska Karta Mieszkańca (WKM)",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Dotknij karty, aby obrócić na drugą stronę (rewers / ICE)",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Wieliszewska Karta Mieszkańca (WKM)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Dotknij karty, aby obrócić na rewers z danymi ICE",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Wybór aktywnej karty w rodzinie (Karta Dużej Rodziny / Multi-Card)
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    itemsIndexed(cardProfiles) { idx, prof ->
+                        FilterChip(
+                            selected = selectedProfileIndex == idx,
+                            onClick = { selectedProfileIndex = idx },
+                            label = {
+                                Text(
+                                    text = "${prof.first} • ${prof.second}",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = when (idx) {
+                                        1 -> Icons.Outlined.School
+                                        2 -> Icons.Outlined.Elderly
+                                        else -> Icons.Outlined.Badge
+                                    },
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Box(
@@ -130,8 +213,34 @@ fun WieliszewCardScreen(
                                 .then(
                                     if (isSenior) Modifier.border(3.dp, WieliszewGold, RoundedCornerShape(22.dp)) else Modifier
                                 )
-                                .padding(20.dp)
                         ) {
+                            // Hologram Bezpieczeństwa (Security Shimmer Wave - Standard mObywatel 2.0)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.linearGradient(
+                                            colors = listOf(
+                                                Color.Transparent,
+                                                Color(0x15FFFFFF),
+                                                Color(0x35E0F2FE),
+                                                Color(0x45FEF08A),
+                                                Color(0x35BBF7D0),
+                                                Color(0x15FFFFFF),
+                                                Color.Transparent
+                                            ),
+                                            start = Offset(holoOffset, 0f),
+                                            end = Offset(holoOffset + 240f, 260f)
+                                        )
+                                    )
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(20.dp),
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
                             Column(
                                 modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.SpaceBetween
@@ -177,20 +286,20 @@ fun WieliszewCardScreen(
 
                                 Column {
                                     Text(
-                                        text = "POSIADACZ KARTY",
+                                        text = "POSIADACZ KARTY (${activeProfile.second.uppercase()})",
                                         color = Color.White.copy(alpha = 0.7f),
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         letterSpacing = 1.sp
                                     )
                                     Text(
-                                        text = card.holderName,
+                                        text = activeProfile.first,
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = if (isSenior) 22.sp else 19.sp
                                     )
                                     Text(
-                                        text = "ID: ${card.cardNumber}",
+                                        text = "ID: ${activeProfile.third}",
                                         color = Color.White.copy(alpha = 0.85f),
                                         fontSize = 13.sp,
                                         fontFamily = FontFamily.Monospace
@@ -262,12 +371,42 @@ fun WieliszewCardScreen(
                                     }
                                     Column(horizontalAlignment = Alignment.End) {
                                         Text("Kontakt ratunkowy ICE:", color = Color.Gray, fontSize = 10.sp)
-                                        Text(
-                                            userProfile.iceContact,
-                                            color = Color(0xFFFF8A80),
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp
-                                        )
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                userProfile.iceContact,
+                                                color = Color(0xFFFF8A80),
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 12.sp
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Surface(
+                                                shape = RoundedCornerShape(6.dp),
+                                                color = Color(0xFFD32F2F),
+                                                modifier = Modifier.clickable {
+                                                    try {
+                                                        val intent = Intent(
+                                                            Intent.ACTION_DIAL,
+                                                            Uri.parse("tel:${userProfile.iceContact.replace(" ", "")}")
+                                                        )
+                                                        context.startActivity(intent)
+                                                    } catch (e: Exception) {}
+                                                }
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Phone,
+                                                        contentDescription = "Zadzwoń ICE",
+                                                        tint = Color.White,
+                                                        modifier = Modifier.size(12.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(3.dp))
+                                                    Text("POŁĄCZ", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
@@ -335,19 +474,26 @@ fun WieliszewCardScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primaryContainer)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = "${secondsLeft}s",
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily.Monospace
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.size(38.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    progress = { secondsLeft / 45f },
+                                    modifier = Modifier.size(36.dp),
+                                    strokeWidth = 3.dp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                                Text(
+                                    text = "${secondsLeft}",
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 11.sp,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
                         }
                     }
 
@@ -603,31 +749,64 @@ fun WieliszewCardScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(72.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFE8F5E9)),
+                            .size(110.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = Color(0xFF2E7D32),
-                            modifier = Modifier.size(48.dp)
+                        // Outer Pulsing Ripple
+                        Box(
+                            modifier = Modifier
+                                .size((80 * nfcPulse).dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f))
                         )
+                        // Inner Ring
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primaryContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Nfc,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Karta zweryfikowana pomyślnie!",
+                        text = "Gotowość do transmisji NFC",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = Color(0xFF2E7D32)
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Terminal w Wieliszewie potwierdził uprawnienia mieszkańca dla: ${card.holderName}",
+                        text = "Przytrzymaj tył telefonu przy czytniku bramki w Wieliszewie lub u kontrolera biletów.",
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color(0xFFE8F5E9)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF2E7D32), modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Aktywny profil: ${activeProfile.first}",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF2E7D32),
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {

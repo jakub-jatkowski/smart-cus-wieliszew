@@ -1,5 +1,11 @@
 package pl.wieliszew.smartcus.modules.profile
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +49,10 @@ fun ProfileScreen(
     val isBackendOnline by repository.isBackendOnline.collectAsState()
 
     var selectedBadgeForDetail by remember { mutableStateOf<Badge?>(null) }
+    val context = LocalContext.current
+    var showEditProfileDialog by remember { mutableStateOf(false) }
+    var showRodoExportDialog by remember { mutableStateOf(false) }
+
 
     LazyColumn(
         modifier = Modifier
@@ -127,28 +137,44 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Emergency,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = "Kontakt ratunkowy ICE:",
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Emergency,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(18.dp)
                                 )
-                                Text(
-                                    text = userProfile.iceContact,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(
+                                        text = "Kontakt ratunkowy ICE:",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                    Text(
+                                        text = userProfile.iceContact,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                            IconButton(
+                                onClick = { showEditProfileDialog = true },
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Edit,
+                                    contentDescription = "Edytuj dane",
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }
@@ -411,6 +437,38 @@ fun ProfileScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable { showRodoExportDialog = true },
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.FileDownload,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text("Eksport Danych Obywatela (RODO Art. 20)", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                                Text("Pobierz kopię swoich danych w formacie JSON", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
+                        Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .clickable { onOpenBackendSettings() },
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -483,4 +541,125 @@ fun ProfileScreen(
             }
         )
     }
+}
+    // Modal: Edycja Profilu Mieszkańca i Kontaktu ICE
+    if (showEditProfileDialog) {
+        var editName by remember { mutableStateOf(userProfile.fullName) }
+        var editVillage by remember { mutableStateOf(userProfile.village) }
+        var editIce by remember { mutableStateOf(userProfile.iceContact) }
+
+        AlertDialog(
+            onDismissRequest = { showEditProfileDialog = false },
+            title = { Text("Edycja Danych Mieszkańca", fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedTextField(
+                        value = editName,
+                        onValueChange = { editName = it },
+                        label = { Text("Imię i Nazwisko") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = editVillage,
+                        onValueChange = { editVillage = it },
+                        label = { Text("Sołectwo zamieszkania") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = editIce,
+                        onValueChange = { editIce = it },
+                        label = { Text("Kontakt ratunkowy ICE (np. Córka +48...)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        repository.updateUserProfile(editName, editVillage, editIce)
+                        showEditProfileDialog = false
+                    }
+                ) {
+                    Text("Zapisz", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditProfileDialog = false }) {
+                    Text("Anuluj")
+                }
+            }
+        )
+    }
+
+    // Modal: Eksport Danych RODO (Art. 20)
+    if (showRodoExportDialog) {
+        val jsonExport = remember(userProfile) {
+            """{
+  "format": "RODO_GDPR_PORTABILITY_V1",
+  "generated_at": "2026-11-03",
+  "citizen": {
+    "name": "${userProfile.fullName}",
+    "village": "${userProfile.village}",
+    "ice_contact": "${userProfile.iceContact}",
+    "timebank_hours": ${userProfile.timeBankBalanceHours},
+    "gamification_points": ${userProfile.gamificationPoints},
+    "senior_mode_active": ${isSenior}
+  },
+  "municipality": "Gmina Wieliszew",
+  "institution": "Centrum Usług Społecznych w Wieliszewie"
+}"""
+        }
+
+        AlertDialog(
+            onDismissRequest = { showRodoExportDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Outlined.FileDownload, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Pakiet Danych Osobowych", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        "Zgodnie z art. 20 RODO masz prawo otrzymać swoje dane osobowe w ustrukturyzowanym formacie.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = jsonExport,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("Dane RODO CUS Wieliszew", jsonExport)
+                        clipboard.setPrimaryClip(clip)
+                        showRodoExportDialog = false
+                    }
+                ) {
+                    Text("Kopiuj JSON do schowka", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRodoExportDialog = false }) {
+                    Text("Zamknij")
+                }
+            }
+        )
+    }
+
 }

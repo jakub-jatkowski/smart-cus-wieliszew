@@ -1,5 +1,12 @@
 package pl.wieliszew.smartcus.modules.map
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
@@ -142,9 +149,11 @@ fun NeedMapScreen(
                 // Safe fallback if polygon creation fails
             }
 
-            // Interactive Map Marker
+            // Interactive Map Marker with custom vector pin
+            val isUrgent = pin.urgency == Urgency.HIGH || pin.urgency == Urgency.CRITICAL
             val marker = Marker(mapView).apply {
                 position = point
+                icon = createCustomNeedMarkerDrawable(context, pin.category, isUrgent)
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 title = "${pin.category.label}: ${pin.title}"
                 snippet = "Sołectwo ${pin.village} • ${pin.urgency.label}"
@@ -417,7 +426,7 @@ fun NeedMapScreen(
                     StatusBadge(
                         text = when {
                             isCompleted -> "ZREALIZOWANE"
-                            isAccepted -> "W TOKU (TY)"
+                            isAccepted -> "W trakcie realizacji"
                             else -> pin.urgency.label
                         },
                         containerColor = when {
@@ -716,7 +725,7 @@ fun NeedPinCard(
                 StatusBadge(
                     text = when {
                         isCompleted -> "ZREALIZOWANE"
-                        isAccepted -> "W TOKU (TY)"
+                        isAccepted -> "W trakcie realizacji"
                         else -> pin.urgency.label
                     },
                     containerColor = when {
@@ -804,4 +813,68 @@ fun NeedPinCard(
             }
         }
     }
+}
+
+/**
+ * Generuje wektorowy piktogram pinezki M3 dla mapy OpenStreetMap
+ * z kolorem kategorii, inicjałem oraz ewentualną czerwoną aureolą pilności
+ */
+fun createCustomNeedMarkerDrawable(
+    context: Context,
+    category: NeedCategory,
+    isUrgent: Boolean
+): Drawable {
+    val sizePx = 96
+    val bitmap = Bitmap.createBitmap(sizePx, sizePx + 18, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    val catColor = when (category) {
+        NeedCategory.SHOPPING -> android.graphics.Color.rgb(34, 197, 94)
+        NeedCategory.TRANSPORT -> android.graphics.Color.rgb(59, 130, 246)
+        NeedCategory.REPAIR -> android.graphics.Color.rgb(249, 115, 22)
+        NeedCategory.COMPANIONSHIP -> android.graphics.Color.rgb(168, 85, 247)
+        NeedCategory.PET_CARE -> android.graphics.Color.rgb(236, 72, 153)
+        NeedCategory.GARDEN -> android.graphics.Color.rgb(16, 185, 129)
+    }
+
+    // Subtelny cień
+    paint.color = android.graphics.Color.argb(50, 0, 0, 0)
+    canvas.drawCircle(sizePx / 2f, sizePx / 2f + 4f, sizePx / 2f - 4f, paint)
+
+    // Zewnętrzny pierścień
+    paint.color = if (isUrgent) android.graphics.Color.rgb(220, 38, 38) else android.graphics.Color.WHITE
+    canvas.drawCircle(sizePx / 2f, sizePx / 2f, sizePx / 2f - 4f, paint)
+
+    // Wewnętrzne koło w kolorze kategorii
+    paint.color = catColor
+    canvas.drawCircle(sizePx / 2f, sizePx / 2f, sizePx / 2f - 10f, paint)
+
+    // Iglica wskazująca precyzyjną pozycję geograficzną
+    val needlePath = Path().apply {
+        moveTo(sizePx / 2f - 10f, sizePx / 2f + 18f)
+        lineTo(sizePx / 2f + 10f, sizePx / 2f + 18f)
+        lineTo(sizePx / 2f, sizePx + 14f)
+        close()
+    }
+    paint.color = if (isUrgent) android.graphics.Color.rgb(220, 38, 38) else catColor
+    canvas.drawPath(needlePath, paint)
+
+    // Inicjał kategorii
+    val letter = when (category) {
+        NeedCategory.SHOPPING -> "Z"
+        NeedCategory.TRANSPORT -> "T"
+        NeedCategory.REPAIR -> "N"
+        NeedCategory.COMPANIONSHIP -> "P"
+        NeedCategory.PET_CARE -> "Z"
+        NeedCategory.GARDEN -> "O"
+    }
+    paint.color = android.graphics.Color.WHITE
+    paint.textSize = 34f
+    paint.typeface = Typeface.DEFAULT_BOLD
+    paint.textAlign = Paint.Align.CENTER
+    val yPos = (sizePx / 2f) - ((paint.descent() + paint.ascent()) / 2)
+    canvas.drawText(letter, sizePx / 2f, yPos, paint)
+
+    return BitmapDrawable(context.resources, bitmap)
 }
