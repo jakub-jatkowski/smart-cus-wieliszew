@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.wieliszew.smartcus.data.model.MunicipalNotification
@@ -187,7 +188,7 @@ fun HeaderBanner(
         tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
@@ -195,61 +196,97 @@ fun HeaderBanner(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .height(52.dp)
+                    .padding(horizontal = 14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .then(if (onOpenBackendSettings != null) Modifier.clickable { onOpenBackendSettings() } else Modifier)
+                // Title and compact clickable backend status pill
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        // Visual backend sync status dot
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(if (isBackendOnline) Color(0xFF22C55E) else Color(0xFFF59E0B))
-                        )
-                    }
                     Text(
-                        text = if (isBackendOnline) subtitle else "$subtitle • Tryb offline/lokalny",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = title,
+                        style = if (isSeniorMode) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleMedium.copy(fontSize = 17.sp),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    // Compact Backend sync pill
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = if (isBackendOnline) Color(0xFFDCFCE7) else Color(0xFFFEF3C7),
+                        contentColor = if (isBackendOnline) Color(0xFF166534) else Color(0xFF92400E),
+                        modifier = Modifier.clickable { onOpenBackendSettings?.invoke() }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isBackendOnline) Color(0xFF22C55E) else Color(0xFFF59E0B))
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (isBackendOnline) "API" else "Lokalny",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Backend Configuration Button
-                    if (onOpenBackendSettings != null) {
-                        IconButton(onClick = onOpenBackendSettings) {
-                            Icon(
-                                imageVector = if (isBackendOnline) Icons.Default.Dns else Icons.Default.CloudOff,
-                                contentDescription = "Status i serwer API CUS",
-                                tint = if (isBackendOnline) MaterialTheme.colorScheme.primary else Color(0xFFF59E0B)
-                            )
+                // Compact Action Buttons
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    // Senior Accessibility Mode Toggle (Compact 'Aa' Circle)
+                    IconButton(
+                        onClick = onToggleSeniorMode,
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSeniorMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            border = if (isSeniorMode) BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary) else null,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = "Aa",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
                         }
                     }
 
                     // Theme Selector Button
-                    IconButton(onClick = onOpenThemeSelector) {
+                    IconButton(
+                        onClick = onOpenThemeSelector,
+                        modifier = Modifier.size(38.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Palette,
                             contentDescription = "Zmień motyw",
+                            modifier = Modifier.size(20.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
                     // Notification Bell with Badge
-                    IconButton(onClick = onOpenNotifications) {
+                    IconButton(
+                        onClick = onOpenNotifications,
+                        modifier = Modifier.size(38.dp)
+                    ) {
                         BadgedBox(
                             badge = {
                                 if (unreadNotificationsCount > 0) {
@@ -257,7 +294,7 @@ fun HeaderBanner(
                                         containerColor = MaterialTheme.colorScheme.error,
                                         contentColor = MaterialTheme.colorScheme.onError
                                     ) {
-                                        Text(text = unreadNotificationsCount.toString(), fontSize = 10.sp)
+                                        Text(text = unreadNotificationsCount.toString(), fontSize = 9.sp)
                                     }
                                 }
                             }
@@ -265,29 +302,10 @@ fun HeaderBanner(
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Powiadomienia gminne",
+                                modifier = Modifier.size(20.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    // M3 Filled Tonal Button for Senior Toggle
-                    FilledTonalButton(
-                        onClick = onToggleSeniorMode,
-                        shape = RoundedCornerShape(9999.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = if (isSeniorMode) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = if (isSeniorMode) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = if (isSeniorMode) BorderStroke(2.dp, MaterialTheme.colorScheme.outline) else null,
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            text = if (isSeniorMode) "Aa Normalny" else "Aa Senior AAA",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
-                        )
                     }
                 }
             }
