@@ -47,12 +47,15 @@ jobs:
         working-directory: ./android_native/app/build/outputs/apk/debug
         run: |
           cp app-debug.apk SmartCUS_Wieliszew_v1.0.0.apk
+          cp app-debug.apk SmartCUS_Wieliszew.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SmartCUS-Wieliszew-APK
-          path: android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
+          path: |
+            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk
+            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk
           retention-days: 60
 
       - name: Publish APK to GitHub Release
@@ -60,5 +63,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload v1.0.0 android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk#SmartCUS_Wieliszew.apk --clobber
+          gh release upload v1.0.0 \
+            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew.apk \
+            android_native/app/build/outputs/apk/debug/SmartCUS_Wieliszew_v1.0.0.apk \
+            --clobber
 
